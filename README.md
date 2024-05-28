@@ -1,8 +1,12 @@
+<p align="center">
+<img title="Extreme Confectionery :O" align="center" src="/ExtremeConfectionery.png" width="39%" />
+</p>
+
 # Caramel
 
 > [!WARNING]
 > 
-> Extreme Confectionery!
+> *Extreme Confectionery!*
 
 ## Completely optional interoperability/compatibility module
 
