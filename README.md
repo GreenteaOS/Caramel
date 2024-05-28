@@ -5,14 +5,14 @@
 # Caramel
 
 > [!WARNING]
-> 
+>
 > *Extreme Confectionery!*
 
 ## Completely optional interoperability/compatibility module
 
 Provides interoperability between various instances of deprecated/obsolete programs in the `.exe` format, system programs and user environment.
 
-Emulates backwards compatible environment of the deprecated/obsolete platforms ([as stated by the original platforms provider](https://support.microsoft.com/en-us/windows/windows-8-1-support-ended-on-january-10-2023-3cfd4cde-f611-496a-8057-923fba401e93)).
+Emulates backwards compatible environment of the deprecated/obsolete platforms ([as stated by the original platforms provider](https://support.microsoft.com/en-us/windows/windows-8-1-support-ended-on-january-10-2023-3cfd4cde-f611-496a-8057-923fba401e93)) on a [no more supported hardware](https://learn.microsoft.com/en-us/windows/whats-new/windows-11-requirements).
 
 ## Contribution guidelines
 
