@@ -1,5 +1,5 @@
 <p align="center">
-<img title="Extreme Confectionery :O" align="center" src="/ExtremeConfectionery.png" width="39%" />
+<img title="Extreme Confectionery :O" align="center" src="/ExtremeConfectionery.png" width="49%" />
 </p>
 
 # Caramel
