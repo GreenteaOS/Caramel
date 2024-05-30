@@ -18,7 +18,9 @@ Emulates backwards compatible environment of the deprecated/obsolete platforms (
 
 In case contributor does attempts at reverse engineering: all corresponding contributions should follow [Council Directive 91/250/EEC](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex%3A31991L0250), [Directive (EU) 2016/943 of the European Parliament](https://eur-lex.europa.eu/eli/dir/2016/943/oj) and newer directives related to reverse engineering.
 
-Most countries follow similar rules.
+Most countries follow similar rules:
+
+- USA [Digital Millennium Copyright Act `(f) Reverse Engineering. (1) (2) (3)`](https://www.govinfo.gov/content/pkg/PLAW-105publ304/html/PLAW-105publ304.htm)
 
 ### Right to reverse engineer
 
