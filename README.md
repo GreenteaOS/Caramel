@@ -37,9 +37,9 @@ As a safety measure we assume that most contributions obtained a right to use a 
 
 We assume that **none** of the contributors had the right to utilize *any* of the "server", "beta" or other editions.
 
-> [!CAUTION]
+> [!NOTE]
 >
-> Be very aware before using any knowledge from other reverse engineering projects if they confirm to those guidelines
+> Be very aware before using any knowledge from other reverse engineering projects if they conform to those guidelines
 
 ### Companion programs
 
