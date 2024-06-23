@@ -8,7 +8,7 @@
 >
 > *Extreme Confectionery!*
 
-## Completely optional interoperability/compatibility module
+## Optional interoperability/compatibility plugin
 
 Provides interoperability between various instances of deprecated/obsolete programs in the [PE format](https://en.wikipedia.org/wiki/Portable_Executable), system programs and user environment.
 
