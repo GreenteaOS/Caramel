@@ -1,0 +1,95 @@
+// The Tofita Engine
+// Copyright (C) 2022-2024 Oleh Petrenko
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// TODO @linkName('KiFastSystemCall')
+fun kiFastSystemCall(rcx UInt64, rdx Payload) UInt64 {
+	return tofitaFastSystemCall(rcx as! TofitaSyscalls, rdx)
+}
+
+// TODO calling convention
+// TODO no capture `@closure(false)`
+declare Entry = (hInstance ConstArrayPointer<Void>, hPrev ConstArrayPointer<Void>, pCmdLine ConstArrayPointer<Void>, nCmdShow Int) => UInt32
+declare DllEntry = (hinstDLL ConstArrayPointer<Void>, fdwReason DllEntryReason, lpvReserved ConstArrayPointer<Void>) => Bool32
+// TODO must error `hinstDLL` twice `declare DllEntry = (hinstDLL ConstArrayPointer<Void>, fdwReason DllEntryReason, hinstDLL ConstArrayPointer<Void>) => Bool32`
+
+// @rename('hexa_entry') declare let hexa_entry Entry // TODO size_t
+// @rename('hexa_pid') declare let hexa_pid UInt64 // TODO size_t
+// @rename('hexa_dllEntries') declare let hexa_dllEntries UInt64 // TODO size_t
+@rename('hexa_startup') declare let hexa_startup UInt64 // TODO size_t aka PointerSizedUInt (size_t is guaranteed to be an unsigned type)
+
+@dllExport('memset')
+fun memset(value UInt32) {
+	// TODO !!
+}
+
+enum DllEntryReason: UInt32 {
+	DLL_PROCESS_ATTACH = 1
+}
+
+// TODO set as entry @linkName('greenteaosIsTheBest')
+fun greenteaosIsTheBest(startup ProcessStartupInformation) {
+	let entry Entry = startup.entry
+	let pid UInt64 = startup.pid
+	let dllEntries UInt64 = startup.dllEntries
+	// TODO entry arguments (argv, argc)
+	// TODO probably should call own DLL startup code (hexa main)
+	// TODO init DLLs
+	// TODO PEB/TEB
+	// TODO TLS callbacks [before EXE entry]
+
+	/* - look for IMAGE_TLS_DIRECTORY (IMAGE_DIRECTORY_ENTRY_TLS) and AddressOfCallBacks must be not 0. So this is real entry point(s) of this EXE - no other option, otherwise EXE will crashes.
+	So solution is to look for IMAGE_DIRECTORY_ENTRY_TLS.AddressOfCallBacks or set breakpoint to LdrpCallTlsInitializers*/
+
+	/*
+	really this was CLR (.NET) image - in this images type entry point is formal and not used after xp. system ignore it and call _CorExeMain in mscoree.dll as entry point.
+	https://msdn.microsoft.com/en-us/library/xh0859k0(v=vs.110).aspx
+	*/
+	// TODO delay-loaded DLLs
+	// TODO load DLLs in user mode
+	tofitaDebugLog("CRT ready for PID %u".utf16(), pid)
+	// TODO as stricture `{ count UInt32, dllEntries ArrayByValue<...> }`
+	let count = startup.dllCount
+	let dllMains = dllEntries as! ConstArrayPointer<DllEntry?>
+
+	if dllEntries == 0 {
+		tofitaDebugLog("dllEntries == 0 for PID %u".utf16(), pid)
+	}
+
+	for i in count {
+		// DLL may have no entry
+		if let entryPoint = dllMains[i] {
+			entryPoint(null, DllEntryReason.DLL_PROCESS_ATTACH, null)
+		}
+	}
+
+	// TODO unmap entries/ProcessStartupInformation if required
+	tofitaDebugLog("Done %u DLLs".utf16(), count)
+
+	if entry != null {
+		// Note: some apps requre entry to be called even if its zero to invoke TLS callbacks
+		tofitaDebugLog("entry != null OK for PID %u at %8".utf16(), pid, entry)
+	}
+
+	if entry == null {
+		tofitaDebugLog("entry == null ERROR for PID %u".utf16(), pid)
+	}
+
+	// TODO non-null stubs here, like HInstance etc
+	tofitaExitProcess(entry(null, null, null, 0))
+	while true { }
+}
+
+// TODO get this structure from FS/GS
+greenteaosIsTheBest(hexa_startup as! ProcessStartupInformation)

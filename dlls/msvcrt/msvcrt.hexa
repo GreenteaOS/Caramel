@@ -1,0 +1,468 @@
+// The Tofita Engine
+// Copyright (C) 2022-2024 Oleh Petrenko
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// TODO Hexa: `let convention = #if bits32 'stdcall' #else 'fastcall' #end`
+// TODO `@link('asIs')` `@link('TitleCase')`
+/*private*/ let convention = 'stdcall'
+
+// @convention(convention) // TODO
+@dllExport('__dllonexit')
+fun __dllonexit(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("__dllonexit()\n".utf16())
+	return 0
+}
+
+@dllExport('__lconv_init')
+fun __lconv_init(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("__lconv_init()\n".utf16())
+	return 0
+}
+
+@dllExport('__set_app_type')
+fun __set_app_type(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("__set_app_type()\n".utf16())
+	return 0
+}
+
+@dllExport('__setusermatherr')
+fun __setusermatherr(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("__setusermatherr()\n".utf16())
+	return 0
+}
+
+@dllExport('__wgetmainargs')
+fun __wgetmainargs(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("__wgetmainargs()\n".utf16())
+	return 0
+}
+
+@dllExport('__winitenv')
+fun __winitenv(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("__winitenv()\n".utf16())
+	return 0
+}
+
+@dllExport('_amsg_exit')
+fun _amsg_exit(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_amsg_exit()\n".utf16())
+	return 0
+}
+
+@dllExport('_cexit')
+fun _cexit(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_cexit()\n".utf16())
+	return 0
+}
+
+@dllExport('_finite')
+fun _finite(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_finite()\n".utf16())
+	return 0
+}
+
+@dllExport('_commode')
+fun _commode(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_commode()\n".utf16())
+	return 0
+}
+
+@dllExport('_fmode')
+fun _fmode(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_fmode()\n".utf16())
+	return 0
+}
+
+@dllExport('_fpreset')
+fun _fpreset(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_fpreset()\n".utf16())
+	return 0
+}
+
+@dllExport('_initterm')
+fun _initterm(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_initterm()\n".utf16())
+	return 0
+}
+
+@dllExport('_iob')
+fun _iob(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_iob()\n".utf16())
+	return 0
+}
+
+@dllExport('_isnan')
+fun _isnan(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_isnan()\n".utf16())
+	return 0
+}
+
+@dllExport('_lock')
+fun _lock(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_lock()\n".utf16())
+	return 0
+}
+
+@dllExport('_onexit')
+fun _onexit(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_onexit()\n".utf16())
+	return 0
+}
+
+@dllExport('_strdup')
+fun _strdup(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_strdup()\n".utf16())
+	return 0
+}
+
+@dllExport('_strupr')
+fun _strupr(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_strupr()\n".utf16())
+	return 0
+}
+
+@dllExport('_unlock')
+fun _unlock(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_unlock()\n".utf16())
+	return 0
+}
+
+// TODO _acmdln
+@dllExport('_wcmdln')
+var _wcmdln ArrayByValue<UInt16, 4> = [
+	// TODO
+	// Just "exe\0"
+	101u16,
+	120u16,
+	101u16,
+	0u16
+]
+// fun _wcmdln(stub SizeOfPointer) SizeOfPointer {
+// // TODO
+// return 0
+// }
+
+@dllExport('_wcsicmp')
+fun _wcsicmp(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("_wcsicmp()\n".utf16())
+	return 0
+}
+
+@dllExport('abort')
+fun abort(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("abort()\n".utf16())
+	return 0
+}
+
+@dllExport('acos')
+fun acos(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("acos()\n".utf16())
+	return 0
+}
+
+@dllExport('asin')
+fun asin(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("asin()\n".utf16())
+	return 0
+}
+
+@dllExport('atan')
+fun atan(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("atan()\n".utf16())
+	return 0
+}
+
+@dllExport('calloc')
+fun calloc(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("calloc()\n".utf16())
+	return 0
+}
+
+@dllExport('cos')
+fun cos(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("cos()\n".utf16())
+	return 0
+}
+
+@dllExport('cosh')
+fun cosh(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("cosh()\n".utf16())
+	return 0
+}
+
+@dllExport('exit')
+fun exit(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("exit()\n".utf16())
+	return 0
+}
+
+@dllExport('exp')
+fun exp(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("exp()\n".utf16())
+	return 0
+}
+
+@dllExport('fmod')
+fun fmod(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("fmod()\n".utf16())
+	return 0
+}
+
+@dllExport('fprintf')
+fun fprintf(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("fprintf()\n".utf16())
+	return 0
+}
+
+@dllExport('fwrite')
+fun fwrite(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("fwrite()\n".utf16())
+	return 0
+}
+
+@dllExport('log')
+fun log(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("log()\n".utf16())
+	return 0
+}
+
+@dllExport('log10')
+fun log10(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("log10()\n".utf16())
+	return 0
+}
+
+@struct @packed
+class Malloc {
+	var payload ArrayByValue<UInt8, 2048> = [0]
+	new () { }
+}
+
+@dllExport('malloc')
+fun malloc(size SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("[msvcrt] malloc called %u".utf16(), size as! UInt32)
+
+	// TODO Hexa: if size > 2048 {
+	if (size as! UInt32) > 2048u32 {
+		tofitaDebugLog("[msvcrt] malloc >2048".utf16())
+	}
+
+	var stub = new Malloc()
+	tofitaDebugLog("[msvcrt] malloc done allocation".utf16())
+	return stub as! SizeOfPointer
+}
+
+@dllExport('memmove')
+fun memmove(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("memmove()\n".utf16())
+	return 0
+}
+
+@dllExport('memcpy')
+fun memcpy(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("memcpy()\n".utf16())
+	return 0
+}
+
+@dllExport('modf')
+fun modf(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("modf()\n".utf16())
+	return 0
+}
+
+@dllExport('pow')
+fun pow(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("pow()\n".utf16())
+	return 0
+}
+
+@dllExport('fabs')
+fun fabs(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("fabs()\n".utf16())
+	return 0
+}
+
+@dllExport('ceil')
+fun ceil(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("ceil()\n".utf16())
+	return 0
+}
+
+@dllExport('signal')
+fun signal(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("signal()\n".utf16())
+	return 0
+}
+
+@dllExport('sin')
+fun sin(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("sin()\n".utf16())
+	return 0
+}
+
+@dllExport('sinh')
+fun sinh(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("sinh()\n".utf16())
+	return 0
+}
+
+@dllExport('sqrt')
+fun sqrt(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("sqrt()\n".utf16())
+	return 0
+}
+
+@dllExport('strlen')
+fun strlen(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("strlen()\n".utf16())
+	return 0
+}
+
+@dllExport('strncmp')
+fun strncmp(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("strncmp()\n".utf16())
+	return 0
+}
+
+@dllExport('swprintf')
+fun swprintf(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("swprintf()\n".utf16())
+	return 0
+}
+
+@dllExport('swscanf')
+fun swscanf(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("swscanf()\n".utf16())
+	return 0
+}
+
+@dllExport('tan')
+fun tan(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("tan()\n".utf16())
+	return 0
+}
+
+@dllExport('tanh')
+fun tanh(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("tanh()\n".utf16())
+	return 0
+}
+
+@dllExport('vfprintf')
+fun vfprintf(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("vfprintf()\n".utf16())
+	return 0
+}
+
+@dllExport('wcscat')
+fun wcscat(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("wcscat()\n".utf16())
+	return 0
+}
+
+@dllExport('wcschr')
+fun wcschr(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("wcschr()\n".utf16())
+	return 0
+}
+
+@dllExport('wcscmp')
+fun wcscmp(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("wcscmp()\n".utf16())
+	return 0
+}
+
+@dllExport('wcscpy')
+fun wcscpy(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("wcscpy()\n".utf16())
+	return 0
+}
+
+@dllExport('wcslen')
+fun wcslen(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("wcslen()\n".utf16())
+	return 0
+}
+
+@linkName('_DllMainCRTStartup_TODO')
+#if bit32
+	@stdcall
+#else
+	@fastcall
+#end
+fun _DllMainCRTStartup(
+	unusedX Any,
+	unusedY Any,
+	unusedZ Any
+) Void {
+	// TODO
+}

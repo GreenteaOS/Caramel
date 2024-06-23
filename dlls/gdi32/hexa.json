@@ -1,0 +1,32 @@
+{
+	"name": "GeeDeeEye",
+	"version": "1.0.0",
+	"description": "Greentea OS",
+	"author": "PeyTy",
+	"license": "LGPL-3.0-only",
+	"global": [
+		"../../../Tofita/dlls/types",
+		"../../../Tofita/engine/syscalls/syscalls",
+		"../../../Tofita/dlls/tofita32/tofita32.header",
+		"../kernel32/kernel32.header",
+		"../ntdll/ntdll.header",
+		"gdi32.header",
+		"gdiMain",
+		"gdi32Vars"
+	],
+	"targets": [
+		{
+			"name": "default",
+			"generator": "c",
+			"output": "gdi32.64.c",
+			"options": []
+		},
+		{
+			"name": "i386",
+			"generator": "c",
+			"output": "gdi32.32.c",
+			"options": []
+		}
+	],
+	"entry": "gdi32"
+}

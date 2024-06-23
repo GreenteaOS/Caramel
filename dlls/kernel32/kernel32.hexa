@@ -1,0 +1,275 @@
+// The Tofita Engine
+// Copyright (C) 2022-2024 Oleh Petrenko
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+@dllExport('ExitProcess')
+@haltsProgram
+fun exitProcess(@hide exitCode UInt32) {
+	tofitaExitProcess(exitCode)
+	// TODO jump to NtDLL or something
+	while true { }
+}
+
+@dllExport('LocalAlloc')
+fun localAlloc(flags UInt32, bytes SizeOfPointer) HLocal {
+	// TODO better way to take pointer to array element `&buffer[bufferOffset]`
+	var result = (buffer as! UInt64) + bufferOffset
+	bufferOffset += bytes as! UInt64 // TODO .toInt()
+	// Align to 8 bytes
+	// Because handle has some bits reserved for tags
+	// TODO how many bits exactly?
+	// TODO also pre-align at CRT startup, cause section may be misaligned
+	// TODO 16-bytes align
+	// TODO OOM
+	while bufferOffset % 8 != 0 {
+		bufferOffset++
+		// TODO non-loop align
+	}
+
+	// TODO allocate buffer via VAlloc every time current one is exchausted
+	return result as! HLocal
+}
+
+@dllExport('GlobalAlloc')
+fun globalAlloc(flags UInt32, bytes SizeOfPointer) HGlobal {
+	return localAlloc(0, bytes) as! HGlobal
+	// TODO corresponding *Free* functions should check for != null,
+	// do MemProbe and check the tag of heap block to actually be a heap
+	// and only then do rc--
+}
+
+@dllExport('HeapAlloc')
+fun heapAlloc(heap Handle, flags UInt32, bytes SizeOfPointer) ArrayPointer<UInt8> {
+	return localAlloc(0, bytes) as! ArrayPointer<UInt8>
+}
+
+// TODO move to crt
+@dllExport('free')
+fun free(@hide pointer SizeOfPointer) Void {
+	// TODO
+	// Note: pointer may be null
+}
+
+@dllExport('DeleteCriticalSection')
+fun deleteCriticalSection(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("deleteCriticalSection()\n".utf16())
+	return 0
+}
+
+@dllExport('EnterCriticalSection')
+fun enterCriticalSection(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	// TODO Hexa: code gen into just L"string"
+	// ^ and NOT count for .c String.new() generation
+	tofitaDebugLog("enterCriticalSection()\n".utf16())
+	return 0
+}
+
+@dllExport('FreeLibrary')
+fun freeLibrary(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("freeLibrary()\n".utf16())
+	return 0
+}
+
+@dllExport('GetCurrentProcess')
+fun getCurrentProcess(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getCurrentProcess()\n".utf16())
+	return 0
+}
+
+@dllExport('GetCurrentProcessId')
+fun getCurrentProcessId(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getCurrentProcessId()\n".utf16())
+	return 0
+}
+
+@dllExport('GetCurrentThreadId')
+fun getCurrentThreadId(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getCurrentThreadId()\n".utf16())
+	return 0
+}
+
+@dllExport('GetLastError')
+fun getLastError(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getLastError()\n".utf16())
+	return 0
+}
+
+@dllExport('GetLocaleInfoW')
+fun getLocaleInfoW(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getLocaleInfoW()\n".utf16())
+	return 0
+}
+
+@dllExport('GetModuleHandleA')
+fun getModuleHandleA(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getModuleHandleA()\n".utf16())
+	return 0
+}
+
+@dllExport('GetProcAddress')
+fun getProcAddress(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getProcAddress()\n".utf16())
+	return 0
+}
+
+@dllExport('GetProfileIntW')
+fun getProfileIntW(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getProfileIntW()\n".utf16())
+	return 0
+}
+
+@dllExport('GetStartupInfoW')
+fun getStartupInfoW(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getStartupInfoW()\n".utf16())
+	return 0
+}
+
+@dllExport('GetSystemTimeAsFileTime')
+fun getSystemTimeAsFileTime(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	let str ArrayByValue<UInt16, 5> = "bruh"
+	// TODO Hexa: String inlining bug where str expected `value && type==String`
+	// TODO Hexa: .ref bug
+	tofitaDebugLog(str as! ConstArrayPointer<ClangWideChar>)
+	tofitaDebugLog("getSystemTimeAsFileTime()\n" as! ConstArrayPointer<ClangWideChar>)
+	tofitaDebugLog("getSystemTimeAsFileTime()\n".utf16())
+	return 0
+}
+
+@dllExport('GetTickCount')
+fun getTickCount(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getTickCount()\n".utf16())
+	return 0
+}
+
+@dllExport('GetVersionExW')
+fun getVersionExW(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getVersionExW()\n".utf16())
+	return 0
+}
+
+@dllExport('GlobalLock')
+fun globalLock(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("globalLock()\n".utf16())
+	return 0
+}
+
+@dllExport('GlobalUnlock')
+fun globalUnlock(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("globalUnlock()\n".utf16())
+	return 0
+}
+
+@dllExport('InitializeCriticalSection')
+fun initializeCriticalSection(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("initializeCriticalSection()\n".utf16())
+	return 0
+}
+
+@dllExport('LeaveCriticalSection')
+fun leaveCriticalSection(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("leaveCriticalSection()\n".utf16())
+	return 0
+}
+
+@dllExport('LoadLibraryW')
+fun loadLibraryW(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("loadLibraryW()\n".utf16())
+	return 0
+}
+
+@dllExport('QueryPerformanceCounter')
+fun queryPerformanceCounter(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("queryPerformanceCounter()\n".utf16())
+	return 0
+}
+
+@dllExport('SetUnhandledExceptionFilter')
+fun setUnhandledExceptionFilter(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("setUnhandledExceptionFilter()\n".utf16())
+	return 0
+}
+
+@dllExport('Sleep')
+fun sleep(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("sleep()\n".utf16())
+	return 0
+}
+
+@dllExport('TerminateProcess')
+fun terminateProcess(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("terminateProcess()\n".utf16())
+	return 0
+}
+
+@dllExport('TlsGetValue')
+fun tlsGetValue(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("tlsGetValue()\n".utf16())
+	return 0
+}
+
+@dllExport('UnhandledExceptionFilter')
+fun unhandledExceptionFilter(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("unhandledExceptionFilter()\n".utf16())
+	return 0
+}
+
+@dllExport('VirtualProtect')
+fun virtualProtect(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("virtualProtect()\n".utf16())
+	return 0
+}
+
+@dllExport('VirtualQuery')
+fun virtualQuery(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("virtualQuery()\n".utf16())
+	return 0
+}
+
+@dllExport('WriteProfileStringW')
+fun writeProfileStringW(stub SizeOfPointer) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("writeProfileStringW()\n".utf16())
+	return 0
+}
+
+// TODO @linkName('_DllMainCRTStartup')
+@fastcall fun _DllMainCRTStartup() Void { }
