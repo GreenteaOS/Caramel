@@ -1,1 +1,2 @@
-echo WIP
+@cd ../Tofita
+@build.bat
