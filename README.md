@@ -22,6 +22,12 @@ Most countries follow similar rules:
 
 - USA [Digital Millennium Copyright Act `(f) Reverse Engineering. (1) (2) (3)`](https://www.govinfo.gov/content/pkg/PLAW-105publ304/html/PLAW-105publ304.htm)
 
+### Illegal use of works protected by copyright
+
+All contributors should be expected **at any moment be willing to provide evidence of the proper reverse engineering techniques being in use**.
+
+Screenshots of the reverse engineering software (with related project files), video and step by step description of the knowledge obtaining process applied with the sole goals as described per this guideline (i.e. interoperability). **Additional information may be requested.**
+
 ### Right to reverse engineer
 
 As per [`Article 6 Decompilation 1. (a)`](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex%3A31991L0250) you should own a **legal copy/license** of the software **before** doing any attempts at reverse engineering. The software should be officially deprecated/obsolete.
