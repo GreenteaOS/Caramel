@@ -62,6 +62,12 @@ Do **NOT** create computer program substantially similar in its expression to th
 - Apply visual language (style guide) and naming distinct from the original
 - In the properties or other user facing elements textually express program goal is to achieve the interoperability
 
+## Trademarks
+
+Microsoft®, Windows™, and the Windows logo are trademarks, or registered trademarks of Microsoft Corporation in the United States and/or other countries.
+
+Other names and brands may be claimed as the property of others.
+
 ### GNU LESSER GENERAL PUBLIC LICENSE VERSION 3
 
 All code should be under this one or compatible license.
