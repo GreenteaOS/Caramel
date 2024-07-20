@@ -98,7 +98,7 @@ fun dialog_GetControl32(p ConstArrayPointer<UInt16>, info DlgControlInfo, dialog
 		if id <= 5 {
 			info.className = class_names[id]
 		} else {
-			info.className = (0 as! ArrayPointer<Void>)
+			info.className = null
 		}
 
 		p += 2
@@ -128,7 +128,7 @@ fun dialog_GetControl32(p ConstArrayPointer<UInt16>, info DlgControlInfo, dialog
 		info.data = p
 		p += (((p) as! ConstArrayPointer<UInt16>) [0]) / sizeOf<UInt32>()
 	} else {
-		info.data = (0 as! ArrayPointer<Void>)
+		info.data = null
 	}
 
 	p++
@@ -173,21 +173,21 @@ fun dialog_CreateControls32(
 		} else {
 			var classRef ConstArrayPointer<ClangChar> = info.className as! ConstArrayPointer<ClangChar>
 			var caption ConstArrayPointer<ClangChar> = info.windowName as! ConstArrayPointer<ClangChar>
-			var class_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
-			var caption_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
+			var class_tmp ConstArrayPointer<ClangChar> = null
+			var caption_tmp ConstArrayPointer<ClangChar> = null
 			var caption_buf ArrayByValue<ClangChar, 4> = [0]
 
 			if not ((((classRef) as! UInt32) >> 16) == 0) {
-				var len UInt32 = wideCharToMultiByte(0, 0, info.className, -1, 0 as! ArrayPointer<Void>, 0, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+				var len UInt32 = wideCharToMultiByte(0, 0, info.className, -1, null, 0, null, null)
 				class_tmp = heapAlloc(getProcessHeap(), 0, len)
-				wideCharToMultiByte(0, 0, info.className, -1, class_tmp, len, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+				wideCharToMultiByte(0, 0, info.className, -1, class_tmp, len, null, null)
 				classRef = class_tmp
 			}
 
 			if not ((((caption) as! UInt32) >> 16) == 0) {
-				var len UInt32 = wideCharToMultiByte(0, 0, info.windowName, -1, 0 as! ArrayPointer<Void>, 0, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+				var len UInt32 = wideCharToMultiByte(0, 0, info.windowName, -1, null, 0, null, null)
 				caption_tmp = heapAlloc(getProcessHeap(), 0, len)
-				wideCharToMultiByte(0, 0, info.windowName, -1, caption_tmp, len, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+				wideCharToMultiByte(0, 0, info.windowName, -1, caption_tmp, len, null, null)
 				caption = caption_tmp
 			} else {
 				if caption {
@@ -267,7 +267,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 	p++
 	switch ((p) as! ConstArrayPointer<UInt16>) [0] {
 		case 0:
-			result.menuName = (0 as! ArrayPointer<Void>)
+			result.menuName = null
 			p++
 		case 65535:
 			result.menuName = (((((p + 1) as! ConstArrayPointer<UInt16>) [0]) as! UInt16) as! UInt32) as! ClangWideChar
@@ -304,7 +304,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 	result.caption = p
 	p += lstrlenW(result.caption) + 1
 	result.pointSize = 0
-	result.faceName = (0 as! ArrayPointer<Void>)
+	result.faceName = null
 	result.weight = 0
 	result.italic = 0
 
@@ -346,7 +346,7 @@ fun dialog_CreateIndirect(
 	var template DlgTemplate = null
 	var dlgInfo DIALOGINFO = null
 	var units UInt32 = getDialogBaseUnits()
-	var disabled_owner HWnd = 0 as! ArrayPointer<Void>
+	var disabled_owner HWnd = null
 	var hMenu HMenu = 0
 	var hUserFont HFont = 0
 	var flags UInt32 = 0
@@ -381,7 +381,7 @@ fun dialog_CreateIndirect(
 		if hUserFont {
 			var charSize ByValue<Size> = ByValue<Size>()
 			var hOldFont HFont = selectObject(dc, hUserFont)
-			charSize.cx = gdiGetCharDimensions(dc, 0 as! ArrayPointer<Void>, charSize.cy)
+			charSize.cx = gdiGetCharDimensions(dc, null, charSize.cy)
 
 			if charSize.cx {
 				xBaseUnit = charSize.cx
@@ -493,28 +493,28 @@ fun dialog_CreateIndirect(
 	}
 
 	if unicode {
-		hwnd = createWindowExW(template.exStyle, template.className, template.caption, template.style & ~268435456, pos.x, pos.y, size.cx, size.cy, owner, hMenu, hInst, 0 as! ArrayPointer<Void>)
+		hwnd = createWindowExW(template.exStyle, template.className, template.caption, template.style & ~268435456, pos.x, pos.y, size.cx, size.cy, owner, hMenu, hInst, null)
 	} else {
 		var classRef ConstArrayPointer<ClangChar> = template.className as! ConstArrayPointer<ClangChar>
 		var caption ConstArrayPointer<ClangChar> = template.caption as! ConstArrayPointer<ClangChar>
-		var class_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
-		var caption_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
+		var class_tmp ConstArrayPointer<ClangChar> = null
+		var caption_tmp ConstArrayPointer<ClangChar> = null
 
 		if not ((((classRef) as! UInt32) >> 16) == 0) {
-			var len UInt32 = wideCharToMultiByte(0, 0, template.className, -1, 0 as! ArrayPointer<Void>, 0, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+			var len UInt32 = wideCharToMultiByte(0, 0, template.className, -1, null, 0, null, null)
 			class_tmp = heapAlloc(getProcessHeap(), 0, len)
-			wideCharToMultiByte(0, 0, template.className, -1, class_tmp, len, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+			wideCharToMultiByte(0, 0, template.className, -1, class_tmp, len, null, null)
 			classRef = class_tmp
 		}
 
 		if not ((((caption) as! UInt32) >> 16) == 0) {
-			var len UInt32 = wideCharToMultiByte(0, 0, template.caption, -1, 0 as! ArrayPointer<Void>, 0, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+			var len UInt32 = wideCharToMultiByte(0, 0, template.caption, -1, null, 0, null, null)
 			caption_tmp = heapAlloc(getProcessHeap(), 0, len)
-			wideCharToMultiByte(0, 0, template.caption, -1, caption_tmp, len, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+			wideCharToMultiByte(0, 0, template.caption, -1, caption_tmp, len, null, null)
 			caption = caption_tmp
 		}
 
-		hwnd = createWindowExA(template.exStyle, classRef, caption, template.style & ~268435456, pos.x, pos.y, size.cx, size.cy, owner, hMenu, hInst, 0 as! ArrayPointer<Void>)
+		hwnd = createWindowExA(template.exStyle, classRef, caption, template.style & ~268435456, pos.x, pos.y, size.cx, size.cy, owner, hMenu, hInst, null)
 		heapFree(getProcessHeap(), 0, class_tmp)
 		heapFree(getProcessHeap(), 0, caption_tmp)
 	}
@@ -866,7 +866,7 @@ fun endDialog(hwnd HWnd, retval SignedSizeOfPointer) Bool32 {
 		ntUserSetFocus(hwnd)
 	}
 
-	ntUserSetWindowPos(hwnd, 0 as! ArrayPointer<Void>, 0, 0, 0, 0, 2 | 1 | 4 | 16 | 128)
+	ntUserSetWindowPos(hwnd, null, 0, 0, 0, 0, 2 | 1 | 4 | 16 | 128)
 
 	if hwnd == getActiveWindow() {
 		if owner {
@@ -897,9 +897,9 @@ fun dialog_IsAccelerator(hwnd HWnd, hwndDlg HWnd, wParam WParam) Bool32 {
 
 				do {
 					p = wcschr(p + 2, 38)
-				} while p != (0 as! ArrayPointer<Void>) and p[1] == 38
+				} while p != (null) and p[1] == 38
 
-				if p != (0 as! ArrayPointer<Void>) and towupper(p [1]) == towupper(wParam) {
+				if p != (null) and towupper(p [1]) == towupper(wParam) {
 					if (dlgCode & 256) or (style & 15) == 7 {
 						sendMessageW(hwndDlg, 40, hwndControl as! WParam, 1)
 						sendMessageW(hwndDlg, 40, 0, 0)
@@ -1055,13 +1055,13 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 			switch msg.wParam {
 				case 9:
 					if not (dlgCode & 2) {
-						var fIsDialog Bool32 = not win_IsCurrentProcess(hwndDlg) or ntUserGetDialogInfo(hwndDlg) != (0 as! ArrayPointer<Void>)
+						var fIsDialog Bool32 = not win_IsCurrentProcess(hwndDlg) or ntUserGetDialogInfo(hwndDlg) != (null)
 
 						if fIsDialog {
 							sendMessageW(hwndDlg, 40, ntUserGetKeyState(16) & 32768, 0)
 						} else {
 							var hwndFocus HWnd = getFocus()
-							var hwndNext HWnd = getNextDlgTabItem(hwndDlg, (hwndFocus == hwndDlg) ? (0 as! ArrayPointer<Void>): hwndFocus, ntUserGetKeyState(16) & 32768)
+							var hwndNext HWnd = getNextDlgTabItem(hwndDlg, (hwndFocus == hwndDlg) ? (null): hwndFocus, ntUserGetKeyState(16) & 32768)
 
 							if hwndNext {
 								dlgCode = sendMessageW(hwndNext, 135, msg.wParam, msg as! LParam)
@@ -1372,7 +1372,7 @@ fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
 	hwndCtrl = win_GetFullHandle(hwndCtrl)
 
 	if hwndDlg == hwndCtrl {
-		hwndCtrl = (0 as! ArrayPointer<Void>)
+		hwndCtrl = null
 	}
 
 	if not hwndCtrl and fPrevious {
@@ -1492,7 +1492,7 @@ fun dialog_GetNextTabItem(
 
 		if (exStyle & 65536) and (dsStyle & 268435456) and not (dsStyle & 134217728) {
 			var retWnd HWnd = null
-			retWnd = dialog_GetNextTabItem(hwndMain, hChildFirst, 0 as! ArrayPointer<Void>, fPrevious)
+			retWnd = dialog_GetNextTabItem(hwndMain, hChildFirst, null, fPrevious)
 
 			if retWnd {
 				return retWnd
@@ -1524,7 +1524,7 @@ fun dialog_GetNextTabItem(
 		}
 
 		if not retWnd {
-			retWnd = dialog_GetNextTabItem(hwndMain, hwndMain, 0 as! ArrayPointer<Void>, fPrevious)
+			retWnd = dialog_GetNextTabItem(hwndMain, hwndMain, null, fPrevious)
 		}
 	}
 
@@ -1536,7 +1536,7 @@ fun getNextDlgTabItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
 	hwndCtrl = win_GetFullHandle(hwndCtrl)
 
 	if hwndDlg == hwndCtrl {
-		hwndCtrl = (0 as! ArrayPointer<Void>)
+		hwndCtrl = null
 	}
 
 	if not hwndCtrl and fPrevious {
@@ -1593,7 +1593,7 @@ fun dialog_DlgDirSelect(
 			ptr = buffer + 1
 		}
 	} else {
-		if wcschr(buffer, 46) == (0 as! ArrayPointer<Void>) {
+		if wcschr(buffer, 46) == (null) {
 			buffer[lstrlenW(buffer) + 1] = 0
 			buffer[lstrlenW(buffer)] = 46
 		}
@@ -1718,16 +1718,16 @@ fun dialog_DlgDirListA(
 ) Int32 {
 	if spec {
 		var ret Int32 = 0
-		var len Int32 = multiByteToWideChar(0, 0, spec, -1, 0 as! ArrayPointer<Void>, 0)
+		var len Int32 = multiByteToWideChar(0, 0, spec, -1, null, 0)
 		var specW ClangWideChar = heapAlloc(getProcessHeap(), 0, len * sizeOf<UInt32>())
 		multiByteToWideChar(0, 0, spec, -1, specW, len)
 		ret = dialog_DlgDirListW(hDlg, specW, idLBox, idStatic, attrib, combo)
-		wideCharToMultiByte(0, 0, specW, -1, spec, 2147483647, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
+		wideCharToMultiByte(0, 0, specW, -1, spec, 2147483647, null, null)
 		heapFree(getProcessHeap(), 0, specW)
 		return ret
 	}
 
-	return dialog_DlgDirListW(hDlg, 0 as! ArrayPointer<Void>, idLBox, idStatic, attrib, combo)
+	return dialog_DlgDirListW(hDlg, null, idLBox, idStatic, attrib, combo)
 }
 
 fun dlgDirSelectExA(
