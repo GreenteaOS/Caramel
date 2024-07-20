@@ -1,6 +1,11 @@
 {
 	"files.exclude": {
 		".vscode": true,
+		"**/**.txt": true,
+		"**/**.h": true,
+		"**/**.hpp": true,
+		"**/**.c": true,
+		"**/**.cpp": true,
 		"**/**.inc": true
 	},
 	"files.trimFinalNewlines": true,
@@ -14,6 +19,7 @@
 	],
 	"cSpell.words": [
 		"ACPI",
+		"Alexandre",
 		"Bootloader",
 		"cpuid",
 		"debuggie",
@@ -27,6 +33,7 @@
 		"njraa",
 		"NTDLL",
 		"Oleh",
+		"Petrenko",
 		"readdir",
 		"scanline",
 		"struct",
