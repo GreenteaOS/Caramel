@@ -171,10 +171,10 @@ fun dialog_CreateControls32(
 
 			hwndCtrl = createWindowExW(info.exStyle | 4, info.className, caption, info.style | 1073741824, mulDiv(info.x, dlgInfo.xBaseUnit, 4), mulDiv(info.y, dlgInfo.yBaseUnit, 8), mulDiv(info.cx, dlgInfo.xBaseUnit, 4), mulDiv(info.cy, dlgInfo.yBaseUnit, 8), hwnd, info.id as! HMenu, hInst, info.data as! ArrayPointer<Void>)
 		} else {
-			var class_tmp ClangChar = (0 as! ArrayPointer<Void>)
 			var classRef ConstArrayPointer<ClangChar> = info.className as! ConstArrayPointer<ClangChar>
 			var caption ConstArrayPointer<ClangChar> = info.windowName as! ConstArrayPointer<ClangChar>
-			var caption_tmp ClangChar = 0 as! ArrayPointer<Void>
+			var class_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
+			var caption_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
 			var caption_buf ArrayByValue<ClangChar, 4> = [0]
 
 			if not ((((classRef) as! UInt32) >> 16) == 0) {
@@ -497,8 +497,8 @@ fun dialog_CreateIndirect(
 	} else {
 		var classRef ConstArrayPointer<ClangChar> = template.className as! ConstArrayPointer<ClangChar>
 		var caption ConstArrayPointer<ClangChar> = template.caption as! ConstArrayPointer<ClangChar>
-		var class_tmp ClangChar = 0 as! ArrayPointer<Void>
-		var caption_tmp ClangChar = 0 as! ArrayPointer<Void>
+		var class_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
+		var caption_tmp ConstArrayPointer<ClangChar> = 0 as! ArrayPointer<Void>
 
 		if not ((((classRef) as! UInt32) >> 16) == 0) {
 			var len UInt32 = wideCharToMultiByte(0, 0, template.className, -1, 0 as! ArrayPointer<Void>, 0, 0 as! ArrayPointer<Void>, 0 as! ArrayPointer<Void>)
@@ -620,7 +620,7 @@ fun createDialogParamA(
 	var hrsrc HRsrc = null
 	var ptr DLGTEMPLATE = null
 
-	if not (hrsrc = findResourceA(hInst, name, (((5) as! UInt16) as! UInt32) as! ClangChar)) {
+	if not (hrsrc = findResourceA(hInst, name, (((5) as! UInt16) as! UInt32) as! ConstArrayPointer<ClangChar>)) {
 		return 0
 	}
 
@@ -764,7 +764,7 @@ fun dialogBoxParamA(
 		return 0
 	}
 
-	if not (hrsrc = findResourceA(hInst, name, (((5) as! UInt16) as! UInt32) as! ClangChar)) {
+	if not (hrsrc = findResourceA(hInst, name, (((5) as! UInt16) as! UInt32) as! ConstArrayPointer<ClangChar>)) {
 		return - 1
 	}
 
@@ -1218,7 +1218,7 @@ fun setDlgItemTextW(hwnd HWnd, id Int32, lpString ConstArrayPointer<ClangWideCha
 fun getDlgItemTextA(
 	hwnd HWnd,
 	id Int32,
-	str ClangChar,
+	str ConstArrayPointer<ClangChar>,
 	len Int32
 ) UInt32 {
 	if str and (len > 0) {
@@ -1602,8 +1602,8 @@ fun dialog_DlgDirSelect(
 	}
 
 	if not unicode {
-		if len > 0 and not wideCharToMultiByte(0, 0, ptr, -1, str as! ClangChar, len, 0, 0) {
-			(str as! ClangChar) [len - 1] = 0
+		if len > 0 and not wideCharToMultiByte(0, 0, ptr, -1, str as! ConstArrayPointer<ClangChar>, len, 0, 0) {
+			(str as! ConstArrayPointer<ClangChar>) [len - 1] = 0
 		}
 	} else {
 		lstrcpynW(str, ptr, len)
@@ -1710,7 +1710,7 @@ fun dialog_DlgDirListW(
 
 fun dialog_DlgDirListA(
 	hDlg HWnd,
-	spec ClangChar,
+	spec ConstArrayPointer<ClangChar>,
 	idLBox Int32,
 	idStatic Int32,
 	attrib UInt32,
@@ -1732,7 +1732,7 @@ fun dialog_DlgDirListA(
 
 fun dlgDirSelectExA(
 	hwnd HWnd,
-	str ClangChar,
+	str ConstArrayPointer<ClangChar>,
 	len Int32,
 	id Int32
 ) Bool32 {
@@ -1750,7 +1750,7 @@ fun dlgDirSelectExW(
 
 fun dlgDirSelectComboBoxExA(
 	hwnd HWnd,
-	str ClangChar,
+	str ConstArrayPointer<ClangChar>,
 	len Int32,
 	id Int32
 ) Bool32 {
@@ -1768,7 +1768,7 @@ fun dlgDirSelectComboBoxExW(
 
 fun dlgDirListA(
 	hDlg HWnd,
-	spec ClangChar,
+	spec ConstArrayPointer<ClangChar>,
 	idLBox Int32,
 	idStatic Int32,
 	attrib UInt32
@@ -1788,7 +1788,7 @@ fun dlgDirListW(
 
 fun dlgDirListComboBoxA(
 	hDlg HWnd,
-	spec ClangChar,
+	spec ConstArrayPointer<ClangChar>,
 	idCBox Int32,
 	idStatic Int32,
 	attrib UInt32
