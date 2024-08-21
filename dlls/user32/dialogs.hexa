@@ -145,7 +145,7 @@ fun dialog_CreateControls32(
 	unicode Bool32
 ) Bool32 {
 	var template = template
-	var dlgInfo DIALOGINFO = dialog_get_info(hwnd, 1)
+	var dlgInfo DIALOGINFO = dialog_get_info(hwnd, Bool32.True)
 	var info DlgControlInfo = null
 	var hwndCtrl HWnd = null
 	var hwndDefButton HWnd = null
@@ -169,7 +169,7 @@ fun dialog_CreateControls32(
 				caption_buf[0] = 65535
 				caption_buf[1] = (((caption) as! UInt32) as! UInt32)
 				caption_buf[2] = 0
-				caption = caption_buf
+				caption = caption_buf.ref
 			}
 
 			hwndCtrl = createWindowExW(info.exStyle | 4, info.className, caption, info.style | 1073741824, mulDiv(info.x, dlgInfo.xBaseUnit, 4), mulDiv(info.y, dlgInfo.yBaseUnit, 8), mulDiv(info.cx, dlgInfo.xBaseUnit, 4), mulDiv(info.cy, dlgInfo.yBaseUnit, 8), hwnd, info.id as! HMenu, hInst, info.data as! ArrayPointer<Void>)
@@ -193,12 +193,12 @@ fun dialog_CreateControls32(
 				wideCharToMultiByte(0, 0, info.windowName, -1, caption_tmp, len as! Int32, null, null)
 				caption = caption_tmp
 			} else {
+				if caption != null {
 					caption_buf[0] = 255
 					caption_buf[1] = (((caption) as! UInt32) as! UInt32)
 					caption_buf[2] = (((caption) as! UInt32) as! UInt32) >> 8
 					caption_buf[3] = 0
-					caption = caption_buf
-				if caption != null {
+					caption = caption_buf.ref
 				}
 			}
 
@@ -230,7 +230,7 @@ fun dialog_CreateControls32(
 		}
 	}
 
-	return 1
+	return Bool32.True
 }
 
 fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemplate) ConstArrayPointer<ClangChar> {
@@ -243,7 +243,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 	p = p.offsetItems(1)
 
 	if dlgver == 1 and signature == 65535 {
-		result.dialogEx = 1
+		result.dialogEx = Bool32.True
 		result.helpId = (p as! ConstArrayPointer<UInt32>) [0]
 		p = p.offsetItems(2)
 		result.exStyle = (p as! ConstArrayPointer<UInt32>) [0]
@@ -283,7 +283,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 			{
 
 			}
-			p = p.offsetItems(lstrlenW(result.menuName) + 1)
+			p = p.offsetItemsBack(lstrlenW(result.menuName) + 1)
 	}
 
 	switch p[0] as! Int32 {
@@ -301,11 +301,11 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 			{
 
 			}
-			p = p.offsetItems(lstrlenW(result.className) + 1)
+			p = p.offsetItemsBack(lstrlenW(result.className) + 1)
 	}
 
 	result.caption = p
-	p = p.offsetItems(lstrlenW(result.caption) + 1)
+	p = p.offsetItemsBack(lstrlenW(result.caption) + 1)
 	result.pointSize = 0
 	result.faceName = null
 	result.weight = 0
@@ -326,7 +326,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 			}
 
 			result.faceName = p
-			p = p.offsetItems(lstrlenW(result.faceName) + 1)
+			p = p.offsetItemsBack(lstrlenW(result.faceName) + 1)
 		}
 	}
 
@@ -340,7 +340,7 @@ fun dialog_CreateIndirect(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam,
 	unicode Bool32,
-	modal_owner HWnd
+	modal_owner ArrayPointer<HWnd>
 ) HWnd {
 	var dlgTemplate = dlgTemplate
 	var owner = owner
@@ -388,9 +388,9 @@ fun dialog_CreateIndirect(
 			var hOldFont HFont = selectObject(dc, hUserFont)
 			charSize.cx = gdiGetCharDimensions(dc, null, charSize.cy)
 
-			if charSize.cx != 0 {
-				xBaseUnit = charSize.cx as! UInt32
-				yBaseUnit = charSize.cy as! UInt32
+			if charSize.ref.cx != 0 {
+				xBaseUnit = charSize.ref.cx as! UInt32
+				yBaseUnit = charSize.ref.cy as! UInt32
 			}
 
 			selectObject(dc, hOldFont)
@@ -426,24 +426,24 @@ fun dialog_CreateIndirect(
 	} else {
 		var monitor HMonitor = null
 		var mon_info ByValue<MonitorInfo> = ByValue<MonitorInfo>()
-		mon_info.cbSize = sizeOf<UInt32>() as! UInt32
+		mon_info.ref.cbSize = sizeOf<UInt32>() as! UInt32
 
 		if template.style & 2048u32 != 0 {
 			monitor = monitorFromWindow((owner) ? owner: getActiveWindow(), 1u32)
-			getMonitorInfoW(monitor, mon_info)
 			pos.x = (mon_info.rcWork.left + mon_info.rcWork.right - size.cx) / 2i32
 			pos.y = (mon_info.rcWork.top + mon_info.rcWork.bottom - size.cy) / 2i32
+			getMonitorInfoW(monitor, mon_info.ref)
 		} else {
 			if template.style & 4096u32 != 0 {
-				getCursorPos(pos)
+				getCursorPos(pos.ref)
 				monitor = monitorFromPoint(pos, 1u32)
-				getMonitorInfoW(monitor, mon_info)
+				getMonitorInfoW(monitor, mon_info.ref)
 			} else {
 				pos.x += mulDiv(template.x, xBaseUnit, 4)
 				pos.y += mulDiv(template.y, yBaseUnit, 8)
 
 				if not (template.style & (1073741824 | 1)) {
-					clientToScreen(owner, pos)
+					clientToScreen(owner, pos.ref)
 				}
 			}
 		}
@@ -454,8 +454,8 @@ fun dialog_CreateIndirect(
 
 				setRect(rect, pos.x, pos.y, pos.x + size.cx, pos.y + size.cy)
 			if monitor == null {
-				monitor = monitorFromRect(rect, 1u32)
-				getMonitorInfoW(monitor, mon_info)
+				monitor = monitorFromRect(rect.ref, 1u32)
+				getMonitorInfoW(monitor, mon_info.ref)
 			}
 
 			if (dX = pos.x + size.cx + getSystemMetrics(7) - mon_info.rcWork.right) > 0 {
@@ -466,12 +466,12 @@ fun dialog_CreateIndirect(
 				pos.y -= dY
 			}
 
-			if pos.x < mon_info.rcWork.left {
-				pos.x = mon_info.rcWork.left
+			if pos.ref.x < mon_info.ref.rcWork.ref.left {
+				pos.ref.x = mon_info.ref.rcWork.ref.left
 			}
 
-			if pos.y < mon_info.rcWork.top {
-				pos.y = mon_info.rcWork.top
+			if pos.ref.y < mon_info.ref.rcWork.ref.top {
+				pos.ref.y = mon_info.ref.rcWork.ref.top
 			}
 		}
 	}
@@ -524,9 +524,9 @@ fun dialog_CreateIndirect(
 		heapFree(getProcessHeap(), 0, caption_tmp)
 	}
 
-			deleteObject(hUserFont)
 	if hwnd == null {
 		if hUserFont != null {
+			deleteObject(hUserFont)
 		}
 
 		if hMenu != null {
@@ -534,13 +534,13 @@ fun dialog_CreateIndirect(
 		}
 
 		if disabled_owner != null {
-			enableWindow(disabled_owner, 1)
+			enableWindow(disabled_owner, Bool32.True)
 		}
 
 		return null
 	}
 
-	dlgInfo = dialog_get_info(hwnd, 1)
+	dlgInfo = dialog_get_info(hwnd, Bool32.True)
 	dlgInfo.hwndFocus = null
 	dlgInfo.hUserFont = hUserFont
 	dlgInfo.hMenu = hMenu
@@ -605,7 +605,7 @@ fun dialog_CreateIndirect(
 	}
 
 	if disabled_owner != null {
-		enableWindow(disabled_owner, 1)
+		enableWindow(disabled_owner, Bool32.True)
 	}
 
 	if isWindow(hwnd) == Bool32.True {
@@ -698,25 +698,25 @@ fun dialog_DoDialogBox(hwnd HWnd, owner HWnd) Int32 {
 		return - 1
 	}
 
-	bFirstEmpty = 1
+	bFirstEmpty = Bool32.True
 
 	if (dlgInfo.flags & 1u32) == 0 {
 		while true {
-			if peekMessageW(msg, null, 0, 0, 1u32) == Bool32.False {
+			if peekMessageW(msg.ref, null, 0, 0, 1u32) == Bool32.False {
 				if bFirstEmpty == Bool32.True {
 					ntUserShowWindow(hwnd, 1)
-					bFirstEmpty = 0
+					bFirstEmpty = Bool32.False
 				}
 
 				if (getWindowLongW(hwnd, -16) & 256) == 0 {
 					sendMessageW(owner, 289u32, null, hwnd as! LParam)
 				}
 
-				getMessageW(msg, null, 0, 0)
+				getMessageW(msg.ref, null, 0, 0)
 			}
 
-			if msg.message == Message.WM_QUIT {
-				postQuitMessage(msg.wParam as! Int32)
+			if msg.ref.message == Message.WM_QUIT {
+				postQuitMessage(msg.ref.wParam as! Int32)
 
 				if isWindow(hwnd) == Bool32.False {
 					return 0
@@ -730,8 +730,8 @@ fun dialog_DoDialogBox(hwnd HWnd, owner HWnd) Int32 {
 			}
 
 			if not (dlgInfo.flags & 1) and not isDialogMessageW(hwnd, msg) {
-				translateMessage(msg)
-				dispatchMessageW(msg)
+				translateMessage(msg.ref)
+				dispatchMessageW(msg.ref)
 			}
 
 			if isWindow(hwnd) == Bool32.False {
@@ -743,8 +743,9 @@ fun dialog_DoDialogBox(hwnd HWnd, owner HWnd) Int32 {
 			}
 
 			if bFirstEmpty == Bool32.True and msg.message == 275u32 {
+				// TODO actually just call `ShowWindow(hwnd, SW_SHOWNORMAL)`?
 				ntUserShowWindow(hwnd, 1)
-				bFirstEmpty = 0
+				bFirstEmpty = Bool32.False
 			}
 		}
 	}
@@ -828,6 +829,7 @@ fun dialogBoxIndirectParamAorW(
 		return dialog_DoDialogBox(hwnd, owner)
 	}
 
+	// TODO format
 	return - 1
 }
 
@@ -859,12 +861,12 @@ fun endDialog(hwnd HWnd, retval SignedSizeOfPointer) Bool32 {
 		return 0
 	}
 
-	dlgInfo.idResult = retval
+	dlgInfo.idResult = retval as! Int32
 	dlgInfo.flags |= 1u32
 	owner = getWindowLongA(hwnd, -8) as! HWnd
 
 	if owner != null {
-		enableWindow(owner, 1)
+		enableWindow(owner, Bool32.True)
 	}
 
 	if isChild(hwnd, getFocus()) == Bool32.True {
@@ -882,7 +884,7 @@ fun endDialog(hwnd HWnd, retval SignedSizeOfPointer) Bool32 {
 	}
 
 	postMessageA(hwnd, 0, null, null)
-	return 1
+	return Bool32.True
 }
 
 fun dialog_IsAccelerator(hwnd HWnd, hwndDlg HWnd, wParam WParam) Bool32 {
@@ -914,7 +916,7 @@ fun dialog_IsAccelerator(hwnd HWnd, hwndDlg HWnd, wParam WParam) Bool32 {
 						}
 					}
 
-					return 1
+					return Bool32.True
 				}
 			}
 
@@ -971,7 +973,7 @@ fun dialog_FixOneChildOnChangeFocus(hwndChild HWnd, lParam LParam) Bool32 {
 		sendMessageW(hwndChild, 244u32, null, 1 as! LParam)
 	}
 
-	return 1
+	return Bool32.True
 }
 
 fun dialog_FixChildrenOnChangeFocus(hwndDlg HWnd, hwndNext HWnd) Void {
@@ -1003,7 +1005,7 @@ fun dialog_FixChildrenOnChangeFocus(hwndDlg HWnd, hwndNext HWnd) Void {
 
 fun dialog_IdToHwnd(hwndDlg HWnd, id Int32) HWnd {
 	var i Int32 = 0
-	var list HWnd = win_ListChildren(hwndDlg)
+	var list ArrayPointer<HWnd> = win_ListChildren(hwndDlg)
 	var ret HWnd = null
 
 	if list == null {
@@ -1035,29 +1037,31 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 	var dlgCode Int32 = 0
 
 	if isWindow(hwndDlg) == Bool32.False {
-		return 0
+		return Bool32.False
+		// TODO `return 0` compiles
 	}
 
 	if ntUserCallMsgFilter(msg, 0) == Bool32.True {
-		return 1
+		return Bool32.True
 	}
 
 	hwndDlg = win_GetFullHandle(hwndDlg)
 
 	if is_desktop_window(hwndDlg) == Bool32.True {
-		return 0
+		return Bool32.False
 	}
 
 	if (hwndDlg != msg.hwnd) and isChild(hwndDlg, msg.hwnd) == Bool32.False {
-		return 0
+		return Bool32.False
 	}
 
 	hwndDlg = dialog_FindMsgDestination(hwndDlg)
 	switch msg.message {
-		case 256:
 			dlgCode = sendMessageW(msg.hwnd, 135, msg.wParam, msg as! LParam)
 			if dlgCode & (4) {
 				break
+		// TODO Hexa: support `case 256u32:`
+		case WM_KEY_DOWN:
 			}
 			switch msg.wParam {
 				case 9:
@@ -1089,11 +1093,11 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 								ntUserSetFocus(hwndNext)
 								dialog_FixChildrenOnChangeFocus(hwndDlg, hwndNext)
 							} else {
-								return 0
+								return Bool32.False
 							}
 						}
 
-						return 1
+						return Bool32.True
 					}
 				case 39 | 40 | 37 | 38:
 					if (dlgCode & 1) == 0 {
@@ -1110,11 +1114,11 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 							sendMessageW(hwndDlg, 40u32, hwndNext as! WParam, 1 as! LParam)
 						}
 
-						return 1
+						return Bool32.True
 					}
 				case 3 | 27:
 					sendMessageW(hwndDlg, 273u32, 2 as! WParam, getDlgItem(hwndDlg, 2) as! LParam)
-					return 1
+					return Bool32.True
 				case 43 | 13:
 					{
 						var dw UInt32 = 0
@@ -1134,25 +1138,25 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 							}
 						}
 					}
-					return 1
+					return Bool32.True
 			}
-		case 258:
 			dlgCode = sendMessageW(msg.hwnd, 135, msg.wParam, msg as! LParam)
+		case WM_CHAR:
 			if dlgCode & (128 | 4) != 0 {
 				break
 			}
 			if msg.wParam == 9u32 and (dlgCode & 2) != 0 {
 				break
 			}
-		case 262:
 			if dialog_IsAccelerator(win_GetFullHandle(msg.hwnd), hwndDlg, msg.wParam) == Bool32.True {
 				return 1
+		case WM_SYS_CHAR:
 			}
 	}
 
 	translateMessage(msg)
 	dispatchMessageW(msg)
-	return 1
+	return Bool32.True
 }
 
 fun getDlgCtrlID(hwnd HWnd) Int32 {
@@ -1161,7 +1165,7 @@ fun getDlgCtrlID(hwnd HWnd) Int32 {
 
 fun getDlgItem(hwndDlg HWnd, id Int32) HWnd {
 	var i Int32 = 0
-	var list HWnd = win_ListChildren(hwndDlg)
+	var list ArrayPointer<HWnd> = win_ListChildren(hwndDlg)
 	var ret HWnd = null
 
 	if list == null {
@@ -1263,7 +1267,7 @@ fun setDlgItemInt(
 	}
 
 	sendDlgItemMessageA(hwnd, id, 12, 0, str as! LParam)
-	return 1
+	return Bool32.True
 }
 
 fun getDlgItemInt(
@@ -1314,8 +1318,8 @@ fun getDlgItemInt(
 }
 
 fun checkDlgButton(hwnd HWnd, id Int32, check UInt32) Bool32 {
-	sendDlgItemMessageW(hwnd, id, 241u32, check, null)
-	return 1
+	sendDlgItemMessageW(hwnd, id, 241u32, check as! WParam, null)
+	return Bool32.True
 }
 
 fun isDlgButtonChecked(hwnd HWnd, id Int32) UInt32 {
@@ -1334,7 +1338,7 @@ fun checkRB(hwndChild HWnd, lParam LParam) Bool32 {
 		}
 	}
 
-	return 1
+	return Bool32.True
 }
 
 fun checkRadioButton(
@@ -1358,14 +1362,14 @@ fun mapDialogRect(hwnd HWnd, rect Rect) Bool32 {
 	var dlgInfo DIALOGINFO = null
 
 	if (dlgInfo = dialog_get_info(hwnd, 0)) == null {
-		return 0
+		return Bool32.False
 	}
 
 	rect.left = mulDiv(rect.left as! Int32, dlgInfo.xBaseUnit as! Int32, 4) as! Int32
 	rect.right = mulDiv(rect.right as! Int32, dlgInfo.xBaseUnit as! Int32, 4) as! Int32
 	rect.top = mulDiv(rect.top as! Int32, dlgInfo.yBaseUnit as! Int32, 8) as! Int32
 	rect.bottom = mulDiv(rect.bottom as! Int32, dlgInfo.yBaseUnit as! Int32, 8) as! Int32
-	return 1
+	return Bool32.True
 }
 
 fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
@@ -1375,8 +1379,9 @@ fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
 	var hwndNext HWnd = null
 	var retvalue HWnd = null
 	var hwndLastGroup HWnd = null
-	var fLooped Bool32 = 0
-	var fSkipping Bool32 = 0
+	var fLooped Bool32 = Bool32.False
+	var fSkipping Bool32 = Bool32.False
+	// TODO compiles `var fSkipping Bool32 = 0`
 	hwndDlg = win_GetFullHandle(hwndDlg)
 	hwndCtrl = win_GetFullHandle(hwndCtrl)
 
@@ -1412,9 +1417,10 @@ fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
 			if hwndDlg == getParent(hwnd) {
 				if fLooped == Bool32.True {
 					"@goto 0x3215328"
+					// TODO
 				}
 
-				fLooped = 1
+				fLooped = Bool32.True
 				hwndNext = getWindow(hwndDlg, 5u32)
 			} else {
 				hwnd = getParent(hwnd)
@@ -1432,7 +1438,7 @@ fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
 			hwndLastGroup = hwnd
 
 			if fSkipping == Bool32.False {
-				fSkipping = 1
+				fSkipping = Bool32.True
 			}
 		}
 
@@ -1446,8 +1452,8 @@ fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
 			}
 
 			hwnd = hwndLastGroup
-			fSkipping = 0
-			fLooped = 0
+			fSkipping = Bool32.False
+			fLooped = Bool32.False
 		}
 
 		if fSkipping == Bool32.False and (getWindowLongW(hwnd, -16) & (268435456 | 134217728)) == 268435456 {
@@ -1459,6 +1465,7 @@ fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
 		}
 	}
 
+	// TODO
 	"@label end 0x3215328"
 	return retvalue
 }
@@ -1471,7 +1478,8 @@ fun dialog_GetNextTabItem(
 ) HWnd {
 	var dsStyle Int32 = 0
 	var exStyle Int32 = 0
-	var wndSearch UInt32 = (fPrevious) ? 3: 2
+	// TODO compiles var wndSearch UInt32 = (fPrevious) ? 3u32: 2u32
+	var wndSearch UInt32 = (fPrevious == Bool32.True) ? 3u32: 2u32
 	var retWnd HWnd = null
 	var hChildFirst HWnd = null
 
@@ -1489,7 +1497,7 @@ fun dialog_GetNextTabItem(
 				if getParent(hwndCtrl) != hwndMain {
 					hChildFirst = getWindow(getParent(hwndCtrl), wndSearch)
 				} else {
-					hChildFirst = getWindow(hwndCtrl, (fPrevious) ? 1: 0 as! UInt32)
+					hChildFirst = getWindow(hwndCtrl, (fPrevious == Bool32.True) ? 1u32: 0 as! UInt32)
 				}
 			}
 		}
@@ -1565,31 +1573,31 @@ fun dialog_DlgDirSelect(
 	unicode Bool32,
 	combo Bool32
 ) Bool32 {
-	var buffer ClangWideChar = null
-	var ptr ClangWideChar = null
+	var buffer ArrayPointer<ClangWideChar> = null
+	var ptr ArrayPointer<ClangWideChar> = null
 	var item Int32 = 0
 	var size Int32 = 0
-	var ret Bool32 = null
+	var ret Bool32 = Bool32.False
 	var listbox HWnd = getDlgItem(hwnd, id)
 
 	if listbox == null {
-		return 0
+		return Bool32.False
 	}
 
 	item = sendMessageW(listbox, (combo) ? 327: 392 as! UInt32, null, null) as! Int32
 
 	if item == (-1) {
-		return 0
+		return Bool32.False
 	}
 
 	size = sendMessageW(listbox, (combo) ? 329: 394 as! UInt32, item as! WParam, null) as! Int32
 
 	if size == (-1) {
-		return 0
+		return Bool32.False
 	}
 
 	if not (buffer = heapAlloc(getProcessHeap(), 0, (size + 2) * sizeOf<UInt32>())) {
-		return 0
+		return Bool32.False
 	}
 
 	sendMessageW(listbox, (combo) ? 328: 393, item, buffer as! LParam)
@@ -1640,10 +1648,10 @@ fun dialog_DlgDirListW(
 	var star ArrayByValue<ClangWideChar, 2> = "*"
 
 	if not spec or not spec[0] or setCurrentDirectoryW(spec) {
-		spec = star
+		spec = star.ref
 	} else {
-		var p ClangWideChar = null
-		var p2 ClangWideChar = null
+		var p ArrayPointer<ClangWideChar> = null
+		var p2 ArrayPointer<ClangWideChar> = null
 
 		if not wcschr(spec, 42) and not wcschr(spec, 63) {
 			setLastError(1417u32)
@@ -1684,6 +1692,7 @@ fun dialog_DlgDirListW(
 
 		{
 			((attrib & 8192)) ? postMessageW(hwnd, (combo) ? 331: 388, 0, 0): sendMessageW(hwnd, (combo) ? 331: 388, 0, 0)
+			// TODO castThisValueToBool ? a : b
 		}
 
 				((attrib & 8192)) ? postMessageW(hwnd, (combo) ? 325: 397, attrib & ~(16 | 16384), spec as! LParam): sendMessageW(hwnd, (combo) ? 325: 397, attrib & ~(16 | 16384), spec as! LParam)
@@ -1706,15 +1715,16 @@ fun dialog_DlgDirListW(
 	if idStatic and ((hwnd = getDlgItem(hDlg, idStatic)) != 0) {
 		var temp ArrayByValue<ClangWideChar, 260> = [0]
 		getCurrentDirectoryW(sizeOf<UInt32>() / sizeOf<UInt32>(), temp)
-		charLowerW(temp)
-		setDlgItemTextW(hDlg, idStatic, temp)
+		charLowerW(temp.ref)
+		setDlgItemTextW(hDlg, idStatic, temp.ref)
 	}
 
 	if orig_spec != null and (spec != orig_spec) {
-		var p ClangWideChar = spec
 
 		while (orig_spec++ [0] = p++ [0]) {
+		var p = spec
 
+			// TODO assign not allowed!
 		}
 	}
 
@@ -1758,7 +1768,7 @@ fun dlgDirSelectExW(
 	len Int32,
 	id Int32
 ) Bool32 {
-	return dialog_DlgDirSelect(hwnd, str, len, id, 1, 0)
+	return dialog_DlgDirSelect(hwnd, str, len, id, Bool32.True, 0)
 }
 
 fun dlgDirSelectComboBoxExA(
@@ -1776,7 +1786,7 @@ fun dlgDirSelectComboBoxExW(
 	len Int32,
 	id Int32
 ) Bool32 {
-	return dialog_DlgDirSelect(hwnd, str, len, id, 1, 1)
+	return dialog_DlgDirSelect(hwnd, str, len, id, Bool32.True, Bool32.True)
 }
 
 fun dlgDirListA(
@@ -1806,7 +1816,7 @@ fun dlgDirListComboBoxA(
 	idStatic Int32,
 	attrib UInt32
 ) Int32 {
-	return dialog_DlgDirListA(hDlg, spec, idCBox, idStatic, attrib, 1)
+	return dialog_DlgDirListA(hDlg, spec, idCBox, idStatic, attrib, Bool32.True)
 }
 
 fun dlgDirListComboBoxW(
@@ -1816,5 +1826,5 @@ fun dlgDirListComboBoxW(
 	idStatic Int32,
 	attrib UInt32
 ) Int32 {
-	return dialog_DlgDirListW(hDlg, spec, idCBox, idStatic, attrib, 1)
+	return dialog_DlgDirListW(hDlg, spec, idCBox, idStatic, attrib, Bool32.True)
 }
