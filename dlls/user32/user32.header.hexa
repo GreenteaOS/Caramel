@@ -13,3 +13,365 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // TODO `@dllImport`
+
+@struct
+class DLGTEMPLATE {
+	let style UInt32
+	let dwExtendedStyle UInt32
+	let cdit UInt16
+	let x Int16
+	let y Int16
+	let cx Int16
+	let cy Int16
+}
+
+@inline fun lstrlenW(str ConstArrayPointer<ClangWideChar>) Int {
+	var i = 0
+	while str[i] != 0 as! ClangWideChar {
+		i++
+	}
+	return i
+}
+
+// TODO
+fun ntUserGetDC(hdc Handle) HDc {
+	return null
+}
+
+fun ntUserReleaseDC(todo Handle, hdc Handle) HDc {
+	return null
+}
+
+fun systemParametersInfoW(
+	uiAction UInt32, // UINT -> UInt32
+	uiParam UInt32, // UINT -> UInt32
+	pvParam ArrayPointer<Void>, // PVOID -> Pointer<Void>
+	fWinIni UInt32 // UINT -> UInt32
+) Bool32 // BOOL -> Bool
+{
+	return Bool32.False
+}
+
+fun createFontIndirectW(
+	lplf LogFontW // const LOGFONTW * -> ConstPointer<LogFontW>
+) Handle // HFONT -> Handle
+{
+	return null
+}
+
+fun getDeviceCaps(
+	hdc Handle, // HDC -> Handle
+	index Int // int -> Int
+) Int // Return type int -> Int
+{
+	return 0
+}
+
+fun createFontW(
+	cHeight Int, // int -> Int
+	cWidth Int, // int -> Int
+	cEscapement Int, // int -> Int
+	cOrientation Int, // int -> Int
+	cWeight Int, // int -> Int
+	bItalic UInt32, // DWORD -> UInt32
+	bUnderline UInt32, // DWORD -> UInt32
+	bStrikeOut UInt32, // DWORD -> UInt32
+	iCharSet UInt32, // DWORD -> UInt32
+	iOutPrecision UInt32, // DWORD -> UInt32
+	iClipPrecision UInt32, // DWORD -> UInt32
+	iQuality UInt32, // DWORD -> UInt32
+	iPitchAndFamily UInt32, // DWORD -> UInt32
+	pszFaceName ConstArrayPointer<ClangWideChar> // LPCWSTR -> ConstPointer<ClangWideChar>
+) Handle // HFONT -> Handle (return type)
+{
+	return null
+}
+
+fun selectObject(
+	hdc Handle, // HDC -> Handle
+	h Handle // HGDIOBJ -> Handle
+) Handle // HGDIOBJ -> Handle (return type)
+{
+	return null
+}
+
+@struct class TextMetricW {
+	var tmHeight Int // LONG -> Int
+	var tmAscent Int // LONG -> Int
+	var tmDescent Int // LONG -> Int
+	var tmInternalLeading Int // LONG -> Int
+	var tmExternalLeading Int // LONG -> Int
+	var tmAveCharWidth Int // LONG -> Int
+	var tmMaxCharWidth Int // LONG -> Int
+	var tmWeight Int // LONG -> Int
+	var tmOverhang Int // LONG -> Int
+	var tmDigitizedAspectX Int // LONG -> Int
+	var tmDigitizedAspectY Int // LONG -> Int
+	var tmFirstChar ClangChar // WCHAR -> ClangChar
+	var tmLastChar ClangChar // WCHAR -> ClangChar
+	var tmDefaultChar ClangChar // WCHAR -> ClangChar
+	var tmBreakChar ClangChar // WCHAR -> ClangChar
+	var tmItalic UInt8 // BYTE -> Byte
+	var tmUnderlined UInt8 // BYTE -> Byte
+	var tmStruckOut UInt8 // BYTE -> Byte
+	var tmPitchAndFamily UInt8 // BYTE -> Byte
+	var tmCharSet UInt8 // BYTE -> Byte
+}
+
+fun gdiGetCharDimensions(
+	hdc Handle, // HDC -> Handle
+	lptm TextMetricW, // LPTEXTMETRICW -> Pointer<ClangTextMetricW>
+	height ArrayPointer<Int> // LONG* -> Pointer<Int>
+) Int // LONG -> Int (return type)
+{
+	return 0
+}
+
+fun setRect(
+	lprc Rect, // LPRECT -> Pointer to ClangRect (assuming LPRECT is a pointer to a RECT structure)
+	xLeft Int, // int -> Int
+	yTop Int, // int -> Int
+	xRight Int, // int -> Int
+	yBottom Int // int -> Int
+) Bool32 // BOOL -> Bool (return type)
+{
+	return Bool32.True
+}
+
+fun adjustWindowRectEx(
+	lpRect Rect, // LPRECT -> Pointer to ClangRect (modifiable, in/out)
+	dwStyle UInt32, // DWORD -> UInt32
+	bMenu Bool, // BOOL -> Bool
+	dwExStyle UInt32 // DWORD -> UInt32
+) Bool32 // BOOL -> Bool (return type)
+{
+	return Bool32.True
+}
+
+fun monitorFromWindow(
+	hwnd HWnd, // HWND -> Pointer to ClangWindow (window handle)
+	dwFlags UInt32 // DWORD -> UInt32
+) HMonitor // HMONITOR -> Pointer to ClangMonitor (return type)
+{
+	return null
+}
+
+fun getActiveWindow() HWnd {
+	return null
+}
+
+fun getMonitorInfoW(
+	hMonitor HMonitor, // HMONITOR -> Pointer to ClangMonitor (monitor handle)
+	lpmi MonitorInfo // LPMONITORINFO -> Pointer to ClangMonitorInfo (output structure)
+) Bool32 // BOOL -> Bool (return type)
+{
+	return Bool32.True
+}
+
+fun getCursorPos(
+	lpPoint Point // LPPOINT -> Pointer to ClangPoint (output structure for cursor position)
+) Bool32 // BOOL -> Bool (return type)
+{
+	return Bool32.True
+}
+
+fun monitorFromPoint(
+	pt ByValue<Point>, // POINT -> ClangPoint (input point for which the monitor is retrieved)
+	dwFlags UInt32 // DWORD -> UInt32 (flags to modify behavior)
+) HMonitor // HMONITOR -> HMonitor (return type for the handle to the monitor)
+{
+	return null
+}
+
+fun clientToScreen(
+	hWnd HWnd, // HWND -> HWnd (input handle to the window)
+	lpPoint Point // LPPOINT -> ClangPoint (pointer to a structure that receives the screen coordinates)
+) Bool32 // BOOL -> Bool (return type)
+{
+	return Bool32.True
+}
+
+fun monitorFromRect(
+	// TODO Rect readonly here
+	lprc Rect, // LPCRECT -> ConstPointer<ClangRect> (input pointer to a rectangle structure)
+	dwFlags UInt32 // DWORD -> UInt32 (input flags for determining how the function works)
+) HMonitor // HMONITOR -> HMonitor (return type indicating the monitor handle)
+{
+	return null
+}
+
+fun getDesktopWindow() HWnd // Function to get the handle to the desktop window, returning HWnd
+{
+	return null
+}
+
+// HGDIOBJ -> Handle
+fun deleteObject(ho Handle) Bool32 // BOOL -> Bool (return type)
+{
+	return Bool32.True
+}
+
+fun ntUserDestroyMenu(menu Handle) { }
+
+fun setWindowContextHelpId(unnamedParam1 HWnd, unnamedParam2 UInt32) Bool32 {
+	return Bool32.True
+}
+
+fun ntUserSetFocus(focus HWnd) { }
+fun setForegroundWindow(window HWnd) { }
+fun ntUserActivateOtherWindow(window HWnd) { }
+
+fun getCapture() HWnd { return null }
+
+fun ntUserShowWindow(hWnd HWnd, nCmdShow Int) Bool32 // Show a specified window
+{
+	return Bool32.True
+}
+
+fun ntUserDestroyWindow(window HWnd) { }
+
+fun findResourceA(hModule HModule, lpName ConstArrayPointer<ClangChar>, lpType ConstArrayPointer<ClangChar>) HRsrc // Find a resource in the specified module
+{ return null }
+
+fun loadResource(hModule HModule, hResInfo HRsrc) HGlobal // Load a resource from the specified module
+{ return null }
+
+fun findResourceW(hModule HModule, lpName ConstArrayPointer<ClangWideChar>, lpType ConstArrayPointer<ClangWideChar>) HRsrc // Find a resource in the specified module
+{ return null }
+
+fun peekMessageW(lpMsg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 // Retrieve a message from the queue
+{
+	return Bool32.True
+}
+
+fun isChild(hWndParent HWnd, hWnd HWnd) Bool32 // Determine whether a window is a child of another window
+{
+	return Bool32.True
+}
+
+fun ntUserSetWindowPos(
+	hWnd HWnd, // Handle to the window
+	hWndInsertAfter HWnd, // Handle to the window to precede this one in the Z order (optional)
+	x Int, // The new position of the left side of the window
+	y Int, // The new position of the top side of the window
+	cx Int, // The new width of the window
+	cy Int, // The new height of the window
+	uFlags UInt32 // Window positioning flags
+) Bool32 // Determine whether a window is a child of another window
+{
+	return Bool32.True
+}
+
+fun setWindowPos(
+	hWnd HWnd, // Handle to the window
+	hWndInsertAfter HWnd, // Handle to the window to precede this one in the Z order (optional)
+	x Int, // The new position of the left side of the window
+	y Int, // The new position of the top side of the window
+	cx Int, // The new width of the window
+	cy Int, // The new height of the window
+	uFlags UInt32 // Window positioning flags
+) Bool32 // Determine whether a window is a child of another window
+{
+	return Bool32.True
+}
+
+fun postMessageA(
+	hWnd HWnd, // Handle to the window whose window procedure will receive the message (optional)
+	msg UInt32, // The message to be sent
+	wParam UInt32, // Additional message-specific information
+	lParam Int // Additional message-specific information
+) Bool32
+{
+	return Bool32.True
+}
+
+// Returns a pointer to the first occurrence of the wide character wc in the C wide string ws.
+fun wcschr(ws ConstArrayPointer<ClangWideChar>, wc ClangWideChar) ArrayPointer<ClangWideChar> {
+	return null // TODO
+}
+
+fun wcsrchr(ws ConstArrayPointer<ClangWideChar>, wc ClangWideChar) ArrayPointer<ClangWideChar> {
+	return null // TODO
+}
+
+fun towupper(wc ClangWideChar) ClangWideChar {
+	return wc // TODO
+}
+
+fun getWindow(
+	hWnd HWnd, // Handle to the window to retrieve information about
+	uCmd UInt32 // Specifies the function to be performed; it determines the relationship of the retrieved window to the specified window
+) HWnd
+{ return null }
+
+fun win_IsCurrentProcess(hwnd HWnd) HWnd
+{
+	{ return null }
+}
+
+fun win_ListChildren(hwnd HWnd) ArrayPointer<HWnd> {
+	{ return null }
+}
+
+fun ntUserCallMsgFilter(msg Msg, code Int) Bool32 {
+	return Bool32.True
+}
+
+fun win_GetFullHandle(hwnd HWnd) HWnd
+{ return null }
+
+fun isDesktopWindow(hwnd HWnd) Bool32
+{
+	return Bool32.True
+}
+
+fun ntUserGetKeyState(virtKey Int) UInt16
+{ return 0 }
+
+@nativeVariadic
+fun sprintf(destination ArrayPointer<ClangChar>, format ConstArrayPointer<ClangWideChar>, ... args) Void {
+
+}
+
+fun strtol(str ConstArrayPointer<ClangChar>, endptr ArrayPointer<ArrayPointer<ClangChar>>, base Int) Int
+{
+	return 0
+}
+
+fun strtoul(str ConstArrayPointer<ClangChar>, endptr ArrayPointer<ArrayPointer<ClangChar>>, base Int) Int
+{
+	return 0
+}
+
+fun _errno() ConstArrayPointer<Int> {
+	return null
+}
+
+fun lstrcpynW(lpString1 ArrayPointer<ClangWideChar>, lpString2 ConstArrayPointer<ClangWideChar>, iMaxLength Int) ArrayPointer<ClangWideChar> {
+	return null
+}
+
+// TODO BOOL WINAPI DECLSPEC_HOTPATCH SetCurrentDirectoryW( LPCWSTR dir )
+fun setCurrentDirectoryW(dir ConstArrayPointer<ClangWideChar>) Bool32 {
+	return Bool32.True
+}
+
+// The Win32 CharUpperW() function does not take a single WideChar as input, only a PWideChar. But the interpretation of that pointer depends on whether its high-order word is zero (the low-order word contains a single char) or non-zero (the whole pointer is to a null-terminated string).
+
+fun charUpperW(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
+	return null
+}
+
+fun charLowerW(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
+	return null
+}
+
+fun getCurrentDirectoryW(buflen UInt32, buf ArrayPointer<ClangWideChar>) UInt32
+{
+	return 0
+}
+
+fun multiByteToWideChar(codePage UInt32, dwFlags UInt32, lpMultiByteStr ConstArrayPointer<ClangChar>, cbMultiByte Int, lpWideCharStr ArrayPointer<ClangWideChar>, cchWideChar Int) Int
+{
+	return 0
+}
