@@ -192,6 +192,25 @@ fun createWindowExW(
 	return hWnd
 }
 
+@dllExport('CreateWindowExA')
+fun createWindowExA(
+	dwExStyle UInt32,
+	lpClassName ConstArrayPointer<ClangWideChar>,
+	lpWindowName ConstArrayPointer<ClangWideChar>,
+	dwStyle UInt32,
+	x Int32,
+	y Int32,
+	nWidth Int32,
+	nHeight Int32,
+	hWndParent HWnd,
+	hMenu HMenu,
+	hInstance HInstance,
+	lpParam LParam
+) HWnd {
+	tofitaDebugLog("CreateWindowExW called".utf16())
+	return null // TODO
+}
+
 @dllExport('ShowWindow')
 fun showWindow(hWnd HWnd, nCmdShow CmdShow) Bool32 {
 	tofitaDebugLog("ShowWindow called".utf16())
@@ -540,10 +559,20 @@ fun enableWindow(hWnd HWnd, bEnable Bool32) Bool32 {
 	return Bool32.False
 }
 
+declare WndEnumProc = (hWnd HWnd, lParam LParam) => Bool32
 @dllExport('EnumChildWindows')
-fun enumChildWindows(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	return 0
+fun enumChildWindows(
+	hWndParent HWnd, // Handle to the parent window whose child windows are to be enumerated
+	lpEnumFunc WndEnumProc, // Pointer to the application-defined callback function to be called for each child window
+	lParam LParam // Application-defined value to be passed to the callback function
+) Bool32
+{
+	return Bool32.True
+}
+
+fun sendMessageA(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) LResult
+{
+	return null
 }
 
 @dllExport('GetAsyncKeyState')
@@ -601,9 +630,11 @@ fun getMenu(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetParent')
-fun getParent(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	return 0
+fun getParent(
+	hWnd HWnd // HWND -> HWnd (input handle to the window)
+) HWnd // HWND -> HWnd (return type indicating the handle to the parent window)
+{
+	return null
 }
 
 @dllExport('GetSubMenu')
@@ -638,8 +669,12 @@ fun getWindowRect(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetWindowTextW')
-fun getWindowTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
+fun getWindowTextW(
+	hWnd HWnd, // Handle to the window whose title or text is to be retrieved
+	lpString ArrayPointer<ClangWideChar>, // Pointer to a buffer that receives the text of the window
+	nMaxCount Int // Maximum number of characters to copy to the buffer, including the null terminator
+) Int
+{
 	return 0
 }
 
@@ -668,9 +703,9 @@ fun isWindow(hWnd HWnd) Bool32 {
 }
 
 @dllExport('IsWindowEnabled')
-fun isWindowEnabled(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	return 0
+fun isWindowEnabled(hWnd HWnd) Bool32 // BOOL -> Bool (return type)
+{
+	return Bool32.True
 }
 
 @dllExport('LoadImageW')
@@ -802,4 +837,52 @@ fun trackPopupMenu(stub SizeOfPointer) SizeOfPointer {
 @fastcall fun _DllMainCRTStartup() Void {
 	// TODO how to handle in Hexa? just HX_MAIN?
 	rootClass.next = null
+}
+
+@struct
+class MonitorInfo {
+	var cbSize UInt32
+	let rcMonitor ByValue<Rect>
+	let rcWork ByValue<Rect>
+	let dwFlags UInt32
+}
+
+@struct
+class LogFontW {
+	let lfHeight Int32
+	let lfWidth Int32
+	let lfEscapement Int32
+	let lfOrientation Int32
+	let lfWeight Int32
+	let lfItalic UInt8
+	let lfUnderline UInt8
+	let lfStrikeOut UInt8
+	let lfCharSet UInt8
+	let lfOutPrecision UInt8
+	let lfClipPrecision UInt8
+	let lfQuality UInt8
+	let lfPitchAndFamily UInt8
+	// TODO LF_FACESIZE = 32
+	// TODO let
+	var lfFaceName ArrayByValue<ClangWideChar, 32>
+}
+
+@struct
+class NonClientMetricsW {
+	var cbSize UInt32
+	let iBorderWidth Int32
+	let iScrollWidth Int32
+	let iScrollHeight Int32
+	let iCaptionWidth Int32
+	let iCaptionHeight Int32
+	let lfCaptionFont ByValue<LogFontW>
+	let iSmCaptionWidth Int32
+	let iSmCaptionHeight Int32
+	let lfSmCaptionFont ByValue<LogFontW>
+	let iMenuWidth Int32
+	let iMenuHeight Int32
+	let lfMenuFont ByValue<LogFontW>
+	let lfStatusFont ByValue<LogFontW>
+	let lfMessageFont ByValue<LogFontW>
+	let iPaddedBorderWidth Int32
 }
