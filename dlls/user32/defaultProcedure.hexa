@@ -1,0 +1,44 @@
+// Copyright (C) 1993, 1996 Alexandre Julliard
+// Copyright (C) 2024 Oleh Petrenko
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+fun ntUserGetDialogInfo(hwnd HWnd) ArrayPointer<Void> {
+	return null // TODO
+}
+
+fun ntUserSetDialogInfo(hwnd HWnd, dlgInfo ArrayPointer<Void>) Void {
+	// TODO
+}
+
+fun dialog_get_info(hwnd HWnd, create Bool32) DIALOGINFO {
+	var dlgInfo DIALOGINFO = null
+	dlgInfo = ntUserGetDialogInfo(hwnd) as! DIALOGINFO
+
+	if dlgInfo == null and create == Bool32.True {
+		if (dlgInfo = heapAlloc(getProcessHeap(), 0, sizeOf<UInt32>() as! UInt32) as! DIALOGINFO) == null {
+			return null
+		}
+
+		dlgInfo.hwndFocus = null
+		dlgInfo.hUserFont = null
+		dlgInfo.hMenu = null
+		dlgInfo.xBaseUnit = 0
+		dlgInfo.yBaseUnit = 0
+		dlgInfo.idResult = 1
+		dlgInfo.flags = 0
+		ntUserSetDialogInfo(hwnd, dlgInfo as! ArrayPointer<Void>)
+	}
+
+	return dlgInfo
+}
