@@ -20,8 +20,50 @@ fun localAlloc(flags UInt32, bytes SizeOfPointer) HLocal
 @dllImport
 @rename('HeapAlloc')
 declare
-fun heapAlloc(heap SizeOfPointer, flags UInt32, bytes SizeOfPointer) ArrayPointer<Void>
+fun heapAlloc(heap Handle, flags UInt32, bytes SizeOfPointer) ArrayPointer<Void>
 // TODO
 // let kernel32 = "kernel32.dll" (uppercase?)
 // @dllImport(kernel32) (fpc)
 // Generate .dllImport.txt where each line is libgen argument list line-per-dll
+
+declare VoidPointer = ConstArrayPointer<Void>
+
+// TODO only header here, impl in other files
+fun heapFree(
+	hHeap Handle,
+	dwFlags UInt32,
+	lpMem VoidPointer
+) Bool32 {
+	return Bool32.True // TODO
+}
+
+fun mulDiv(
+	nNumber Int,
+	nNumerator Int,
+	nDenominator Int
+) {
+	return 0 // TODO
+}
+
+fun wideCharToMultiByte(
+	codePage UInt32,
+	dwFlags UInt32,
+	lpWideCharStr ConstArrayPointer<ClangWideChar>,
+	cchWideChar Int,
+	lpMultiByteStr ArrayPointer<ClangChar>,
+	cbMultiByte Int,
+	lpDefaultChar ConstArrayPointer<ClangChar>,
+	lpUsedDefaultChar ArrayPointer<Bool>
+) Int {
+	return 0 // TODO
+}
+
+fun getProcessHeap() Handle {
+	return null // TODO
+}
+
+fun setLastError(
+	dwErrCode UInt32
+) Void {
+	// TODO
+}
