@@ -11,7 +11,9 @@
 		"../kernel32/kernel32.header",
 		"../ntdll/ntdll.header",
 		"user32.header",
-		"userMain",
+		"user32",
+		"defaultProcedure",
+		"dialogs",
 		"user32Vars"
 	],
 	"targets": [
@@ -28,5 +30,5 @@
 			"options": []
 		}
 	],
-	"entry": "user32"
+	"entry": "userMain"
 }
