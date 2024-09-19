@@ -65,6 +65,7 @@ fun windowToHandle(window Window) HWnd {
 
 @dllExport('RegisterClassW')
 fun registerClassW(wc WindowClass) Atom {
+	// TODO just `tofitaDebugLog("RegisterClassW called")` no `.utf16()`
 	tofitaDebugLog("RegisterClassW called".utf16())
 
 	// TODO utf16zClassName takes atoms? then utf16zClassName PossiblyAtom .toString
@@ -72,7 +73,8 @@ fun registerClassW(wc WindowClass) Atom {
 	// to avoid headers copy-pasta law (print all places at once)
 
 	// TODO abort if class name is too long (test real limitation)
-	var tail = rootClass
+	// TODO Hexa: infer bug
+	var tail ClassesLinkedList = rootClass
 	// TODO `while let`
 	while tail.next != null {
 		tail = tail.next
@@ -83,10 +85,11 @@ fun registerClassW(wc WindowClass) Atom {
 	// TODO `new ClassesLinkedList()`
 	// TODO just use Hexa Map here
 	// TODO use SEH for string pointer validation? At least check it is not null ptr
-	var list = new ClassesLinkedList(named: String.fromUTF16zUpTo(wc.utf16zClassName as! ConstArrayPointer<UInt16>, classNameLimit))
+	var list = ClassesLinkedList(named: String.fromUTF16zUpTo(wc.utf16zClassName as! ConstArrayPointer<UInt16>, classNameLimit))
 	list.next = null
 
-	list.wc = new WindowClass() // TODO `new T() { ...wc }` to make a copy
+	list.wc = WindowClass()
+	// TODO `new T() { ...wc }` to make a copy
 	memcpy(list.wc as! ArrayPointer<UInt8>, wc as! ConstArrayPointer<UInt8>, sizeOf<WindowClass>() as! Int)
 
 	// TODO still bad idea cause pointers to strings (aka wide chars)
@@ -117,7 +120,8 @@ fun createWindowExW(
 	tofitaDebugLog("CreateWindowExW called".utf16())
 
 	// Find class
-	var list = rootClass
+	// TODO Hexa: infer bug
+	var list ClassesLinkedList = rootClass
 	var name = String.fromUTF16zUpTo(lpClassName as! ConstArrayPointer<UInt16>, classNameLimit)
 	// TODO ^ check string pointer for null/SEH
 	var found = false
@@ -145,7 +149,7 @@ fun createWindowExW(
 	// Prepare for syscall
 	// TODO proper `new CreateWindowExPayload {} ()`
 	// TODO stack alloc\dealloc by @owned/borrowed @struct refs
-	var payload CreateWindowExPayload = new CreateWindowExPayload()
+	var payload CreateWindowExPayload = CreateWindowExPayload()
 
 	payload.wc = wc as! UInt64
 	// TODO `wc.type.address` same for others
@@ -164,7 +168,7 @@ fun createWindowExW(
 	// TODO pass params as tags? are all those params even needed in server?
 
 	// Create local window counterpart
-	var window = new Window()
+	var window = Window()
 	tofitaDebugLog("window = {%8}\n".utf16(), (window as! UInt64))
 
 	let hWnd = window as! HWnd
@@ -223,7 +227,7 @@ fun getMessageW(msg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32) 
 	tofitaDebugLog("GetMessageW called".utf16())
 	var result = Bool32.True // TODO `true`
 
-	let payload = new ByValue<GetMessagePayload>()
+	let payload = ByValue<GetMessagePayload>()
 	let payload = payload.ref
 	// TODO others by value too
 
@@ -291,7 +295,7 @@ fun dispatchMessageW(msg Msg) LResult? {
 
 @dllExport('PostMessage')
 fun postMessage(hWnd HWnd, msg Message, wParam WParam, lParam LParam) Bool32 {
-	var payload PostMessagePayload = new PostMessagePayload()
+	var payload PostMessagePayload = PostMessagePayload()
 	// TODO ^ by value
 	payload.hWnd = hWnd as! UInt64
 	payload.msg = msg
@@ -360,7 +364,7 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 	var fb = dc as! WindowFramebuffer
 	// TODO validate != null and that it is actually a WindowFrameBuffer
 
-	var color = new ByValue<Pixel32>()
+	var color = ByValue<Pixel32>()
 	// TODO by val
 	color.ref.color = 0xFFAA0000u32
 
@@ -531,9 +535,9 @@ fun enableMenuItem(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('EnableWindow')
-fun enableWindow(stub SizeOfPointer) SizeOfPointer {
+fun enableWindow(hWnd HWnd, bEnable Bool32) Bool32 {
 	// TODO
-	return 0
+	return Bool32.False
 }
 
 @dllExport('EnumChildWindows')
@@ -573,9 +577,9 @@ fun getDlgItemTextW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetFocus')
-fun getFocus(stub SizeOfPointer) SizeOfPointer {
+fun getFocus() HWnd {
 	// TODO
-	return 0
+	return null
 }
 
 @dllExport('GetKeyboardLayout')
@@ -615,7 +619,7 @@ fun getSystemMetrics(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetWindowLongW')
-fun getWindowLongW(stub SizeOfPointer) SizeOfPointer {
+fun getWindowLongW(hWnd HWnd, nIndex Int) Int {
 	// TODO
 	return 0
 }
@@ -658,9 +662,9 @@ fun isDlgButtonChecked(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('IsWindow')
-fun isWindow(stub SizeOfPointer) SizeOfPointer {
+fun isWindow(hWnd HWnd) Bool32 {
 	// TODO
-	return 0
+	return Bool32.True
 }
 
 @dllExport('IsWindowEnabled')
@@ -676,7 +680,7 @@ fun loadImageW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('LoadMenuW')
-fun loadMenuW(stub SizeOfPointer) SizeOfPointer {
+fun loadMenuW(hInstance HInstance, lpMenuName ConstArrayPointer<ClangWideChar>) Handle {
 	// TODO
 	return 0
 }
@@ -706,7 +710,7 @@ fun openClipboard(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('PostMessageW')
-fun postMessageW(stub SizeOfPointer) SizeOfPointer {
+fun postMessageW(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) Bool32 {
 	// TODO
 	return 0
 }
@@ -718,9 +722,21 @@ fun sendDlgItemMessageW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('SendMessageW')
-fun sendMessageW(stub SizeOfPointer) SizeOfPointer {
+fun sendMessageW(
+	hWnd Handle,
+	msg UInt32,
+	wParam WParam,
+	lParam LParam
+) LResult {
 	// TODO
 	return 0
+}
+
+fun getWindowLongA(
+	hWnd HWnd,
+	nIndex Int32
+) Int32 {
+	return 0 // TODO
 }
 
 @dllExport('SetClipboardData')
@@ -748,7 +764,12 @@ fun setMenu(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('SetWindowLongW')
-fun setWindowLongW(stub SizeOfPointer) SizeOfPointer {
+fun setWindowLongW(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
+	// TODO
+	return 0
+}
+
+fun setWindowLongA(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
 	// TODO
 	return 0
 }
