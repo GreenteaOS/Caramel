@@ -474,7 +474,7 @@ fun callWindowProcW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('CheckDlgButton')
-fun checkDlgButton(stub SizeOfPointer) SizeOfPointer {
+fun xTODOcheckDlgButton(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	return 0
 }
@@ -486,7 +486,7 @@ fun checkMenuItem(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('CheckRadioButton')
-fun checkRadioButton(stub SizeOfPointer) SizeOfPointer {
+fun xTODOcheckRadioButton(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	return 0
 }
@@ -499,7 +499,7 @@ fun closeClipboard(stub SizeOfPointer) SizeOfPointer {
 
 // TODO rename to `UIntOfPointer` or `UIntPointer`
 @dllExport('CreateDialogParamW')
-fun createDialogParamW(
+fun xTODOcreateDialogParamW(
 	hInstance HInstance,
 	lpTemplateName ConstArrayPointer<ClangWideChar>,
 	hWndParent HWnd,
@@ -594,13 +594,13 @@ fun getClipboardData(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetDlgItem')
-fun getDlgItem(stub SizeOfPointer) SizeOfPointer {
+fun xTODOgetDlgItem(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	return 0
 }
 
 @dllExport('GetDlgItemTextW')
-fun getDlgItemTextW(stub SizeOfPointer) SizeOfPointer {
+fun xTODOgetDlgItemTextW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	return 0
 }
@@ -691,7 +691,7 @@ fun isClipboardFormatAvailable(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('IsDlgButtonChecked')
-fun isDlgButtonChecked(stub SizeOfPointer) SizeOfPointer {
+fun xTODOisDlgButtonChecked(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	return 0
 }
@@ -751,7 +751,7 @@ fun postMessageW(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) Bool32 {
 }
 
 @dllExport('SendDlgItemMessageW')
-fun sendDlgItemMessageW(stub SizeOfPointer) SizeOfPointer {
+fun xTODOsendDlgItemMessageW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	return 0
 }
@@ -781,7 +781,7 @@ fun setClipboardData(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('SetDlgItemTextW')
-fun setDlgItemTextW(stub SizeOfPointer) SizeOfPointer {
+fun xTODOsetDlgItemTextW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	return 0
 }
