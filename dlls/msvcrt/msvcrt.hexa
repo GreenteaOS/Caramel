@@ -280,6 +280,8 @@ fun log10(stub SizeOfPointer) SizeOfPointer {
 @struct @packed
 class Malloc {
 	var payload ArrayByValue<UInt8, 2048> = [0]
+
+	// TODO Hexa: allow to be constructible by default
 	new () { }
 }
 
@@ -293,7 +295,7 @@ fun malloc(size SizeOfPointer) SizeOfPointer {
 		tofitaDebugLog("[msvcrt] malloc >2048".utf16())
 	}
 
-	var stub = new Malloc()
+	var stub = Malloc()
 	tofitaDebugLog("[msvcrt] malloc done allocation".utf16())
 	return stub as! SizeOfPointer
 }
