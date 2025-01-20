@@ -64,7 +64,7 @@
         HEXA_MAIN(0, nullptr);
     }
 
-    #ifdef bit64
+    #ifdef bit64 // TODO rename to x64 x32
     // TODO why separate fun? same arguments?
     __attribute__((fastcall)) void _DllMainCRTStartup() {
         startup();
@@ -76,3 +76,194 @@
     #endif
 ')
 declare fun entry() Void
+
+enum ButtonStyles : Int {
+	// TODO Hexa: make it possible to use constants as tags like `BS_PUSHBUTTON = push_button`
+	BS_PUSH_BUTTON = 0x00000000
+	BS_DEF_PUSH_BUTTON = 0x00000001
+	BS_CHECK_BOX = 0x00000002
+	BS_AUTO_CHECK_BOX = 0x00000003
+	BS_RADIO_BUTTON = 0x00000004
+	BS_3STATE = 0x00000005
+	BS_AUTO3STATE = 0x00000006
+	BS_GROUP_BOX = 0x00000007
+	BS_USER_BUTTON = 0x00000008
+	BS_AUTO_RADIO_BUTTON = 0x00000009
+	BS_PUSH_BOX = 0x0000000A
+	BS_OWNER_DRAW = 0x0000000B
+	BS_TYPE_MASK = 0x0000000F
+	BS_LEFT_TEXT = 0x00000020
+
+	BS_TEXT = BS_PUSH_BUTTON
+	BS_ICON = 0x00000040
+	BS_BITMAP = 0x00000080
+	BS_LEFT = 0x00000100
+	BS_RIGHT = 0x00000200
+	BS_CENTER = 0x00000300
+	BS_TOP = 0x00000400
+	BS_BOTTOM = 0x00000800
+	BS_VERTICAL_CENTER = 0x00000C00
+	BS_PUSH_LIKE = 0x00001000
+	BS_MULTILINE = 0x00002000
+	BS_NOTIFY = 0x00004000
+	BS_FLAT = 0x00008000
+	BS_RIGHT_BUTTON = BS_LEFT_TEXT
+}
+
+enum ButtonStates : UInt16 {
+	BST_UNCHECKED = 0x0000
+	BST_CHECKED = 0x0001
+	BST_INDETERMINATE = 0x0002
+	BST_PUSHED = 0x0004
+	BST_FOCUS = 0x0008
+}
+
+fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResult? {
+	// tofitaDebugLog("buttonWindowProcW called".utf16())
+
+	switch uMsg {
+		case WM_PAINT:
+			tofitaDebugLog("buttonWindowProcW called - WM_PAINT".utf16())
+			let ps ByValue<PaintStruct> = ByValue<PaintStruct>()
+			let hdc = beginPaint(hWnd, ps.ref)
+			// let color_window = 5 // TODO
+			// fillRect(hdc, ps.ref.rcPaint.ref, (color_window + 1) as! HBrush)
+			let window = handleToWindow(hWnd)
+			let style = getWindowLongW(hWnd, -16)
+			let userdata = getWindowLongW(hWnd, -20)
+
+			let title = window.title.utf16()
+
+			switch (style & 0x000F) as! ButtonStyles {
+				case BS_CHECK_BOX:
+					// TODO
+
+				case BS_GROUP_BOX:
+					let r = ByValue<Rect>()
+					getClientRect(hWnd, r.ref)
+					drawTextW(hdc, title, -1, r.ref, DrawTextFormat.DT_SINGLE_LINE)
+
+				case _:
+					// Includes BS_PUSH_BUTTON and BS_DEF_PUSH_BUTTON
+
+					let r = ByValue<Rect>()
+					getClientRect(hWnd, r.ref)
+					let fmt DrawTextFormat = DrawTextFormat.DT_CENTER // TODO | DrawTextFormat.DT_VCENTER
+
+					let color_window = 5 // TODO
+					// fillRect(hdc, ps.ref.rcPaint.ref, (color_window + 2) as! HBrush)
+					// fillRect(hdc, r.ref, (color_window + 2) as! HBrush)
+
+					if (userdata & (ButtonStates.BST_PUSHED as! UInt16) /*TODO*/) == 0 {
+						drawEdge(hdc, r.ref, EdgeFlags.BDR_RAISED_INNER, BorderFlags.BF_MIDDLE /* TODO | BF_RECT*/)
+						if (style & (ButtonStyles.BS_MULTILINE as! UInt16) /*TODO*/) == 0 {
+							// TODO fmt |= DrawTextFormat.DT_SINGLE_LINE
+							drawTextW(hdc, title, -1, r.ref, fmt)
+						}
+					}
+			}
+
+			// TODO restore font and bkg
+			endPaint(hWnd, ps.ref)
+
+			return null
+	}
+
+	tofitaDebugLog("buttonWindowProcW called - default".utf16())
+	return defWindowProcW(hWnd, uMsg, wParam, lParam)
+}
+
+fun emptyWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResult? {
+	// tofitaDebugLog("emptyWindowProcW called".utf16())
+
+	switch uMsg {
+		case WM_PAINT:
+			tofitaDebugLog("emptyWindowProcW called - WM_PAINT".utf16())
+			let ps ByValue<PaintStruct> = ByValue<PaintStruct>()
+			let hdc = beginPaint(hWnd, ps.ref)
+
+			let color_window = 5 // TODO
+
+			fillRect(hdc, ps.ref.rcPaint.ref, (color_window + 1) as! HBrush)
+
+			endPaint(hWnd, ps.ref)
+
+			return null
+	}
+
+	tofitaDebugLog("emptyWindowProcW called - default".utf16())
+	return defWindowProcW(hWnd, uMsg, wParam, lParam)
+}
+
+fun registerDefaultComponents() Bool32 {
+	let wc = ByValue<WindowClass>()
+	wc.ref.style = 0 // TODO
+
+	// TODO register registerDefaultButtonComponent()
+
+	// BUTTON
+	wc.ref.lpfnWndProc = buttonWindowProcW
+	wc.ref.utf16zClassName = "Button".utf16()
+	registerClassW(wc.ref)
+
+	// COMBO
+	// TODO wc.ref.lpfnWndProc = comboWindowProcW
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "ComboBox".utf16()
+	registerClassW(wc.ref)
+
+	// COMBO L BOX
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "ComboLBox".utf16()
+	registerClassW(wc.ref)
+
+	// DIALOG
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = 32770 as! ConstArrayPointer<ClangWideChar>
+	registerClassW(wc.ref)
+
+	// EDIT
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "Edit".utf16()
+	registerClassW(wc.ref)
+
+	// ICON TITLE
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = 32772 as! ConstArrayPointer<ClangWideChar>
+	registerClassW(wc.ref)
+
+	// LISTBOX
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "ListBox".utf16()
+	registerClassW(wc.ref)
+
+	// MDI CLIENT
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "MDIClient".utf16()
+	registerClassW(wc.ref)
+
+	// MENU
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = 32768 as! ConstArrayPointer<ClangWideChar>
+	registerClassW(wc.ref)
+
+	// SCROLL
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "ScrollBar".utf16()
+	registerClassW(wc.ref)
+
+	// STATIC
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "Static".utf16()
+	registerClassW(wc.ref)
+
+	// IME
+	wc.ref.lpfnWndProc = emptyWindowProcW // TODO
+	wc.ref.utf16zClassName = "IME".utf16()
+	registerClassW(wc.ref)
+
+	return Bool32.True
+}
+
+// TODO initOnceExecuteOnce
+registerDefaultComponents()
