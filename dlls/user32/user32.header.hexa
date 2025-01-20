@@ -35,6 +35,16 @@ class DLGTEMPLATE {
 	return i
 }
 
+// TODO handle `#` variation
+fun isAtom(value UInt64) Bool {
+	tofitaDebugLog("isAtom called".utf16())
+	if value > 0xBFFF {
+		return false
+	}
+
+	return true
+}
+
 // TODO
 fun ntUserGetDC(hdc Handle) HDc {
 	tofitaDebugLog("ntUserGetDC called".utf16())
@@ -306,7 +316,7 @@ fun ntUserSetWindowPos(
 	uFlags UInt32 // Window positioning flags
 ) Bool32 // Determine whether a window is a child of another window
 {
-	tofitaDebugLog("setWindowPos called".utf16())
+	tofitaDebugLog("ntUserSetWindowPos called".utf16())
 	return Bool32.True
 }
 
@@ -320,7 +330,7 @@ fun setWindowPos(
 	uFlags UInt32 // Window positioning flags
 ) Bool32 // Determine whether a window is a child of another window
 {
-	tofitaDebugLog("ntUserSetWindowPos called".utf16())
+	tofitaDebugLog("setWindowPos called".utf16())
 	return Bool32.True
 }
 

@@ -22,6 +22,7 @@ let classNameLimit = 256u16
 //
 // TODO regions and separate modules
 
+// TODO `Window?`
 fun handleToWindow(hWnd HWnd) Window {
 	// TODO `HWnd?` and `if let hWnd, compare secret etc { return ok }`
 	if hWnd == null {
@@ -85,8 +86,9 @@ fun registerClassW(wc WindowClass) Atom {
 	// TODO `new ClassesLinkedList()`
 	// TODO just use Hexa Map here
 	// TODO use SEH for string pointer validation? At least check it is not null ptr
-	var list = ClassesLinkedList(named: String.fromUTF16zUpTo(wc.utf16zClassName as! ConstArrayPointer<UInt16>, classNameLimit))
+	let className = isAtom(wc.utf16zClassName as! UInt64) ? '#' + (wc.utf16zClassName as! UInt64) : String.fromUTF16zUpTo(wc.utf16zClassName as! ConstArrayPointer<UInt16>, classNameLimit)
 	tofitaDebugLog("registerClassW className %S".utf16(), className.utf16() as! UInt64)
+	let list = ClassesLinkedList(named: className)
 	list.next = null
 
 	list.wc = WindowClass()
@@ -98,6 +100,7 @@ fun registerClassW(wc WindowClass) Atom {
 	tail.next = list
 	tail = tail.next
 
+	// TODO handle that proc can be null
 	tofitaDebugLog("RegisterClassW done".utf16())
 	return 0 as! Atom // TODO make atom
 }
@@ -123,7 +126,9 @@ fun createWindowExW(
 	// Find class
 	// TODO Hexa: infer bug
 	var list ClassesLinkedList = rootClass
-	var name = String.fromUTF16zUpTo(lpClassName as! ConstArrayPointer<UInt16>, classNameLimit)
+	// TODO SEH
+	let className = isAtom(lpClassName as! UInt64) ? '#' + (lpClassName as! UInt64) : String.fromUTF16zUpTo(lpClassName as! ConstArrayPointer<UInt16>, classNameLimit)
+	tofitaDebugLog("CreateWindowExW lpClassName %S lpWindowName %S".utf16(), className.utf16() as! UInt64, lpWindowName as! UInt64)
 	// TODO ^ check string pointer for null/SEH
 	var found = false
 	var wc WindowClass = null
@@ -132,8 +137,8 @@ fun createWindowExW(
 		// Step upfront, to ignore empty root
 		list = list.next
 
-		if list.name == name {
-			tofitaDebugLog("CreateWindowExW found class {%S}\n".utf16(), (name.utf16() as! UInt64))
+		if list.name == className {
+			tofitaDebugLog("CreateWindowExW found class {%S}\n".utf16(), className.utf16() as! UInt64)
 			found = true
 			wc = list.wc
 			break
@@ -150,13 +155,17 @@ fun createWindowExW(
 	// Prepare for syscall
 	// TODO proper `new CreateWindowExPayload {} ()`
 	// TODO stack alloc\dealloc by @owned/borrowed @struct refs
-	var payload CreateWindowExPayload = CreateWindowExPayload()
+	let payload CreateWindowExPayload = CreateWindowExPayload()
 
 	payload.wc = wc as! UInt64
 	// TODO `wc.type.address` same for others
 
-	payload.lpClassName = lpClassName as! UInt64
-	payload.lpWindowName = lpWindowName as! UInt64
+	if isAtom(lpWindowName as! UInt64) {
+		payload.lpWindowName = 0 // Will use app name
+	} else {
+		payload.lpWindowName = lpWindowName as! UInt64 // TODO Hexa: .address
+	}
+
 	payload.dwStyle = dwStyle
 	payload.x = x
 	payload.y = y
@@ -170,7 +179,7 @@ fun createWindowExW(
 	// TODO pass params as tags? are all those params even needed in server?
 
 	// Create local window counterpart
-	var window = Window()
+	let window = Window()
 	tofitaDebugLog("window = {%8}\n".utf16(), window as! UInt64)
 
 	let hWnd = window as! HWnd
