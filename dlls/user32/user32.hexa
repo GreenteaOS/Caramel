@@ -321,6 +321,27 @@ fun translateMessage(msg Msg) Bool32 {
 	return Bool32.False
 }
 
+fun render(window Window, msg Msg) LResult? {
+	// TODO BK ERASE
+	var result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
+
+	for child in window.children {
+		tofitaDebugLog("child WM_PAINT %S".utf16(), child.title.utf16() as! UInt64)
+		// TODO pass msg or not? what is even passed
+		// child.proc(child as! HWnd, msg.message, msg.wParam, msg.lParam)
+		child.clipX = window.clipX + child.x
+		child.clipY = window.clipY + child.y
+		// TODO child.clipWidth = window.clipWidth - child.x
+		// TODO child.clipHeight = window.clipHeight - child.y
+		child.clipWidth = child.width
+		child.clipHeight = child.height
+
+		render(child, msg)
+	}
+
+	return result
+}
+
 @dllExport('DispatchMessageW')
 fun dispatchMessageW(msg Msg) LResult? {
 	tofitaDebugLog("DispatchMessageW called (hexa)".utf16())
@@ -337,7 +358,7 @@ fun dispatchMessageW(msg Msg) LResult? {
 		// ERROR_INVALID_HANDLE
 		if msg.message == Message.WM_PAINT {
 			tofitaDebugLog("WM_PAINT".utf16())
-			result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
+			result = render(window, msg)
 		} else {
 			tofitaDebugLog("not_WM_PAINT".utf16())
 			result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
@@ -381,12 +402,18 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 	}
 	let fb = window.fb.ref
 	// We do this every time, cause window may be resized
-	njraaGetOrCreateWindowFramebuffer(window.windowId, fb)
+	njraaGetOrCreateWindowFramebuffer(fb)
 	let rcPaint = ps.rcPaint.ref
 	rcPaint.left = 0
+	rcPaint.left = window.clipX
 	rcPaint.top = 0
+	rcPaint.top = window.clipY
+
 	rcPaint.right = fb.width as! Int32
+	rcPaint.right = window.clipX + window.clipWidth // TODO MIN(fb.width)
 	rcPaint.bottom = fb.height as! Int32
+	rcPaint.bottom = window.clipY + window.clipHeight // TODO MIN(fb.height)
+
 	tofitaDebugLog("BeginPaint done".utf16())
 	return fb as! HDc
 	// TODO ^ proper HDc implementation (at least as a handle with secret)
@@ -416,6 +443,21 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 	// #end
 }
 
+fun outerRect(dc HDc, lprc Rect, brush HBrush) {
+	tofitaDebugLog("[internal] outerRect called".utf16())
+	let fb = dc as! WindowFramebuffer
+	let color = ByValue<Pixel32>()
+	color.ref.color = 0xFFADADADu32 // TODO brush
+	for y in lprc.top ... lprc.bottom {
+		for x in lprc.left ... lprc.right {
+			if (x == lprc.left or y == lprc.top or y == lprc.bottom - 1 or x == lprc.right - 1) {
+				setPixel(fb, x, y, color)
+			}
+		}
+	}
+	tofitaDebugLog("[internal] outerRect done".utf16())
+}
+
 @dllExport('FillRect')
 fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 	tofitaDebugLog("FillRect called".utf16())
@@ -425,20 +467,20 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 
 	let color = ByValue<Pixel32>()
 	// TODO by val
-	color.ref.color = 0xFFAA0000u32
+	color.ref.color = 0xFFE1E1E1u32 // TODO brush
+	if brush as! Int != 7 {
+		color.ref.color = 0xFFF0F0F0u32 // TODO brush
+	}
 
 	for y in lprc.top ... lprc.bottom {
 		for x in lprc.left ... lprc.right {
-			color.ref.color = (x * 256) + (y ^ x) + (y * 255 * 255) + 0u32
+			// color.ref.color = color.ref.color ^(lprc as! UInt32) ^(dc as! UInt32)
+			// TODO format
 			// TODO respect brush color/style
 			setPixel(fb, x, y, color)
 			// TODO ^ this can be unsafe write, cause within bounds
 
 			// TODO this is for demo purposes and to check frame buffer size
-			if (x == 0 or y == 0 or y == lprc.bottom - 1 or x == lprc.right - 1) {
-				color.ref.color = 0x00AA0000
-				setPixel(fb, x, y, color)
-			}
 		}
 	}
 
@@ -456,7 +498,7 @@ fun endPaint(hWnd HWnd, ps PaintStruct) Bool32 {
 		return Bool32.False
 	}
 	let fb = window.fb.ref
-	njraaSwapWindowFramebuffer(window.windowId, fb)
+	njraaSwapWindowFramebuffer(fb)
 	// TODO ^ could be there multiple End Paint event? Probably swap after primary WM_PAINT
 	tofitaDebugLog("EndPaint done".utf16())
 	// TODO ^ instead of explicit logging, create a trace-mode in normalizer with call tree
@@ -863,6 +905,115 @@ fun sendMessageW(
 	// TODO
 	tofitaDebugLog("SendMessageW called".utf16())
 	return 0
+}
+
+@dllExport('GetClientRect')
+fun getClientRect(
+	hWnd HWnd,
+	lpRect Rect
+) Bool32 {
+	tofitaDebugLog("GetClientRect called".utf16())
+	if let window = handleToWindow(hWnd) {
+		lpRect.left = window.x
+		lpRect.top = window.y
+		lpRect.right = window.width
+		lpRect.bottom = window.height
+		return Bool32.True
+	}
+	return Bool32.False
+}
+
+enum DrawTextFormat : Int {
+	DT_LEFT = 0x00000000
+	DT_RIGHT = 0x00000001
+	DT_CENTER = 0x00000002
+	DT_VERTICAL_CENTER = 0x00000004
+	DT_SINGLE_LINE = 0x00000020
+	DT_END_ELLIPSIS = 0x00008000
+}
+
+@dllExport('DrawTextW')
+fun drawTextW(
+	hdc HDc,
+	lpchText ConstArrayPointer<ClangWideChar>,
+	cchText Int32,
+	lprc Rect,
+	format DrawTextFormat
+) Int32 {
+	tofitaDebugLog("DrawTextW called".utf16())
+	let color = ByValue<Pixel32>()
+	color.ref.color = 0xFF000000u32 // TODO
+	drawTextBox(
+		lpchText,
+		lprc.left as! Int16,
+		lprc.top as! Int16,
+		color.ref,
+		(lprc.right - lprc.left) as! UInt16,
+		(lprc.bottom - lprc.top) as! UInt16,
+		false,
+		hdc as! WindowFramebuffer,
+		false
+	)
+
+	return 12 // TODO
+}
+
+enum EdgeFlags : UInt32 {
+	BDR_RAISED_OUTER = 0x0001
+	BDR_SUNKEN_OUTER = 0x0002
+	BDR_RAISED_INNER = 0x0004
+	BDR_SUNKEN_INNER = 0x0008
+	BDR_OUTER = 0x0003
+	BDR_INNER = 0x000c
+	BDR_RAISED = 0x0005
+	BDR_SUNKEN = 0x000a
+	// TODO EDGE_RAISED = (BDR_RAISEDOUTER | BDR_RAISEDINNER)
+	// TODO EDGE_SUNKEN = (BDR_SUNKENOUTER | BDR_SUNKENINNER)
+	// TODO EDGE_ETCHED = (BDR_SUNKENOUTER | BDR_RAISEDINNER)
+	// TODO EDGE_BUMP = (BDR_RAISEDOUTER | BDR_SUNKENINNER)
+}
+
+enum BorderFlags : UInt32 {
+	BF_LEFT = 0x0001
+	BF_TOP = 0x0002
+	BF_RIGHT = 0x0004
+	BF_BOTTOM = 0x0008
+	BF_DIAGONAL = 0x0010
+	/// Fill in the middle
+	BF_MIDDLE = 0x0800
+	/// For softer buttons
+	BF_SOFT = 0x1000
+	/// Calculate the space left over
+	BF_ADJUST = 0x2000
+	/// For flat rather than 3D borders
+	BF_FLAT = 0x4000
+	/// For monochrome borders
+	BF_MONO = 0x8000
+	// TODO BF_TOPLEFT = (BF_TOP | BF_LEFT)
+	// TODO BF_TOPRIGHT = (BF_TOP | BF_RIGHT)
+	// TODO BF_BOTTOMLEFT = (BF_BOTTOM | BF_LEFT)
+	// TODO BF_BOTTOMRIGHT = (BF_BOTTOM | BF_RIGHT)
+	// TODO BF_RECT = (BF_LEFT | BF_TOP | BF_RIGHT | BF_BOTTOM)
+	// TODO BF_DIAGONAL_ENDTOPRIGHT = (BF_DIAGONAL | BF_TOP | BF_RIGHT)
+	// TODO BF_DIAGONAL_ENDTOPLEFT = (BF_DIAGONAL | BF_TOP | BF_LEFT)
+	// TODO BF_DIAGONAL_ENDBOTTOMLEFT = (BF_DIAGONAL | BF_BOTTOM | BF_LEFT)
+	// TODO BF_DIAGONAL_ENDBOTTOMRIGHT = (BF_DIAGONAL | BF_BOTTOM | BF_RIGHT)
+}
+
+@dllExport('DrawEdge')
+fun drawEdge(
+	hdc HDc,
+	qrc Rect,
+	edge EdgeFlags,
+	grfFlags BorderFlags
+) Bool32 {
+	tofitaDebugLog("DrawEdge called".utf16())
+
+	let color_window = 5 // TODO
+	// TODO
+	// fillRect(hdc, qrc, (color_window + 1) as! HBrush)
+	outerRect(hdc, qrc, (color_window + 1) as! HBrush)
+	return Bool32.True
 }
 
 @dllExport('GetWindowLongA')
