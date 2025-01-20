@@ -267,3 +267,4 @@ fun registerDefaultComponents() Bool32 {
 
 // TODO initOnceExecuteOnce
 registerDefaultComponents()
+initText()

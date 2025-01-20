@@ -11,6 +11,7 @@
 		"../kernel32/kernel32.header",
 		"../ntdll/ntdll.header",
 		"user32.header",
+		"textDrawing",
 		"user32",
 		"defaultProcedure",
 		"dialogs",
