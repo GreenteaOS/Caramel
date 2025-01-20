@@ -271,6 +271,7 @@ fun getCapture() HWnd {
 fun ntUserShowWindow(hWnd HWnd, nCmdShow Int) Bool32 // Show a specified window
 {
 	tofitaDebugLog("ntUserShowWindow called".utf16())
+	showWindow(hWnd, CmdShow.SW_SHOWDEFAULT)
 	return Bool32.True
 }
 
@@ -287,11 +288,352 @@ fun findResourceA(hModule HModule, lpName ConstArrayPointer<ClangChar>, lpType C
 fun loadResource(hModule HModule, hResInfo HRsrc) HGlobal // Load a resource from the specified module
 {
 	tofitaDebugLog("loadResource called".utf16())
+	return hResInfo as! HGlobal
+}
+
+fun make_lang_id(lang UInt16, sub UInt16) UInt16 {
+	return ((sub << 10u16) | lang)
+}
+
+let lang_neutral UInt16 = 0
+let sub_lang_neutral UInt16 = 0
+
+fun is_int_resource(idOrPointer UInt64) Bool {
+	tofitaDebugLog("is_int_resource called".utf16())
+	return idOrPointer <= 0xFFFF
+}
+
+// 1 byte aligned
+@struct @packed @sizeOf(24)
+class PeHeader {
+	var magic UInt32 // PE\0\0 or 0x00004550
+	var machine UInt16
+	var numberOfSections UInt16
+	var timeDateStamp UInt32
+	var pointerToSymbolTable UInt32
+	var numberOfSymbols UInt32
+	var sizeOfOptionalHeader UInt16
+	var characteristics UInt16
+}
+
+@struct @packed @sizeOf(40)
+class ImageSectionHeader { // size 40 bytes
+	var name ArrayByValue<UInt8, 8>
+	var virtualSize UInt32
+	var virtualAddress UInt32
+	var sizeOfRawData UInt32
+	var pointerToRawData UInt32
+	var pointerToRealocations UInt32
+	var pointerToLinenumbers UInt32
+	var numberOfRealocations UInt16
+	var numberOfLinenumbers UInt16
+	var characteristics UInt32
+}
+
+@packed @struct
+class IMAGE_RESOURCE_DIRECTORY_ENTRY_OFFSET_DIRECTORY {
+	@bits(31) var offsetToDirectory UInt32
+	@bits(1) var dataIsDirectory UInt32
+}
+
+@packed @struct @union
+class IMAGE_RESOURCE_DIRECTORY_ENTRY_OFFSET {
+	let offsetToData UInt32
+	let string ByValue<IMAGE_RESOURCE_DIRECTORY_ENTRY_OFFSET_DIRECTORY>
+}
+
+@packed @struct
+class IMAGE_RESOURCE_DIRECTORY_ENTRY_NAME_STRING {
+	// TODO Hexa: @bits don't work with `let` `@bits(31) let nameOffset UInt32`
+	@bits(31) var nameOffset UInt32
+	@bits(1) var nameIsString UInt32
+}
+
+@packed @struct @union
+class IMAGE_RESOURCE_DIRECTORY_ENTRY_NAME {
+	let string ByValue<IMAGE_RESOURCE_DIRECTORY_ENTRY_NAME_STRING>
+	let name UInt32
+	let id UInt16
+}
+
+@packed @struct class IMAGE_RESOURCE_DIRECTORY_ENTRY {
+	let unionName ByValue<IMAGE_RESOURCE_DIRECTORY_ENTRY_NAME>
+	let unionOffset ByValue<IMAGE_RESOURCE_DIRECTORY_ENTRY_OFFSET>
+}
+
+// TODO `let` here and everywhere
+@packed
+@struct class IMAGE_RESOURCE_DIRECTORY {
+	var characteristics UInt32
+	var timeDateStamp UInt32
+	var majorVersion UInt16
+	var minorVersion UInt16
+	var numberOfNamedEntries UInt16
+	var numberOfIdEntries UInt16
+	var directoryEntries ArrayByValue<ByValue<IMAGE_RESOURCE_DIRECTORY_ENTRY>, 1>
+}
+
+@packed @struct class IMAGE_RESOURCE_DATA_ENTRY {
+	let offsetToData UInt32
+	let size UInt32
+	let codePage UInt32
+	let reserved UInt32
+}
+
+@packed @struct class GRPICONDIRENTRY {
+	let bWidth UInt8
+	let bHeight UInt8
+	let bColorCount UInt8
+	let bReserved UInt8
+	let wPlanes UInt16
+	let wBitCount UInt16
+	let dwBytesInRes UInt32
+	let nID UInt16
+}
+
+@packed @struct class GRPICONDIR {
+	let idReserved UInt16
+	let idType UInt16
+	let idCount UInt16
+	var idEntries ArrayByValue<ByValue<GRPICONDIRENTRY>, 1>
+}
+
+// 1 byte aligned
+@struct @packed
+class Pe64OptionalHeader {
+	var magic UInt16 // 0x010b - PE32, 0x020b - PE32+ (64 bit)
+	var majorLinkerVersion UInt8
+	var minorLinkerVersion UInt8
+	var sizeOfCode UInt32
+	var sizeOfInitializedData UInt32
+	var sizeOfUninitializedData UInt32
+	var addressOfEntryPoint UInt32
+	var baseOfCode UInt32
+	var imageBase UInt64
+	var sectionAlignment UInt32
+	var fileAlignment UInt32
+	var majorOperatingSystemVersion UInt16
+	var minorOperatingSystemVersion UInt16
+	var majorImageVersion UInt16
+	var minorImageVersion UInt16
+	var majorSubsystemVersion UInt16
+	var minorSubsystemVersion UInt16
+	var win32VersionValue UInt32
+	var sizeOfImage UInt32
+	var sizeOfHeaders UInt32
+	var checkSum UInt32
+	var subsystem UInt16
+	var dllCharacteristics UInt16
+	var sizeOfStackReserve UInt64
+	var sizeOfStackCommit UInt64
+	var sizeOfHeapReserve UInt64
+	var sizeOfHeapCommit UInt64
+	var loaderFlags UInt32
+	var numberOfRvaAndSizes UInt32
+}
+
+// 1 byte aligned
+@struct @packed
+// TODO Hexa: <is64 Bool>
+class Pe32OptionalHeader {
+	var magic UInt16 // 0x010b - PE32, 0x020b - PE32+ (64 bit)
+	var majorLinkerVersion UInt8
+	var minorLinkerVersion UInt8
+	var sizeOfCode UInt32
+	var sizeOfInitializedData UInt32
+	var sizeOfUninitializedData UInt32
+	var addressOfEntryPoint UInt32
+	var baseOfCode UInt32
+	// TODO Hexa: @enableIf()
+	var baseOfData UInt32 // present only in 32-bit
+	var imageBase UInt32
+	var sectionAlignment UInt32
+	var fileAlignment UInt32
+	var majorOperatingSystemVersion UInt16
+	var minorOperatingSystemVersion UInt16
+	var majorImageVersion UInt16
+	var minorImageVersion UInt16
+	var majorSubsystemVersion UInt16
+	var minorSubsystemVersion UInt16
+	var win32VersionValue UInt32
+	var sizeOfImage UInt32
+	var sizeOfHeaders UInt32
+	var checkSum UInt32
+	var subsystem UInt16
+	var dllCharacteristics UInt16
+	var sizeOfStackReserve UInt32
+	var sizeOfStackCommit UInt32
+	var sizeOfHeapReserve UInt32
+	var sizeOfHeapCommit UInt32
+	var loaderFlags UInt32
+	var numberOfRvaAndSizes UInt32
+}
+
+class ExeResourceLoader<SIZE, HEADER> {
+	new () { }
+
+	/*fun virtualToSection(virtualAddress) {
+		let imageSectionHeader = 0
+		let virtualSectionStart = -1
+		let blobSectionStart = -1
+		at = optionalAt + mSizeOfOptionalHeader
+		while imageSectionHeader < mNumberOfSections {
+			let section = readImageSectionHeader()
+
+			if section.mVirtualAddress <= virtualAddress and section.mVirtualAddress > virtualSectionStart {
+				virtualSectionStart = section.mVirtualAddress
+				blobSectionStart = section.mPointerToRawData + (virtualAddress - section.mVirtualAddress)
+			}
+
+			imageSectionHeader++
+		}
+		return blobSectionStart
+	}*/
+	fun getIcon(asset HModule, lpType UInt16, lpName UInt16) HRsrc? {
+		let ptr = asset as! ArrayPointer<UInt8>
+		// TODO 32 bit 0x3C
+		var peHeader = ((ptr as! UInt64) + ptr[0x3C] + ptr[0x3C + 1] * 256) as! PeHeader
+		// serialPrintf("[ExeResourceLoader] PE header signature 'PE' == '%s'\n", peHeader)
+		var peOptionalHeader = ((peHeader as! UInt64) + sizeOf<PeHeader>()) as! HEADER
+		// serialPrintf("[ExeResourceLoader] PE32(+) optional header signature 0x020B == %d == %d\n", peOptionalHeader.magic,
+		// 0x020B)
+		// TODO require all .dlls ARCH be the same or show loader error
+		// serialPrintf("[ExeResourceLoader] PE32(+) size of image == %d\n", peOptionalHeader.sizeOfImage)
+
+		// let pages = down_bytes_to_pages(peOptionalHeader.sizeOfImage) + 1u32
+		// let physical = PhysicalAllocator.allocatePages(pages)
+
+		// Copy sections
+		var imageSectionHeader =
+			((peOptionalHeader as! UInt64) + peHeader.sizeOfOptionalHeader) as! ArrayPointer<ByValue<ImageSectionHeader>>
+
+		// TODO copy PE headers?
+		for i in peHeader.numberOfSections {
+			tofitaDebugLog("[ExeResourceLoader] Found section [%d] named '%s'\n".utf16(), i, imageSectionHeader[i].ref.name.ref as! UInt64)
+			tofitaDebugLog("[ExeResourceLoader] Found section size %d at offset %8'\n".utf16(), imageSectionHeader[i].ref.sizeOfRawData as! UInt64, imageSectionHeader[i].ref.virtualAddress)
+			// serialPrintf("[ExeResourceLoader] Found section [%d] named '%s' of size %d at %u\n", i,
+			// imageSectionHeader[i].ref.name.ref,
+			// imageSectionHeader[i].ref.sizeOfRawData,
+			// imageSectionHeader[i].ref.virtualAddress)
+			// var where UInt64 = (buffer as! UInt64) + imageSectionHeader[i].ref.virtualAddress
+
+			// tmemcpy(where as! ArrayPointer<UInt8>,
+			// ((asset.data as! UInt64) + (imageSectionHeader[i].ref.pointerToRawData as! UInt64)) as! ConstArrayPointer<UInt8>,
+			// imageSectionHeader[i].ref.sizeOfRawData)
+			// Compare with `.rsrc` TODO better idea
+			let isRSRC =
+				imageSectionHeader[i].ref.name[0] == 46 and
+				imageSectionHeader[i].ref.name[1] == 114 and
+				imageSectionHeader[i].ref.name[2] == 115 and
+				imageSectionHeader[i].ref.name[3] == 114 and
+				imageSectionHeader[i].ref.name[4] == 99 // TODO and zero terminator?
+
+			if isRSRC {
+				tofitaDebugLog("[ExeResourceLoader] Parsing .rsrc...\n".utf16())
+				// serialPrintf("[ExeResourceLoader] Parsing .rsrc...\n")
+				let section = imageSectionHeader[i].ref
+				let dir = ((ptr as! UInt64) + section.virtualAddress) as! IMAGE_RESOURCE_DIRECTORY
+				// TODO Named
+				tofitaDebugLog("[ExeResourceLoader] ID Entries: %d at %8\n".utf16(), dir.numberOfIdEntries, dir as! UInt64)
+
+				// Find the payload
+				for id in dir.numberOfIdEntries {
+					let entry = dir.directoryEntries[id].ref
+
+					if entry.unionName.ref.id == lpType {
+						// serialPrintf("[ExeResourceLoader] Found RT_ICON at %d offset %8\n", id as! Int, entry.unionOffset.ref.offsetToData as! UInt64)
+						tofitaDebugLog("[ExeResourceLoader] Found by type %8...\n".utf16(), lpType)
+					} else {
+						tofitaDebugLog("[ExeResourceLoader] Ignoring by type %8...\n".utf16(), entry.unionName.ref.id)
+						continue
+					}
+
+					let byName =
+						((ptr as! UInt64) + (section.virtualAddress as! UInt64) + (entry.unionOffset.ref.offsetToData & 0x7fffffffu64))
+						as! IMAGE_RESOURCE_DIRECTORY
+
+					for id in byName.numberOfIdEntries {
+						let byNameEntry = byName.directoryEntries[id].ref
+						tofitaDebugLog("[ExeResourceLoader] Scanning by name %8...\n".utf16(), byNameEntry.unionName.ref.id)
+
+						let byLanguage =
+							((ptr as! UInt64) + section.virtualAddress + (byNameEntry.unionOffset.ref.offsetToData & 0x7fffffffu64))
+							as! IMAGE_RESOURCE_DIRECTORY
+
+						for id in byLanguage.numberOfIdEntries {
+							let byLanguageEntry = byLanguage.directoryEntries[id].ref
+							tofitaDebugLog("[ExeResourceLoader] Scanning by language %8...\n".utf16(), byLanguageEntry.unionName.ref.id)
+							let dataEntry =
+								((ptr as! UInt64) + section.virtualAddress + (byLanguageEntry.unionOffset.ref.offsetToData & 0x7fffffffu64))
+								as! IMAGE_RESOURCE_DATA_ENTRY
+
+							let rva UInt64 = section.virtualAddress + (dataEntry.offsetToData - section.virtualAddress)
+							let offset = (ptr as! UInt64) + rva
+
+							// serialPrintf("[ExeResourceLoader] Best is %d current is %d\n", bestIcon as! UInt32, id as! UInt32)
+							if lpName == byNameEntry.unionName.ref.id {
+								// serialPrintf("[ExeResourceLoader] Found icon %d\n", bestIcon)
+								tofitaDebugLog("[ExeResourceLoader] Found by name %8...\n".utf16(), lpName)
+								let icon = offset
+								// TODO Hexa: `let bmp = return whatever`
+								tofitaDebugLog("findResourceExW found resource %S at %8".utf16(), icon as! UInt64, icon as! UInt64)
+								return icon as! HRsrc
+							} else {
+								tofitaDebugLog("[ExeResourceLoader] Ignoring by name %8...\n".utf16(), byNameEntry.unionName.ref.id)
+							}
+						}
+					}
+				}
+
+				tofitaDebugLog("findResourceExW no resource found".utf16())
+				return null
+			}
+		}
+		// TODO Hexa: got a bug with garbage in `return` cause *guaranteed return* wasn't checked
+		tofitaDebugLog("findResourceExW no resource section present".utf16())
+		return null
+	}
+}
+
+fun findResourceExW(hModule HModule, lpType ConstArrayPointer<ClangWideChar>, lpName ConstArrayPointer<ClangWideChar>, wLanguage UInt16) HRsrc // Find a resource in the specified module
+{
+	tofitaDebugLog("findResourceExW called hModule %8".utf16(), hModule as! UInt64)
+	tofitaDebugLog("findResourceExW with lpType %8 lpName %8".utf16(), lpType as! UInt64, lpName as! UInt64)
+
+	var simpleResource = true
+
+	if not is_int_resource(lpName as! UInt64) {
+		tofitaDebugLog("findResourceExW lpType %S".utf16(), lpType as! UInt64)
+		simpleResource = false
+	}
+
+	if not is_int_resource(lpName as! UInt64) {
+		tofitaDebugLog("findResourceExW lpName %S".utf16(), lpName as! UInt64)
+		simpleResource = false
+	}
+
+	let is64 = sizeOf<HModule>() == 8
+
+	if not simpleResource {
+		// TODO by string
+		return null
+	}
+
+	// TODO by language
+	// If this parameter is MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), the current language associated with the calling thread is used.
+	if is64 {
+		let loader = new ExeResourceLoader<UInt64, Pe64OptionalHeader>()
+		return loader.getIcon(hModule, lpType as! UInt16, lpName as! UInt16)
+	} else {
+		let loader = new ExeResourceLoader<UInt32, Pe32OptionalHeader>()
+		return loader.getIcon(hModule, lpType as! UInt16, lpName as! UInt16)
+	}
 }
 
 fun findResourceW(hModule HModule, lpName ConstArrayPointer<ClangWideChar>, lpType ConstArrayPointer<ClangWideChar>) HRsrc // Find a resource in the specified module
 {
 	tofitaDebugLog("findResourceW called".utf16())
+	return findResourceExW(hModule, lpType, lpName, make_lang_id(lang_neutral, sub_lang_neutral))
 }
 
 fun peekMessageW(lpMsg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 // Retrieve a message from the queue
