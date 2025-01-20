@@ -41,8 +41,8 @@ fun mulDiv(
 	nNumber Int,
 	nNumerator Int,
 	nDenominator Int
-) {
-	return 0 // TODO
+) Int {
+	return nNumber // TODO
 }
 
 fun wideCharToMultiByte(
