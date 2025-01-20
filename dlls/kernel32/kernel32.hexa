@@ -125,10 +125,17 @@ fun getModuleHandleA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetProcAddress')
-fun getProcAddress(stub SizeOfPointer) SizeOfPointer {
+@dllExport('GetModuleHandleW')
+fun getModuleHandleW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getProcAddress()\n".utf16())
+	tofitaDebugLog("getModuleHandleW()\n".utf16())
+	return 0
+}
+
+@dllExport('GetProcAddress')
+fun getProcAddress(module HModule, lpProcName ConstArrayPointer<ClangChar>) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("getProcAddress(%s) for %8\n".utf16(), lpProcName as! UInt64, module as! UInt64)
 	return 0
 }
 
@@ -201,9 +208,9 @@ fun leaveCriticalSection(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('LoadLibraryW')
-fun loadLibraryW(stub SizeOfPointer) SizeOfPointer {
+fun loadLibraryW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule {
 	// TODO
-	tofitaDebugLog("loadLibraryW()\n".utf16())
+	tofitaDebugLog("loadLibraryW(%S)\n".utf16(), lpLibFileName as! UInt64)
 	return 0
 }
 

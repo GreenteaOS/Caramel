@@ -56,6 +56,8 @@ class RadioGroup {
 }
 
 fun dialog_GetControl32(p ConstArrayPointer<UInt16>, info DlgControlInfo, dialogEx Bool32) ConstArrayPointer<UInt16> {
+	tofitaDebugLog("dialog_GetControl32 called p = %8".utf16(), p as! UInt64)
+
 	var p = p
 	if dialogEx == Bool32.True {
 		info.helpId = (p as! ConstArrayPointer<UInt32>) [0]
@@ -127,6 +129,7 @@ fun dialog_GetControl32(p ConstArrayPointer<UInt16>, info DlgControlInfo, dialog
 
 	p = p.offsetItems(1)
 	return (((p as! SizeOfPointer) + 3u32) & (~3 as! UInt32)) as! ConstArrayPointer<UInt16>
+	tofitaDebugLog("dialog_GetControl32 done".utf16())
 }
 
 fun dialog_CreateControls32(
@@ -136,6 +139,8 @@ fun dialog_CreateControls32(
 	hInst HInstance,
 	unicode Bool32
 ) Bool32 {
+	tofitaDebugLog("dialog_CreateControls32 called".utf16())
+
 	var template = template
 	var dlgInfo DIALOGINFO = dialog_get_info(hwnd, Bool32.True)
 	var info DlgControlInfo = null
@@ -205,6 +210,7 @@ fun dialog_CreateControls32(
 			}
 
 			setLastError(0)
+			tofitaDebugLog("dialog_CreateControls32 done 0".utf16())
 			return 0
 		}
 
@@ -222,10 +228,13 @@ fun dialog_CreateControls32(
 		}
 	}
 
+	tofitaDebugLog("dialog_CreateControls32 done true".utf16())
 	return Bool32.True
 }
 
 fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemplate) ConstArrayPointer<ClangChar> {
+	tofitaDebugLog("dialog_ParseTemplate32 called".utf16())
+
 	var p ConstArrayPointer<UInt16> = template as! ConstArrayPointer<UInt16>
 	var signature UInt16 = 0
 	var dlgver UInt16 = 0
@@ -267,14 +276,8 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 		case 65535:
 			result.menuName = (((p.offsetItems(1) [0])) as! UInt32) as! ArrayPointer<ClangWideChar>
 			p = p.offsetItems(2)
-			{
-
-			}
 		case _:
 			result.menuName = p
-			{
-
-			}
 			p = p.offsetItemsBack(lstrlenW(result.menuName) + 1)
 	}
 
@@ -285,14 +288,8 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 		case 65535:
 			result.className = (((p.offsetItems(1) [0])) as! UInt32) as! ArrayPointer<ClangWideChar>
 			p = p.offsetItems(2)
-			{
-
-			}
 		case _:
 			result.className = p
-			{
-
-			}
 			p = p.offsetItemsBack(lstrlenW(result.className) + 1)
 	}
 
@@ -323,6 +320,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 	}
 
 	return (((p as! SizeOfPointer) + 3u32) & (~3 as! UInt32)) as! ConstArrayPointer<ClangChar>
+	tofitaDebugLog("dialog_ParseTemplate32 done".utf16())
 }
 
 fun dialog_CreateIndirect(
@@ -335,6 +333,8 @@ fun dialog_CreateIndirect(
 	modal_owner ArrayPointer<HWnd>
 ) HWnd {
 	var dlgTemplate = dlgTemplate
+	tofitaDebugLog("dialog_CreateIndirect called".utf16())
+
 	var owner = owner
 	var hwnd HWnd = null
 	var rect ByValue<Rect> = ByValue<Rect>()
@@ -608,6 +608,7 @@ fun dialog_CreateIndirect(
 		ntUserDestroyWindow(hwnd)
 	}
 
+	tofitaDebugLog("dialog_CreateIndirect done with null".utf16())
 	return null
 }
 
@@ -618,6 +619,8 @@ fun createDialogParamA(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) HWnd {
+	tofitaDebugLog("[dialogs] createDialogParamW called".utf16())
+
 	var hrsrc HRsrc = null
 	var ptr DLGTEMPLATE = null
 
@@ -632,6 +635,7 @@ fun createDialogParamA(
 	return createDialogIndirectParamA(hInst, ptr, owner, dlgProc, param)
 }
 
+@dllExport('CreateDialogParamW')
 fun createDialogParamW(
 	hInst HInstance,
 	name ConstArrayPointer<ClangWideChar>,
@@ -639,6 +643,8 @@ fun createDialogParamW(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) HWnd {
+	tofitaDebugLog("createDialogParamA called".utf16())
+
 	var hrsrc HRsrc = null
 	var ptr DLGTEMPLATE = null
 
@@ -661,6 +667,8 @@ fun createDialogIndirectParamAorW(
 	param LParam,
 	flags UInt32
 ) HWnd {
+	tofitaDebugLog("createDialogIndirectParamAorW called".utf16())
+
 	return dialog_CreateIndirect(hInst, dlgTemplate, owner, dlgProc, param, Bool32.fromBool(flags == 0), null)
 }
 
@@ -671,6 +679,7 @@ fun createDialogIndirectParamA(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) HWnd {
+	tofitaDebugLog("createDialogIndirectParamA called".utf16())
 	return createDialogIndirectParamAorW(hInst, dlgTemplate as! ConstArrayPointer<Void>, owner, dlgProc, param, 2u32)
 }
 
@@ -681,10 +690,12 @@ fun createDialogIndirectParamW(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) HWnd {
+	tofitaDebugLog("createDialogIndirectParamW called".utf16())
 	return createDialogIndirectParamAorW(hInst, dlgTemplate as! ConstArrayPointer<Void>, owner, dlgProc, param, 0)
 }
 
 fun dialog_DoDialogBox(hwnd HWnd, owner HWnd) Int32 {
+	tofitaDebugLog("dialog_DoDialogBox called".utf16())
 	var dlgInfo DIALOGINFO = null
 	var msg ByValue<Msg> = ByValue<Msg>()
 	var retval Int32 = 0
@@ -758,6 +769,8 @@ fun dialogBoxParamA(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) SignedSizeOfPointer {
+	tofitaDebugLog("dialogBoxParamW called".utf16())
+
 	var hwnd HWnd = null
 	var hrsrc HRsrc = null
 	var ptr DLGTEMPLATE = null
@@ -789,6 +802,8 @@ fun dialogBoxParamW(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) SignedSizeOfPointer {
+	tofitaDebugLog("dialogBoxParamA called".utf16())
+
 	var hwnd HWnd = null
 	var hrsrc HRsrc = null
 	var ptr DLGTEMPLATE = null
@@ -821,6 +836,8 @@ fun dialogBoxIndirectParamAorW(
 	param LParam,
 	flags UInt32
 ) SignedSizeOfPointer {
+	tofitaDebugLog("dialogBoxIndirectParamAorW called".utf16())
+
 	var ownerRef = ByValue<HWnd>()
 	var hwnd HWnd = dialog_CreateIndirect(hInstance, template, owner, dlgProc, param, Bool32.fromBool(flags == 0), ownerRef.pointer)
 
@@ -839,6 +856,7 @@ fun dialogBoxIndirectParamA(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) SignedSizeOfPointer {
+	tofitaDebugLog("dialogBoxIndirectParamA called".utf16())
 	return dialogBoxIndirectParamAorW(hInstance, template as! ConstArrayPointer<Void>, owner, dlgProc, param, 2u32)
 }
 
@@ -849,10 +867,12 @@ fun dialogBoxIndirectParamW(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) SignedSizeOfPointer {
+	tofitaDebugLog("dialogBoxIndirectParamW called".utf16())
 	return dialogBoxIndirectParamAorW(hInstance, template as! ConstArrayPointer<Void>, owner, dlgProc, param, 0)
 }
 
 fun endDialog(hwnd HWnd, retval SignedSizeOfPointer) Bool32 {
+	tofitaDebugLog("endDialog called".utf16())
 	var dlgInfo DIALOGINFO = null
 	var owner HWnd = null
 
@@ -887,6 +907,7 @@ fun endDialog(hwnd HWnd, retval SignedSizeOfPointer) Bool32 {
 }
 
 fun dialog_IsAccelerator(hwnd HWnd, hwndDlg HWnd, wParam WParam) Bool32 {
+	tofitaDebugLog("dialog_IsAccelerator called".utf16())
 	var hwndControl HWnd = hwnd
 	var hwndNext HWnd = null
 	var dlgCode Int32 = 0
@@ -949,6 +970,7 @@ fun dialog_IsAccelerator(hwnd HWnd, hwndDlg HWnd, wParam WParam) Bool32 {
 }
 
 fun dialog_FindMsgDestination(hwndDlg HWnd) HWnd {
+	tofitaDebugLog("dialog_FindMsgDestination called".utf16())
 	var hwndDlg = hwndDlg
 	while getWindowLongA(hwndDlg, -16) & 1024 != 0 {
 		var hParent HWnd = getParent(hwndDlg)
@@ -968,6 +990,7 @@ fun dialog_FindMsgDestination(hwndDlg HWnd) HWnd {
 }
 
 fun dialog_FixOneChildOnChangeFocus(hwndChild HWnd, lParam LParam) Bool32 {
+	tofitaDebugLog("dialog_FixOneChildOnChangeFocus called".utf16())
 	if 16i32 & (sendMessageW(hwndChild, 135u32, null, null) as! Int) != 0 {
 		sendMessageW(hwndChild, 244u32, null, 1 as! LParam)
 	}
@@ -976,6 +999,7 @@ fun dialog_FixOneChildOnChangeFocus(hwndChild HWnd, lParam LParam) Bool32 {
 }
 
 fun dialog_FixChildrenOnChangeFocus(hwndDlg HWnd, hwndNext HWnd) Void {
+	tofitaDebugLog("dialog_FixChildrenOnChangeFocus called".utf16())
 	var dlgcode_next Int32 = sendMessageW(hwndNext, 135u32, null, null) as! Int32
 	enumChildWindows(hwndDlg, dialog_FixOneChildOnChangeFocus, null)
 
@@ -1003,6 +1027,7 @@ fun dialog_FixChildrenOnChangeFocus(hwndDlg HWnd, hwndNext HWnd) Void {
 }
 
 fun dialog_IdToHwnd(hwndDlg HWnd, id Int32) HWnd {
+	tofitaDebugLog("dialog_IdToHwnd called".utf16())
 	var i Int32 = 0
 	var list ArrayPointer<HWnd> = win_ListChildren(hwndDlg)
 	var ret HWnd = null
@@ -1032,6 +1057,7 @@ fun dialog_IdToHwnd(hwndDlg HWnd, id Int32) HWnd {
 }
 
 fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
+	tofitaDebugLog("isDialogMessageW called".utf16())
 	var hwndDlg = hwndDlg
 	var dlgCode Int32 = 0
 
@@ -1168,10 +1194,12 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 }
 
 fun getDlgCtrlID(hwnd HWnd) Int32 {
+	tofitaDebugLog("getDlgCtrlID called".utf16())
 	return getWindowLongW(hwnd, -12) as! Int32
 }
 
 fun getDlgItem(hwndDlg HWnd, id Int32) HWnd {
+	tofitaDebugLog("getDlgItem called".utf16())
 	var i Int32 = 0
 	var list ArrayPointer<HWnd> = win_ListChildren(hwndDlg)
 	var ret HWnd = null
@@ -1201,6 +1229,7 @@ fun sendDlgItemMessageA(
 	wParam WParam,
 	lParam LParam
 ) LResult {
+	tofitaDebugLog("sendDlgItemMessageW called".utf16())
 	var hwndCtrl HWnd = getDlgItem(hwnd, id)
 
 	if hwndCtrl != null {
@@ -1217,6 +1246,7 @@ fun sendDlgItemMessageW(
 	wParam WParam,
 	lParam LParam
 ) LResult {
+	tofitaDebugLog("sendDlgItemMessageA called".utf16())
 	var hwndCtrl HWnd = getDlgItem(hwnd, id)
 
 	if hwndCtrl != null {
@@ -1227,10 +1257,12 @@ fun sendDlgItemMessageW(
 }
 
 fun setDlgItemTextA(hwnd HWnd, id Int32, lpString ConstArrayPointer<ClangChar>) Bool32 {
+	tofitaDebugLog("setDlgItemTextA called".utf16())
 	return sendDlgItemMessageA(hwnd, id, 12u32, null, lpString as! LParam) as! Bool32
 }
 
 fun setDlgItemTextW(hwnd HWnd, id Int32, lpString ConstArrayPointer<ClangWideChar>) Bool32 {
+	tofitaDebugLog("setDlgItemTextW called".utf16())
 	return sendDlgItemMessageW(hwnd, id, 12u32, null, lpString as! LParam) as! Bool32
 }
 
@@ -1240,6 +1272,7 @@ fun getDlgItemTextA(
 	str ArrayPointer<ClangChar>,
 	len Int32
 ) UInt32 {
+	tofitaDebugLog("getDlgItemTextA called".utf16())
 	if str != null and (len > 0) {
 		str[0] = null
 	}
@@ -1253,6 +1286,7 @@ fun getDlgItemTextW(
 	str ArrayPointer<ClangWideChar>,
 	len Int32
 ) UInt32 {
+	tofitaDebugLog("getDlgItemTextW called".utf16())
 	if str != null and (len > 0) {
 		str[0] = null
 	}
@@ -1266,6 +1300,7 @@ fun setDlgItemInt(
 	value UInt32,
 	fSigned Bool32
 ) Bool32 {
+	tofitaDebugLog("setDlgItemInt called".utf16())
 	var str ArrayByValue<ClangChar, 20> = [0]
 
 	if fSigned == Bool32.True {
@@ -1284,6 +1319,7 @@ fun getDlgItemInt(
 	translated ArrayPointer<Bool32>,
 	fSigned Bool32
 ) UInt32 {
+	tofitaDebugLog("getDlgItemInt called".utf16())
 	var str ArrayByValue<ClangChar, 30> = [0]
 	var endptr ArrayPointer<ClangChar> = null
 	var result Int32 = 0
@@ -1328,15 +1364,18 @@ fun getDlgItemInt(
 }
 
 fun checkDlgButton(hwnd HWnd, id Int32, check UInt32) Bool32 {
+	tofitaDebugLog("checkDlgButton called".utf16())
 	sendDlgItemMessageW(hwnd, id, 241u32, check as! WParam, null)
 	return Bool32.True
 }
 
 fun isDlgButtonChecked(hwnd HWnd, id Int32) UInt32 {
+	tofitaDebugLog("isDlgButtonChecked called".utf16())
 	return sendDlgItemMessageW(hwnd, id, 240u32, null, null) as! UInt32
 }
 
 fun checkRB(hwndChild HWnd, lParam LParam) Bool32 {
+	tofitaDebugLog("checkRB called".utf16())
 	var lChildID Int32 = getWindowLongW(hwndChild, -12)
 	var lpRadioGroup RadioGroup = lParam as! RadioGroup
 
@@ -1357,6 +1396,7 @@ fun checkRadioButton(
 	lastID Int32,
 	checkID Int32
 ) Bool32 {
+	tofitaDebugLog("checkRadioButton called".utf16())
 	var radioGroup RadioGroup = null
 	radioGroup.firstID = firstID as! UInt32
 	radioGroup.lastID = lastID as! UInt32
@@ -1365,14 +1405,17 @@ fun checkRadioButton(
 }
 
 fun ntUserGetDialogBaseUnits() UInt32 {
+	tofitaDebugLog("ntUserGetDialogBaseUnits called".utf16())
 	return 0 // TODO
 }
 
 fun getDialogBaseUnits() UInt32 {
+	tofitaDebugLog("getDialogBaseUnits called".utf16())
 	return ntUserGetDialogBaseUnits()
 }
 
 fun mapDialogRect(hwnd HWnd, rect Rect) Bool32 {
+	tofitaDebugLog("mapDialogRect called".utf16())
 	var dlgInfo DIALOGINFO = null
 
 	if (dlgInfo = dialog_get_info(hwnd, 0)) == null {
@@ -1387,6 +1430,7 @@ fun mapDialogRect(hwnd HWnd, rect Rect) Bool32 {
 }
 
 fun getNextDlgGroupItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
+	tofitaDebugLog("getNextDlgGroupItem called".utf16())
 	var hwndDlg = hwndDlg
 	var hwndCtrl = hwndCtrl
 	var hwnd HWnd = null
@@ -1490,6 +1534,7 @@ fun dialog_GetNextTabItem(
 	hwndCtrl HWnd,
 	fPrevious Bool32
 ) HWnd {
+	tofitaDebugLog("dialog_GetNextTabItem called".utf16())
 	var dsStyle Int32 = 0
 	var exStyle Int32 = 0
 	// TODO compiles var wndSearch UInt32 = (fPrevious) ? 3u32: 2u32
@@ -1563,6 +1608,7 @@ fun dialog_GetNextTabItem(
 }
 
 fun getNextDlgTabItem(hwndDlg HWnd, hwndCtrl HWnd, fPrevious Bool32) HWnd {
+	tofitaDebugLog("getNextDlgTabItem called".utf16())
 	var hwndDlg = hwndDlg
 	var hwndCtrl = hwndCtrl
 	hwndDlg = win_GetFullHandle(hwndDlg)
@@ -1587,6 +1633,7 @@ fun dialog_DlgDirSelect(
 	unicode Bool32,
 	combo Bool32
 ) Bool32 {
+	tofitaDebugLog("dialog_DlgDirSelect called".utf16())
 	var buffer ArrayPointer<ClangWideChar> = null
 	var ptr ArrayPointer<ClangWideChar> = null
 	var item Int32 = 0
@@ -1654,6 +1701,7 @@ fun dialog_DlgDirListW(
 	attrib UInt32,
 	combo Bool32
 ) Int32 {
+	tofitaDebugLog("dialog_DlgDirListW called".utf16())
 	var spec = spec
 	var attrib = attrib
 	var hwnd HWnd = null
@@ -1752,6 +1800,7 @@ fun dialog_DlgDirListA(
 	attrib UInt32,
 	combo Bool32
 ) Int32 {
+	tofitaDebugLog("dialog_DlgDirListA called".utf16())
 	if spec != null {
 		var ret Int32 = 0
 		var len Int32 = multiByteToWideChar(0, 0, spec, -1, null, 0)
@@ -1772,6 +1821,7 @@ fun dlgDirSelectExA(
 	len Int32,
 	id Int32
 ) Bool32 {
+	tofitaDebugLog("dlgDirSelectExA called".utf16())
 	return dialog_DlgDirSelect(hwnd, str as! ArrayPointer<ClangWideChar>, len, id, 0, 0)
 }
 
@@ -1781,6 +1831,7 @@ fun dlgDirSelectExW(
 	len Int32,
 	id Int32
 ) Bool32 {
+	tofitaDebugLog("dlgDirSelectExW called".utf16())
 	return dialog_DlgDirSelect(hwnd, str, len, id, Bool32.True, 0)
 }
 
@@ -1790,6 +1841,7 @@ fun dlgDirSelectComboBoxExA(
 	len Int32,
 	id Int32
 ) Bool32 {
+	tofitaDebugLog("dlgDirSelectComboBoxExA called".utf16())
 	return dialog_DlgDirSelect(hwnd, str as! ArrayPointer<ClangWideChar>, len, id, 0, Bool32.True)
 }
 
@@ -1799,6 +1851,7 @@ fun dlgDirSelectComboBoxExW(
 	len Int32,
 	id Int32
 ) Bool32 {
+	tofitaDebugLog("dlgDirSelectComboBoxExW called".utf16())
 	return dialog_DlgDirSelect(hwnd, str, len, id, Bool32.True, Bool32.True)
 }
 
@@ -1809,6 +1862,7 @@ fun dlgDirListA(
 	idStatic Int32,
 	attrib UInt32
 ) Int32 {
+	tofitaDebugLog("dlgDirListA called".utf16())
 	return dialog_DlgDirListA(hDlg, spec, idLBox, idStatic, attrib, 0)
 }
 
@@ -1819,6 +1873,7 @@ fun dlgDirListW(
 	idStatic Int32,
 	attrib UInt32
 ) Int32 {
+	tofitaDebugLog("dlgDirListW called".utf16())
 	return dialog_DlgDirListW(hDlg, spec, idLBox, idStatic, attrib, 0)
 }
 
@@ -1829,6 +1884,7 @@ fun dlgDirListComboBoxA(
 	idStatic Int32,
 	attrib UInt32
 ) Int32 {
+	tofitaDebugLog("dlgDirListComboBoxA called".utf16())
 	return dialog_DlgDirListA(hDlg, spec, idCBox, idStatic, attrib, Bool32.True)
 }
 
@@ -1839,5 +1895,6 @@ fun dlgDirListComboBoxW(
 	idStatic Int32,
 	attrib UInt32
 ) Int32 {
+	tofitaDebugLog("dlgDirListComboBoxW called".utf16())
 	return dialog_DlgDirListW(hDlg, spec, idCBox, idStatic, attrib, Bool32.True)
 }

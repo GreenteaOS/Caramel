@@ -14,14 +14,17 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 fun ntUserGetDialogInfo(hwnd HWnd) ArrayPointer<Void> {
+	tofitaDebugLog("ntUserGetDialogInfo called".utf16())
 	return null // TODO
 }
 
 fun ntUserSetDialogInfo(hwnd HWnd, dlgInfo ArrayPointer<Void>) Void {
+	tofitaDebugLog("ntUserSetDialogInfo called".utf16())
 	// TODO
 }
 
 fun dialog_get_info(hwnd HWnd, create Bool32) DIALOGINFO {
+	tofitaDebugLog("dialog_get_info called".utf16())
 	var dlgInfo DIALOGINFO = null
 	dlgInfo = ntUserGetDialogInfo(hwnd) as! DIALOGINFO
 

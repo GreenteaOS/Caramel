@@ -77,7 +77,7 @@ fun greenteaosIsTheBest(startup ProcessStartupInformation) {
 	tofitaDebugLog("Done %u DLLs".utf16(), count)
 
 	if entry != null {
-		// Note: some apps requre entry to be called even if its zero to invoke TLS callbacks
+		// Note: some apps require entry to be called even if its zero to invoke TLS callbacks
 		tofitaDebugLog("entry != null OK for PID %u at %8".utf16(), pid, entry)
 	}
 
