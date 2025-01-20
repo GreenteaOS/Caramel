@@ -92,9 +92,11 @@ fun dialog_GetControl32(p ConstArrayPointer<UInt16>, info DlgControlInfo, dialog
 	}
 
 	if (p [0] as! Int32) == 65535 {
+		// Basically "Button" is 0x80
 		var class_names ArrayByValue<ConstArrayPointer<ClangWideChar>, 6 > = ["Button", "Edit", "Static", "ListBox", "ScrollBar", "ComboBox"]
 		// TODO ClangWideString
 		var id UInt16 = p.offsetItems(1) [0]
+		// Windows treats dialog control class ids 0-5 same way as 0x80-0x85
 
 		if ((id as! Int32) >= 128) and ((id as! Int32) <= 133) {
 			id -= 128
@@ -122,14 +124,14 @@ fun dialog_GetControl32(p ConstArrayPointer<UInt16>, info DlgControlInfo, dialog
 
 	if (p [0]) != 0 {
 		info.data = p as! ConstArrayPointer<Void>
-		p = p.offsetItems((p [0] as! UInt32) / sizeOf<UInt32>())
+		p = p.offsetItems((p [0] as! UInt32) / sizeOf<UInt16>()) // sizeof(WORD)
 	} else {
 		info.data = null
 	}
 
 	p = p.offsetItems(1)
-	return (((p as! SizeOfPointer) + 3u32) & (~3 as! UInt32)) as! ConstArrayPointer<UInt16>
 	tofitaDebugLog("dialog_GetControl32 done".utf16())
+	return (((p as! SizeOfPointer) + 3u64) & (~3u64)) as! ConstArrayPointer<UInt16>
 }
 
 fun dialog_CreateControls32(
@@ -143,7 +145,8 @@ fun dialog_CreateControls32(
 
 	var template = template
 	var dlgInfo DIALOGINFO = dialog_get_info(hwnd, Bool32.True)
-	var info DlgControlInfo = null
+	var infoRef ByValue<DlgControlInfo> = ByValue<DlgControlInfo>()
+	var info = infoRef.ref
 	var hwndCtrl HWnd = null
 	var hwndDefButton HWnd = null
 	var items Int32 = dlgTemplate.nbItems as! Int32
@@ -243,6 +246,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 	signature = p[0]
 	p = p.offsetItems(1)
 
+	// TODO This cast to Int32 seems useless
 	if (dlgver as! Int32) == 1 and (signature as! Int32) == 65535 {
 		result.dialogEx = Bool32.True
 		result.helpId = (p as! ConstArrayPointer<UInt32>) [0]
@@ -252,6 +256,7 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 		result.style = (p as! ConstArrayPointer<UInt32>) [0]
 		p = p.offsetItems(2)
 	} else {
+		// TODO p - 2
 		result.style = ((p - 2) as! ConstArrayPointer<UInt32>) [0]
 		result.dialogEx = 0
 		result.helpId = 0
@@ -300,7 +305,10 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 	result.weight = 0
 	result.italic = 0
 
-	if result.style & 64u32 != 0 {
+	let ds_setfont = 64u32
+	// TODO Hexa: failed with `	if result.style & 64u32 != 0 {` in C `if (result->style & DS_SETFONT)` no `!=`
+	// ^ the bitwise operators (& and |) have lower precedence than the equality operator (==)
+	if (result.style & ds_setfont) != 0 {
 		result.pointSize = p[0] as! Int16
 		p = p.offsetItems(1)
 
@@ -319,8 +327,9 @@ fun dialog_ParseTemplate32(template ConstArrayPointer<ClangChar>, result DlgTemp
 		}
 	}
 
-	return (((p as! SizeOfPointer) + 3u32) & (~3 as! UInt32)) as! ConstArrayPointer<ClangChar>
 	tofitaDebugLog("dialog_ParseTemplate32 done".utf16())
+	// First control is on dword boundary
+	return (((p as! UInt64) + 3u64) & ~3u64) as! ConstArrayPointer<ClangChar>
 }
 
 fun dialog_CreateIndirect(
@@ -332,15 +341,14 @@ fun dialog_CreateIndirect(
 	unicode Bool32,
 	modal_owner ArrayPointer<HWnd>
 ) HWnd {
-	var dlgTemplate = dlgTemplate
 	tofitaDebugLog("dialog_CreateIndirect called".utf16())
 
 	var owner = owner
 	var hwnd HWnd = null
 	var rect ByValue<Rect> = ByValue<Rect>()
 	var pos ByValue<Point> = ByValue<Point>()
-	var size ByValue<Size> = ByValue<Size>()
-	var template DlgTemplate = null
+	var templateRef ByValue<DlgTemplate> = ByValue<DlgTemplate>()
+	var template DlgTemplate = templateRef.ref
 	var dlgInfo DIALOGINFO = null
 	var units UInt32 = getDialogBaseUnits()
 	var disabled_owner HWnd = null
@@ -354,7 +362,7 @@ fun dialog_CreateIndirect(
 		return null
 	}
 
-	dlgTemplate = dialog_ParseTemplate32(dlgTemplate as! ConstArrayPointer<ClangChar>, template) as! ConstArrayPointer<Void>
+	let dlgTemplate = dialog_ParseTemplate32(dlgTemplate as! ConstArrayPointer<ClangChar>, template) as! ConstArrayPointer<Void>
 
 	if template.menuName != null {
 		hMenu = loadMenuW(hInst, template.menuName)
@@ -412,6 +420,7 @@ fun dialog_CreateIndirect(
 	adjustWindowRectEx(rect.ref, template.style, hMenu != null, template.exStyle)
 	pos.ref.x = rect.ref.left
 	pos.ref.y = rect.ref.top
+	var size ByValue<Size> = ByValue<Size>()
 	size.ref.cx = rect.ref.right - rect.ref.left
 	size.ref.cy = rect.ref.bottom - rect.ref.top
 
@@ -619,7 +628,7 @@ fun createDialogParamA(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) HWnd {
-	tofitaDebugLog("[dialogs] createDialogParamW called".utf16())
+	tofitaDebugLog("createDialogParamA called".utf16())
 
 	var hrsrc HRsrc = null
 	var ptr DLGTEMPLATE = null
@@ -643,7 +652,7 @@ fun createDialogParamW(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) HWnd {
-	tofitaDebugLog("createDialogParamA called".utf16())
+	tofitaDebugLog("[dialogs] createDialogParamW called".utf16())
 
 	var hrsrc HRsrc = null
 	var ptr DLGTEMPLATE = null
@@ -769,7 +778,7 @@ fun dialogBoxParamA(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) SignedSizeOfPointer {
-	tofitaDebugLog("dialogBoxParamW called".utf16())
+	tofitaDebugLog("dialogBoxParamA called".utf16())
 
 	var hwnd HWnd = null
 	var hrsrc HRsrc = null
@@ -802,7 +811,7 @@ fun dialogBoxParamW(
 	dlgProc @noCapture @stdcall (HWnd, UInt32, WParam, LParam) => SignedSizeOfPointer,
 	param LParam
 ) SignedSizeOfPointer {
-	tofitaDebugLog("dialogBoxParamA called".utf16())
+	tofitaDebugLog("dialogBoxParamW called".utf16())
 
 	var hwnd HWnd = null
 	var hrsrc HRsrc = null
@@ -1229,7 +1238,7 @@ fun sendDlgItemMessageA(
 	wParam WParam,
 	lParam LParam
 ) LResult {
-	tofitaDebugLog("sendDlgItemMessageW called".utf16())
+	tofitaDebugLog("sendDlgItemMessageA called".utf16())
 	var hwndCtrl HWnd = getDlgItem(hwnd, id)
 
 	if hwndCtrl != null {
@@ -1246,7 +1255,7 @@ fun sendDlgItemMessageW(
 	wParam WParam,
 	lParam LParam
 ) LResult {
-	tofitaDebugLog("sendDlgItemMessageA called".utf16())
+	tofitaDebugLog("sendDlgItemMessageW called".utf16())
 	var hwndCtrl HWnd = getDlgItem(hwnd, id)
 
 	if hwndCtrl != null {
@@ -1275,6 +1284,7 @@ fun getDlgItemTextA(
 	tofitaDebugLog("getDlgItemTextA called".utf16())
 	if str != null and (len > 0) {
 		str[0] = null
+		// TODO ^ not `null` but 0
 	}
 
 	return sendDlgItemMessageA(hwnd, id, 13u32, len as! WParam, str as! LParam) as! UInt32
@@ -1379,7 +1389,7 @@ fun checkRB(hwndChild HWnd, lParam LParam) Bool32 {
 	var lChildID Int32 = getWindowLongW(hwndChild, -12)
 	var lpRadioGroup RadioGroup = lParam as! RadioGroup
 
-	if ((lChildID as! UInt32) >=(lpRadioGroup.firstID as! UInt32)) and ((lChildID as! UInt32) <=(lpRadioGroup.lastID as! UInt32)) {
+	if ((lChildID as! UInt32) >= (lpRadioGroup.firstID as! UInt32)) and ((lChildID as! UInt32) <= (lpRadioGroup.lastID as! UInt32)) {
 		if (lChildID as! UInt32) == (lpRadioGroup.checkID as! UInt32) {
 			sendMessageW(hwndChild, 241u32, 1 as! WParam, null)
 		} else {
@@ -1661,6 +1671,7 @@ fun dialog_DlgDirSelect(
 		return Bool32.False
 	}
 
+	// TODO `393 as! UInt32`
 	sendMessageW(listbox, (combo == Bool32.True) ? 328u32: 393 as! UInt32, item as! WParam, buffer as! LParam)
 
 	if (ret = Bool32.fromBool((buffer [0] as! Int32) == 91)) == Bool32.True {
