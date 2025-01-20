@@ -32,6 +32,7 @@ rootClass.next = null // TODO why I do this?
 // TODO to enums
 let windowIsWindow UInt16 = 0xA1CE
 
+/// Window == HWnd
 @struct
 class Window {
 	// @rename('windowIsWindow_') // TODO renames due to global
@@ -41,9 +42,25 @@ class Window {
 	var proc WindowProcedure
 	var fb ByValue<WindowFramebuffer>
 	var instanceId UInt64 // Random unique ID
-	new () { }
+	let children [Window] = []
+	var x Int32
+	var y Int32
+	var width Int32
+	var height Int32
+	var title String
+
+	// Clipping for painting
+	var clipX Int32 = 0
+	var clipY Int32 = 0
+	var clipWidth Int32 = 0
+	var clipHeight Int32 = 0
+
+	new () {
+		windowIsWindowSecret = windowIsWindow
+	}
 }
 
+// TODO just allocate global and take its address as a secret
 let windowIsRemoteWindow UInt16 = 0xA1CB
 
 // Window of other process

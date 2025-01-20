@@ -116,8 +116,8 @@ fun createWindowExW(
 	y Int32,
 	nWidth Int32,
 	nHeight Int32,
-	hWndParent HWnd,
-	hMenu HMenu,
+	hWndParent HWnd?,
+	hMenu HMenu?,
 	hInstance HInstance,
 	lpParam LParam
 ) HWnd {
@@ -169,12 +169,10 @@ fun createWindowExW(
 	payload.dwStyle = dwStyle
 	payload.x = x
 	payload.y = y
-	payload.nWidth = nWidth
-	payload.nHeight = nHeight
-	payload.hWndParent = hWndParent as! UInt64
-	payload.hMenu = hMenu as! UInt64
-	payload.hInstance = hInstance as! UInt64
-	payload.lpParam = lpParam as! UInt64
+	// TODO test zero-width
+	// TODO respect CW_USE_DEFAULT etc for pos and size
+	payload.nWidth = nWidth <= 0? 316 : nWidth
+	payload.nHeight = nHeight <= 0? 163 : nHeight
 	tofitaDebugLog("CreateWindowExW requested size %d x %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
 	// TODO pass params as tags? are all those params even needed in server?
 
@@ -186,8 +184,15 @@ fun createWindowExW(
 	payload.hWnd = hWnd as! UInt64
 
 	// Create native window counterpart
-	var windowId UInt64 = tofitaCreateWindowEx(payload)
+	let windowId UInt64 = hWndParent == null ? tofitaCreateWindowEx(payload) : 0
 	// TODO ^ check the result if it succeeded
+
+	if let parent = handleToWindow(hWndParent) {
+		tofitaDebugLog("window added as a child to {%8}\n".utf16(), parent as! UInt64)
+		// TODO notify both of being added?
+		parent.children.push(window)
+		window.fb = parent.fb
+	}
 
 	window.windowId = windowId
 	tofitaDebugLog("window.windowId = {%8}\n".utf16(), window.windowId as! UInt64)
@@ -195,6 +200,25 @@ fun createWindowExW(
 	tofitaDebugLog("wc.lpfnWndProc = {%8}\n".utf16(), wc.lpfnWndProc as! UInt64)
 	window.proc = wc.lpfnWndProc
 	tofitaDebugLog("window.proc = {%8}\n".utf16(), window.proc as! UInt64)
+
+	window.x = x
+	window.y = y
+	window.width = payload.nWidth
+	window.height = payload.nHeight
+	// TODO null should produce `"null"`
+	// TODO window name limit?
+	window.title = isAtom(lpWindowName as! UInt64) ? '#' + (lpWindowName as! UInt64) : String.fromUTF16zUpTo(lpWindowName as! ConstArrayPointer<UInt16>, 4096)
+
+	if windowId != 0 {
+		// Whole framebuffer
+		window.clipX = 0
+		window.clipY = 0
+
+		window.clipWidth = window.width
+		window.clipHeight = window.height
+
+		window.fb.ref.ownerWindowId = windowId
+	}
 
 	// Initial paint
 	// TODO should be called somewhere else, in syscall of windows creation?
@@ -396,10 +420,10 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 	tofitaDebugLog("FillRect called".utf16())
 
-	var fb = dc as! WindowFramebuffer
+	let fb = dc as! WindowFramebuffer
 	// TODO validate != null and that it is actually a WindowFrameBuffer
 
-	var color = ByValue<Pixel32>()
+	let color = ByValue<Pixel32>()
 	// TODO by val
 	color.ref.color = 0xFFAA0000u32
 
@@ -447,6 +471,8 @@ fun defWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResul
 	if window == null {
 		return null
 	}
+
+	// TODO only for overlapped windows?
 	if uMsg == Message.WM_CLOSE {
 		// TODO DestroyWindow(hWnd)
 		// TODO probably should be async post?
@@ -455,6 +481,16 @@ fun defWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResul
 		window.proc(hWnd, Message.WM_NON_CLIENT_DESTROY, null, null)
 		return null
 	}
+
+	if uMsg == Message.WM_ERASE_BACKGROUND {
+		// TODO
+	}
+
+	// If the update region also intersects the non-client area of the window, the system sends WM_NCPAINT.
+	if uMsg == Message.WM_NON_CLIENT_PAINT {
+		// TODO
+	}
+
 	tofitaDebugLog("DefWindowProcW done".utf16())
 	return null
 }
