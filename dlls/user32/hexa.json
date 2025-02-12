@@ -13,6 +13,7 @@
 		"user32.header",
 		"textDrawing",
 		"user32",
+		"extras",
 		"defaultProcedure",
 		"dialogs",
 		"user32Vars"

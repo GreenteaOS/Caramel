@@ -131,13 +131,6 @@ fun rtlUnwind(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetLastError')
-fun setLastError(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetLastError called".utf16())
-	return 0
-}
-
 @dllExport('InitializeCriticalSectionAndSpinCount')
 fun initializeCriticalSectionAndSpinCount(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -236,13 +229,6 @@ fun outputDebugStringW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
-	return 0
-}
-
 @dllExport('FindClose')
 fun findClose(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -303,20 +289,6 @@ fun getCommandLineA(stub SizeOfPointer) SizeOfPointer {
 fun getCommandLineW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetCommandLineW called".utf16())
-	return 0
-}
-
-@dllExport('MultiByteToWideChar')
-fun multiByteToWideChar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MultiByteToWideChar called".utf16())
-	return 0
-}
-
-@dllExport('WideCharToMultiByte')
-fun wideCharToMultiByte(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WideCharToMultiByte called".utf16())
 	return 0
 }
 
@@ -411,13 +383,6 @@ fun lCMapStringW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
 @dllExport('SetConsoleCtrlHandler')
 fun setConsoleCtrlHandler(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -429,90 +394,6 @@ fun setConsoleCtrlHandler(stub SizeOfPointer) SizeOfPointer {
 fun heapReAlloc(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("HeapReAlloc called".utf16())
-	return 0
-}
-
-@dllExport('WriteConsoleW')
-fun writeConsoleW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WriteConsoleW called".utf16())
-	return 0
-}
-
-@dllExport('CloseHandle')
-fun closeHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CloseHandle called".utf16())
-	return 0
-}
-
-@dllExport('CreateFileW')
-fun createFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFileW called".utf16())
-	return 0
-}
-
-@dllExport('ReadConsoleW')
-fun readConsoleW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReadConsoleW called".utf16())
-	return 0
-}
-
-@dllExport('ReadFile')
-fun readFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReadFile called".utf16())
-	return 0
-}
-
-@dllExport('SetFilePointerEx')
-fun setFilePointerEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetFilePointerEx called".utf16())
-	return 0
-}
-
-@dllExport('GetFileSizeEx')
-fun getFileSizeEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetFileSizeEx called".utf16())
-	return 0
-}
-
-@dllExport('GetConsoleMode')
-fun getConsoleMode(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetConsoleMode called".utf16())
-	return 0
-}
-
-@dllExport('GetConsoleOutputCP')
-fun getConsoleOutputCP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetConsoleOutputCP called".utf16())
-	return 0
-}
-
-@dllExport('FlushFileBuffers')
-fun flushFileBuffers(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FlushFileBuffers called".utf16())
-	return 0
-}
-
-@dllExport('HeapReAlloc')
-fun heapReAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapReAlloc called".utf16())
-	return 0
-}
-
-@dllExport('InitializeSListHead')
-fun initializeSListHead(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InitializeSListHead called".utf16())
 	return 0
 }
 
@@ -537,20 +418,6 @@ fun rtlVirtualUnwind(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('IsDebuggerPresent')
-fun isDebuggerPresent(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsDebuggerPresent called".utf16())
-	return 0
-}
-
-@dllExport('IsProcessorFeaturePresent')
-fun isProcessorFeaturePresent(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsProcessorFeaturePresent called".utf16())
-	return 0
-}
-
 @dllExport('RtlUnwindEx')
 fun rtlUnwindEx(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -558,346 +425,10 @@ fun rtlUnwindEx(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('InterlockedPushEntrySList')
-fun interlockedPushEntrySList(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InterlockedPushEntrySList called".utf16())
-	return 0
-}
-
-@dllExport('InterlockedFlushSList')
-fun interlockedFlushSList(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InterlockedFlushSList called".utf16())
-	return 0
-}
-
-@dllExport('SetLastError')
-fun setLastError(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetLastError called".utf16())
-	return 0
-}
-
-@dllExport('InitializeCriticalSectionAndSpinCount')
-fun initializeCriticalSectionAndSpinCount(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InitializeCriticalSectionAndSpinCount called".utf16())
-	return 0
-}
-
-@dllExport('TlsAlloc')
-fun tlsAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsAlloc called".utf16())
-	return 0
-}
-
-@dllExport('TlsSetValue')
-fun tlsSetValue(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsSetValue called".utf16())
-	return 0
-}
-
-@dllExport('TlsFree')
-fun tlsFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsFree called".utf16())
-	return 0
-}
-
-@dllExport('LoadLibraryExW')
-fun loadLibraryExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadLibraryExW called".utf16())
-	return 0
-}
-
-@dllExport('EncodePointer')
-fun encodePointer(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EncodePointer called".utf16())
-	return 0
-}
-
-@dllExport('RaiseException')
-fun raiseException(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RaiseException called".utf16())
-	return 0
-}
-
 @dllExport('RtlPcToFileHeader')
 fun rtlPcToFileHeader(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("RtlPcToFileHeader called".utf16())
-	return 0
-}
-
-@dllExport('GetStdHandle')
-fun getStdHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetStdHandle called".utf16())
-	return 0
-}
-
-@dllExport('WriteFile')
-fun writeFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WriteFile called".utf16())
-	return 0
-}
-
-@dllExport('GetModuleFileNameW')
-fun getModuleFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('RtlUnwind')
-fun rtlUnwind(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RtlUnwind called".utf16())
-	return 0
-}
-
-@dllExport('GetModuleHandleExW')
-fun getModuleHandleExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleHandleExW called".utf16())
-	return 0
-}
-
-@dllExport('GetCurrentThread')
-fun getCurrentThread(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCurrentThread called".utf16())
-	return 0
-}
-
-@dllExport('OutputDebugStringW')
-fun outputDebugStringW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("OutputDebugStringW called".utf16())
-	return 0
-}
-
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
-	return 0
-}
-
-@dllExport('FindClose')
-fun findClose(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindClose called".utf16())
-	return 0
-}
-
-@dllExport('FindFirstFileExW')
-fun findFirstFileExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindFirstFileExW called".utf16())
-	return 0
-}
-
-@dllExport('FindNextFileW')
-fun findNextFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindNextFileW called".utf16())
-	return 0
-}
-
-@dllExport('IsValidCodePage')
-fun isValidCodePage(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsValidCodePage called".utf16())
-	return 0
-}
-
-@dllExport('GetACP')
-fun getACP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetACP called".utf16())
-	return 0
-}
-
-@dllExport('GetOEMCP')
-fun getOEMCP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetOEMCP called".utf16())
-	return 0
-}
-
-@dllExport('GetCPInfo')
-fun getCPInfo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCPInfo called".utf16())
-	return 0
-}
-
-@dllExport('GetCommandLineA')
-fun getCommandLineA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCommandLineA called".utf16())
-	return 0
-}
-
-@dllExport('GetCommandLineW')
-fun getCommandLineW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCommandLineW called".utf16())
-	return 0
-}
-
-@dllExport('MultiByteToWideChar')
-fun multiByteToWideChar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MultiByteToWideChar called".utf16())
-	return 0
-}
-
-@dllExport('WideCharToMultiByte')
-fun wideCharToMultiByte(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WideCharToMultiByte called".utf16())
-	return 0
-}
-
-@dllExport('GetEnvironmentStringsW')
-fun getEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetEnvironmentStringsW called".utf16())
-	return 0
-}
-
-@dllExport('FreeEnvironmentStringsW')
-fun freeEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FreeEnvironmentStringsW called".utf16())
-	return 0
-}
-
-@dllExport('SetEnvironmentVariableW')
-fun setEnvironmentVariableW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetEnvironmentVariableW called".utf16())
-	return 0
-}
-
-@dllExport('SetStdHandle')
-fun setStdHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetStdHandle called".utf16())
-	return 0
-}
-
-@dllExport('GetFileType')
-fun getFileType(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetFileType called".utf16())
-	return 0
-}
-
-@dllExport('GetStringTypeW')
-fun getStringTypeW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetStringTypeW called".utf16())
-	return 0
-}
-
-@dllExport('IsValidLocale')
-fun isValidLocale(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsValidLocale called".utf16())
-	return 0
-}
-
-@dllExport('GetUserDefaultLCID')
-fun getUserDefaultLCID(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetUserDefaultLCID called".utf16())
-	return 0
-}
-
-@dllExport('EnumSystemLocalesW')
-fun enumSystemLocalesW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EnumSystemLocalesW called".utf16())
-	return 0
-}
-
-@dllExport('GetDateFormatW')
-fun getDateFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDateFormatW called".utf16())
-	return 0
-}
-
-@dllExport('GetTimeFormatW')
-fun getTimeFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetTimeFormatW called".utf16())
-	return 0
-}
-
-@dllExport('CompareStringW')
-fun compareStringW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CompareStringW called".utf16())
-	return 0
-}
-
-@dllExport('LCMapStringW')
-fun lCMapStringW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LCMapStringW called".utf16())
-	return 0
-}
-
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
-@dllExport('SetConsoleCtrlHandler')
-fun setConsoleCtrlHandler(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetConsoleCtrlHandler called".utf16())
-	return 0
-}
-
-@dllExport('HeapSize')
-fun heapSize(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapSize called".utf16())
-	return 0
-}
-
-@dllExport('SetDlgItemInt')
-fun setDlgItemInt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetDlgItemInt called".utf16())
-	return 0
-}
-
-@dllExport('GetDlgItemInt')
-fun getDlgItemInt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDlgItemInt called".utf16())
-	return 0
-}
-
-@dllExport('EndDialog')
-fun endDialog(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDialog called".utf16())
 	return 0
 }
 
@@ -926,13 +457,6 @@ fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
 fun setTimer(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetTimer called".utf16())
-	return 0
-}
-
-@dllExport('SetRect')
-fun setRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRect called".utf16())
 	return 0
 }
 
@@ -978,13 +502,6 @@ fun ptInRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('MonitorFromRect')
-fun monitorFromRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MonitorFromRect called".utf16())
-	return 0
-}
-
 @dllExport('LoadIconW')
 fun loadIconW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1020,13 +537,6 @@ fun intersectRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetMonitorInfoW')
-fun getMonitorInfoW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetMonitorInfoW called".utf16())
-	return 0
-}
-
 @dllExport('GetSysColorBrush')
 fun getSysColorBrush(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1038,13 +548,6 @@ fun getSysColorBrush(stub SizeOfPointer) SizeOfPointer {
 fun getDC(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetDC called".utf16())
-	return 0
-}
-
-@dllExport('DialogBoxParamW')
-fun dialogBoxParamW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DialogBoxParamW called".utf16())
 	return 0
 }
 
@@ -1066,20 +569,6 @@ fun bitBlt(stub SizeOfPointer) SizeOfPointer {
 fun deleteDC(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
-}
-
-@dllExport('DeleteObject')
-fun deleteObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteObject called".utf16())
-	return 0
-}
-
-@dllExport('SelectObject')
-fun selectObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectObject called".utf16())
 	return 0
 }
 
@@ -1153,20 +642,6 @@ fun bsearch(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('sprintf')
-fun sprintf(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("sprintf called".utf16())
-	return 0
-}
-
-@dllExport('SetLastError')
-fun setLastError(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetLastError called".utf16())
-	return 0
-}
-
 @dllExport('LocalReAlloc')
 fun localReAlloc(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1178,20 +653,6 @@ fun localReAlloc(stub SizeOfPointer) SizeOfPointer {
 fun getEnvironmentVariableA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetEnvironmentVariableA called".utf16())
-	return 0
-}
-
-@dllExport('lstrlenW')
-fun lstrlenW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrlenW called".utf16())
-	return 0
-}
-
-@dllExport('lstrcpynW')
-fun lstrcpynW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrcpynW called".utf16())
 	return 0
 }
 
@@ -1265,13 +726,6 @@ fun htmlHelpW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CloseHandle')
-fun closeHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CloseHandle called".utf16())
-	return 0
-}
-
 @dllExport('CreateSemaphoreW')
 fun createSemaphoreW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1293,24 +747,10 @@ fun fileTimeToSystemTime(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('FindClose')
-fun findClose(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindClose called".utf16())
-	return 0
-}
-
 @dllExport('FindFirstFileW')
 fun findFirstFileW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("FindFirstFileW called".utf16())
-	return 0
-}
-
-@dllExport('FindResourceW')
-fun findResourceW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindResourceW called".utf16())
 	return 0
 }
 
@@ -1321,38 +761,10 @@ fun flushInstructionCache(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetDateFormatW')
-fun getDateFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDateFormatW called".utf16())
-	return 0
-}
-
 @dllExport('GetFullPathNameW')
 fun getFullPathNameW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetFullPathNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetModuleHandleExW')
-fun getModuleHandleExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleHandleExW called".utf16())
-	return 0
-}
-
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
-@dllExport('GetTimeFormatW')
-fun getTimeFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetTimeFormatW called".utf16())
 	return 0
 }
 
@@ -1363,38 +775,10 @@ fun globalFree(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
-	return 0
-}
-
-@dllExport('HeapReAlloc')
-fun heapReAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapReAlloc called".utf16())
-	return 0
-}
-
-@dllExport('HeapSize')
-fun heapSize(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapSize called".utf16())
-	return 0
-}
-
 @dllExport('LoadLibraryA')
 fun loadLibraryA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("LoadLibraryA called".utf16())
-	return 0
-}
-
-@dllExport('LoadResource')
-fun loadResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadResource called".utf16())
 	return 0
 }
 
@@ -1412,38 +796,10 @@ fun releaseSemaphore(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetLastError')
-fun setLastError(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetLastError called".utf16())
-	return 0
-}
-
 @dllExport('SizeofResource')
 fun sizeofResource(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SizeofResource called".utf16())
-	return 0
-}
-
-@dllExport('TlsAlloc')
-fun tlsAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsAlloc called".utf16())
-	return 0
-}
-
-@dllExport('TlsFree')
-fun tlsFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsFree called".utf16())
-	return 0
-}
-
-@dllExport('TlsSetValue')
-fun tlsSetValue(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsSetValue called".utf16())
 	return 0
 }
 
@@ -1475,20 +831,7 @@ fun lstrcmpiW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('lstrcpynW')
-fun lstrcpynW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrcpynW called".utf16())
-	return 0
-}
-
-@dllExport('lstrlenW')
-fun lstrlenW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrlenW called".utf16())
-	return 0
-}
-
+// TODO reported as unresolved (could be x32 underscore problem) (try @linkName + @rename)
 @dllExport('__argc')
 fun __argc(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1496,6 +839,7 @@ fun __argc(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// TODO reported as unresolved
 @dllExport('__wargv')
 fun __wargv(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1503,6 +847,7 @@ fun __wargv(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// TODO reported as unresolved
 @dllExport('_vscwprintf')
 fun _vscwprintf(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1510,6 +855,7 @@ fun _vscwprintf(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// TODO reported as unresolved
 @dllExport('_wtoi')
 fun _wtoi(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1517,24 +863,10 @@ fun _wtoi(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('rand')
-fun rand(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("rand called".utf16())
-	return 0
-}
-
 @dllExport('realloc')
 fun realloc(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("realloc called".utf16())
-	return 0
-}
-
-@dllExport('strcmp')
-fun strcmp(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("strcmp called".utf16())
 	return 0
 }
 
@@ -1549,13 +881,6 @@ fun vswprintf(stub SizeOfPointer) SizeOfPointer {
 fun wcsncpy(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("wcsncpy called".utf16())
-	return 0
-}
-
-@dllExport('wcsrchr')
-fun wcsrchr(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsrchr called".utf16())
 	return 0
 }
 
@@ -1622,13 +947,6 @@ fun pathStripPathW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('BitBlt')
-fun bitBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BitBlt called".utf16())
-	return 0
-}
-
 @dllExport('CreateBitmap')
 fun createBitmap(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1650,24 +968,10 @@ fun createCompatibleBitmap(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CreateCompatibleDC')
-fun createCompatibleDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateCompatibleDC called".utf16())
-	return 0
-}
-
 @dllExport('CreateDIBSection')
 fun createDIBSection(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("CreateDIBSection called".utf16())
-	return 0
-}
-
-@dllExport('CreateFontIndirectW')
-fun createFontIndirectW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFontIndirectW called".utf16())
 	return 0
 }
 
@@ -1685,20 +989,6 @@ fun createSolidBrush(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('DeleteDC')
-fun deleteDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
-}
-
-@dllExport('DeleteObject')
-fun deleteObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteObject called".utf16())
-	return 0
-}
-
 @dllExport('Ellipse')
 fun ellipse(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1710,13 +1000,6 @@ fun ellipse(stub SizeOfPointer) SizeOfPointer {
 fun extFloodFill(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("ExtFloodFill called".utf16())
-	return 0
-}
-
-@dllExport('GetDeviceCaps')
-fun getDeviceCaps(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDeviceCaps called".utf16())
 	return 0
 }
 
@@ -1804,24 +1087,10 @@ fun roundRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SelectObject')
-fun selectObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectObject called".utf16())
-	return 0
-}
-
 @dllExport('SetBkColor')
 fun setBkColor(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetBkColor called".utf16())
-	return 0
-}
-
-@dllExport('SetPixel')
-fun setPixel(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetPixel called".utf16())
 	return 0
 }
 
@@ -1846,24 +1115,10 @@ fun bringWindowToTop(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CharLowerW')
-fun charLowerW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CharLowerW called".utf16())
-	return 0
-}
-
 @dllExport('CopyImage')
 fun copyImage(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("CopyImage called".utf16())
-	return 0
-}
-
-@dllExport('DialogBoxParamW')
-fun dialogBoxParamW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DialogBoxParamW called".utf16())
 	return 0
 }
 
@@ -1874,45 +1129,10 @@ fun drawIconEx(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('EndDialog')
-fun endDialog(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDialog called".utf16())
-	return 0
-}
-
 @dllExport('FindWindowExW')
 fun findWindowExW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("FindWindowExW called".utf16())
-	return 0
-}
-
-@dllExport('GetCapture')
-fun getCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCapture called".utf16())
-	return 0
-}
-
-@dllExport('GetCursorPos')
-fun getCursorPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCursorPos called".utf16())
-	return 0
-}
-
-@dllExport('GetDC')
-fun getDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDC called".utf16())
-	return 0
-}
-
-@dllExport('GetDlgItemInt')
-fun getDlgItemInt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDlgItemInt called".utf16())
 	return 0
 }
 
@@ -1941,13 +1161,6 @@ fun getScrollPos(stub SizeOfPointer) SizeOfPointer {
 fun getSysColor(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetSysColor called".utf16())
-	return 0
-}
-
-@dllExport('GetSysColorBrush')
-fun getSysColorBrush(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSysColorBrush called".utf16())
 	return 0
 }
 
@@ -1986,27 +1199,6 @@ fun isWindowVisible(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('LoadAcceleratorsW')
-fun loadAcceleratorsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadAcceleratorsW called".utf16())
-	return 0
-}
-
-@dllExport('LoadCursorW')
-fun loadCursorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadCursorW called".utf16())
-	return 0
-}
-
-@dllExport('LoadIconW')
-fun loadIconW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadIconW called".utf16())
-	return 0
-}
-
 @dllExport('MessageBoxW')
 fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -2018,27 +1210,6 @@ fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
 fun offsetRect(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("OffsetRect called".utf16())
-	return 0
-}
-
-@dllExport('RegisterClassExW')
-fun registerClassExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RegisterClassExW called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseCapture')
-fun releaseCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseCapture called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseDC')
-fun releaseDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseDC called".utf16())
 	return 0
 }
 
@@ -2056,31 +1227,10 @@ fun screenToClient(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetCapture')
-fun setCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetCapture called".utf16())
-	return 0
-}
-
 @dllExport('SetCursor')
 fun setCursor(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetCursor called".utf16())
-	return 0
-}
-
-@dllExport('SetDlgItemInt')
-fun setDlgItemInt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetDlgItemInt called".utf16())
-	return 0
-}
-
-@dllExport('SetRect')
-fun setRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRect called".utf16())
 	return 0
 }
 
@@ -2123,657 +1273,6 @@ fun setWindowTextW(stub SizeOfPointer) SizeOfPointer {
 fun showScrollBar(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("ShowScrollBar called".utf16())
-	return 0
-}
-
-@dllExport('SystemParametersInfoW')
-fun systemParametersInfoW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SystemParametersInfoW called".utf16())
-	return 0
-}
-
-@dllExport('TranslateAcceleratorW')
-fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TranslateAcceleratorW called".utf16())
-	return 0
-}
-
-@dllExport('UpdateWindow')
-fun updateWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("UpdateWindow called".utf16())
-	return 0
-}
-
-@dllExport('HtmlHelpW')
-fun htmlHelpW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HtmlHelpW called".utf16())
-	return 0
-}
-
-@dllExport('PageSetupDlgW')
-fun pageSetupDlgW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PageSetupDlgW called".utf16())
-	return 0
-}
-
-@dllExport('GetSaveFileNameW')
-fun getSaveFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSaveFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetOpenFileNameW')
-fun getOpenFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetOpenFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('ChooseColorW')
-fun chooseColorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ChooseColorW called".utf16())
-	return 0
-}
-
-@dllExport('PrintDlgW')
-fun printDlgW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PrintDlgW called".utf16())
-	return 0
-}
-
-@dllExport('DragQueryFileW')
-fun dragQueryFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragQueryFileW called".utf16())
-	return 0
-}
-
-@dllExport('DragFinish')
-fun dragFinish(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragFinish called".utf16())
-	return 0
-}
-
-@dllExport('SHAddToRecentDocs')
-fun sHAddToRecentDocs(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SHAddToRecentDocs called".utf16())
-	return 0
-}
-
-@dllExport('DragAcceptFiles')
-fun dragAcceptFiles(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragAcceptFiles called".utf16())
-	return 0
-}
-
-@dllExport('EndDialog')
-fun endDialog(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDialog called".utf16())
-	return 0
-}
-
-@dllExport('GetDlgItemInt')
-fun getDlgItemInt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDlgItemInt called".utf16())
-	return 0
-}
-
-@dllExport('MessageBoxW')
-fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MessageBoxW called".utf16())
-	return 0
-}
-
-@dllExport('SetDlgItemInt')
-fun setDlgItemInt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetDlgItemInt called".utf16())
-	return 0
-}
-
-@dllExport('GetDC')
-fun getDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDC called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseDC')
-fun releaseDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseDC called".utf16())
-	return 0
-}
-
-@dllExport('SetRect')
-fun setRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRect called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowTextW')
-fun setWindowTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowTextW called".utf16())
-	return 0
-}
-
-@dllExport('LoadCursorW')
-fun loadCursorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadCursorW called".utf16())
-	return 0
-}
-
-@dllExport('LoadIconW')
-fun loadIconW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadIconW called".utf16())
-	return 0
-}
-
-@dllExport('SetCursor')
-fun setCursor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetCursor called".utf16())
-	return 0
-}
-
-@dllExport('CopyImage')
-fun copyImage(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CopyImage called".utf16())
-	return 0
-}
-
-@dllExport('InvertRect')
-fun invertRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InvertRect called".utf16())
-	return 0
-}
-
-@dllExport('GetCapture')
-fun getCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCapture called".utf16())
-	return 0
-}
-
-@dllExport('GetCursorPos')
-fun getCursorPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCursorPos called".utf16())
-	return 0
-}
-
-@dllExport('GetKeyState')
-fun getKeyState(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetKeyState called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseCapture')
-fun releaseCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseCapture called".utf16())
-	return 0
-}
-
-@dllExport('SetCapture')
-fun setCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetCapture called".utf16())
-	return 0
-}
-
-@dllExport('RemoveMenu')
-fun removeMenu(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RemoveMenu called".utf16())
-	return 0
-}
-
-@dllExport('InsertMenuW')
-fun insertMenuW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InsertMenuW called".utf16())
-	return 0
-}
-
-@dllExport('GetWindowPlacement')
-fun getWindowPlacement(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetWindowPlacement called".utf16())
-	return 0
-}
-
-@dllExport('FindWindowExW')
-fun findWindowExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindWindowExW called".utf16())
-	return 0
-}
-
-@dllExport('DialogBoxParamW')
-fun dialogBoxParamW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DialogBoxParamW called".utf16())
-	return 0
-}
-
-@dllExport('GetSysColorBrush')
-fun getSysColorBrush(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSysColorBrush called".utf16())
-	return 0
-}
-
-@dllExport('DrawIconEx')
-fun drawIconEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DrawIconEx called".utf16())
-	return 0
-}
-
-@dllExport('GetWindowTextLengthW')
-fun getWindowTextLengthW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetWindowTextLengthW called".utf16())
-	return 0
-}
-
-@dllExport('SetRectEmpty')
-fun setRectEmpty(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRectEmpty called".utf16())
-	return 0
-}
-
-@dllExport('OffsetRect')
-fun offsetRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("OffsetRect called".utf16())
-	return 0
-}
-
-@dllExport('IsWindowVisible')
-fun isWindowVisible(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsWindowVisible called".utf16())
-	return 0
-}
-
-@dllExport('ShowScrollBar')
-fun showScrollBar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ShowScrollBar called".utf16())
-	return 0
-}
-
-@dllExport('SetScrollInfo')
-fun setScrollInfo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetScrollInfo called".utf16())
-	return 0
-}
-
-@dllExport('GetScrollPos')
-fun getScrollPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetScrollPos called".utf16())
-	return 0
-}
-
-@dllExport('GetScrollInfo')
-fun getScrollInfo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetScrollInfo called".utf16())
-	return 0
-}
-
-@dllExport('SystemParametersInfoW')
-fun systemParametersInfoW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SystemParametersInfoW called".utf16())
-	return 0
-}
-
-@dllExport('GetSysColor')
-fun getSysColor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSysColor called".utf16())
-	return 0
-}
-
-@dllExport('BringWindowToTop')
-fun bringWindowToTop(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BringWindowToTop called".utf16())
-	return 0
-}
-
-@dllExport('TranslateAcceleratorW')
-fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TranslateAcceleratorW called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowPlacement')
-fun setWindowPlacement(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowPlacement called".utf16())
-	return 0
-}
-
-@dllExport('RegisterClassExW')
-fun registerClassExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RegisterClassExW called".utf16())
-	return 0
-}
-
-@dllExport('LoadAcceleratorsW')
-fun loadAcceleratorsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadAcceleratorsW called".utf16())
-	return 0
-}
-
-@dllExport('CharLowerW')
-fun charLowerW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CharLowerW called".utf16())
-	return 0
-}
-
-@dllExport('UpdateWindow')
-fun updateWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("UpdateWindow called".utf16())
-	return 0
-}
-
-@dllExport('SetScrollPos')
-fun setScrollPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetScrollPos called".utf16())
-	return 0
-}
-
-@dllExport('ScreenToClient')
-fun screenToClient(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ScreenToClient called".utf16())
-	return 0
-}
-
-@dllExport('SetBkColor')
-fun setBkColor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetBkColor called".utf16())
-	return 0
-}
-
-@dllExport('CreateDIBSection')
-fun createDIBSection(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateDIBSection called".utf16())
-	return 0
-}
-
-@dllExport('PatBlt')
-fun patBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PatBlt called".utf16())
-	return 0
-}
-
-@dllExport('MaskBlt')
-fun maskBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MaskBlt called".utf16())
-	return 0
-}
-
-@dllExport('CreateCompatibleBitmap')
-fun createCompatibleBitmap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateCompatibleBitmap called".utf16())
-	return 0
-}
-
-@dllExport('CreateBitmap')
-fun createBitmap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateBitmap called".utf16())
-	return 0
-}
-
-@dllExport('CreateFontIndirectW')
-fun createFontIndirectW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFontIndirectW called".utf16())
-	return 0
-}
-
-@dllExport('StretchBlt')
-fun stretchBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("StretchBlt called".utf16())
-	return 0
-}
-
-@dllExport('BitBlt')
-fun bitBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BitBlt called".utf16())
-	return 0
-}
-
-@dllExport('SetROP2')
-fun setROP2(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetROP2 called".utf16())
-	return 0
-}
-
-@dllExport('SetPixel')
-fun setPixel(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetPixel called".utf16())
-	return 0
-}
-
-@dllExport('CreateSolidBrush')
-fun createSolidBrush(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateSolidBrush called".utf16())
-	return 0
-}
-
-@dllExport('RoundRect')
-fun roundRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RoundRect called".utf16())
-	return 0
-}
-
-@dllExport('Rectangle')
-fun rectangle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Rectangle called".utf16())
-	return 0
-}
-
-@dllExport('Polyline')
-fun polyline(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Polyline called".utf16())
-	return 0
-}
-
-@dllExport('Polygon')
-fun polygon(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Polygon called".utf16())
-	return 0
-}
-
-@dllExport('PolyBezier')
-fun polyBezier(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PolyBezier called".utf16())
-	return 0
-}
-
-@dllExport('MoveToEx')
-fun moveToEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MoveToEx called".utf16())
-	return 0
-}
-
-@dllExport('LineTo')
-fun lineTo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LineTo called".utf16())
-	return 0
-}
-
-@dllExport('GetROP2')
-fun getROP2(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetROP2 called".utf16())
-	return 0
-}
-
-@dllExport('GetPixel')
-fun getPixel(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetPixel called".utf16())
-	return 0
-}
-
-@dllExport('ExtFloodFill')
-fun extFloodFill(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ExtFloodFill called".utf16())
-	return 0
-}
-
-@dllExport('Ellipse')
-fun ellipse(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Ellipse called".utf16())
-	return 0
-}
-
-@dllExport('CreatePen')
-fun createPen(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreatePen called".utf16())
-	return 0
-}
-
-@dllExport('CreateBrushIndirect')
-fun createBrushIndirect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateBrushIndirect called".utf16())
-	return 0
-}
-
-@dllExport('SelectObject')
-fun selectObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectObject called".utf16())
-	return 0
-}
-
-@dllExport('GetObjectW')
-fun getObjectW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetObjectW called".utf16())
-	return 0
-}
-
-@dllExport('GetDeviceCaps')
-fun getDeviceCaps(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDeviceCaps called".utf16())
-	return 0
-}
-
-@dllExport('DeleteObject')
-fun deleteObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteObject called".utf16())
-	return 0
-}
-
-@dllExport('DeleteDC')
-fun deleteDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
-}
-
-@dllExport('CreateCompatibleDC')
-fun createCompatibleDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateCompatibleDC called".utf16())
-	return 0
-}
-
-@dllExport('ImageList_Create')
-fun imageList_Create(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ImageList_Create called".utf16())
-	return 0
-}
-
-@dllExport('ImageList_AddMasked')
-fun imageList_AddMasked(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ImageList_AddMasked called".utf16())
-	return 0
-}
-
-@dllExport('_vscwprintf')
-fun _vscwprintf(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("_vscwprintf called".utf16())
-	return 0
-}
-
-@dllExport('wcstod')
-fun wcstod(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcstod called".utf16())
-	return 0
-}
-
-@dllExport('_wtoi')
-fun _wtoi(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("_wtoi called".utf16())
 	return 0
 }
 
@@ -2785,65 +1284,22 @@ fun _CxxThrowException(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('??2@YAPEAX_K@Z')
-fun ?? 2 @ YAPEAX_K @ Z(stub SizeOfPointer) SizeOfPointer {
+fun cpp_cdecl_operator_new(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("??2@YAPEAX_K@Z called".utf16())
-	return 0
-}
-
-@dllExport('vswprintf')
-fun vswprintf(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("vswprintf called".utf16())
+	tofitaDebugLog("??2@YAPEAX_K@Z aka `void * __cdecl operator new(unsigned __int64)` called".utf16())
 	return 0
 }
 
 @dllExport('??3@YAXPEAX@Z')
-fun ?? 3 @ YAXPEAX @ Z(stub SizeOfPointer) SizeOfPointer {
+fun cpp_cdecl_operator_delete(stub SizeOfPointer) Void {
 	// TODO
-	tofitaDebugLog("??3@YAXPEAX@Z called".utf16())
-	return 0
+	tofitaDebugLog("??3@YAXPEAX@Z aka `void __cdecl operator delete(void *)` called".utf16())
 }
 
 @dllExport('__CxxFrameHandler')
 fun __CxxFrameHandler(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("__CxxFrameHandler called".utf16())
-	return 0
-}
-
-@dllExport('wcsncpy')
-fun wcsncpy(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsncpy called".utf16())
-	return 0
-}
-
-@dllExport('__wargv')
-fun __wargv(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("__wargv called".utf16())
-	return 0
-}
-
-@dllExport('__argc')
-fun __argc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("__argc called".utf16())
-	return 0
-}
-
-@dllExport('realloc')
-fun realloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("realloc called".utf16())
-	return 0
-}
-
-@dllExport('rand')
-fun rand(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("rand called".utf16())
 	return 0
 }
 
@@ -2854,17 +1310,10 @@ fun abs(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('wcsrchr')
-fun wcsrchr(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsrchr called".utf16())
-	return 0
-}
-
 @dllExport('??_V@YAXPEAX@Z')
-fun ?? _V @ YAXPEAX @ Z(stub SizeOfPointer) SizeOfPointer {
+fun cpp_cdecl_operator_delete_array(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("??_V@YAXPEAX@Z called".utf16())
+	tofitaDebugLog("??_V@YAXPEAX@Z aka `void __cdecl operator delete[](void *)` called".utf16())
 	return 0
 }
 
@@ -2876,212 +1325,9 @@ fun _purecall(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('??_U@YAPEAX_K@Z')
-fun ?? _U @ YAPEAX_K @ Z(stub SizeOfPointer) SizeOfPointer {
+fun cpp_cdecl_operator_new_array(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("??_U@YAPEAX_K@Z called".utf16())
-	return 0
-}
-
-@dllExport('GetModuleHandleExW')
-fun getModuleHandleExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleHandleExW called".utf16())
-	return 0
-}
-
-@dllExport('FindResourceW')
-fun findResourceW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindResourceW called".utf16())
-	return 0
-}
-
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
-@dllExport('GlobalFree')
-fun globalFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GlobalFree called".utf16())
-	return 0
-}
-
-@dllExport('SetLastError')
-fun setLastError(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetLastError called".utf16())
-	return 0
-}
-
-@dllExport('lstrcpynW')
-fun lstrcpynW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrcpynW called".utf16())
-	return 0
-}
-
-@dllExport('FlushInstructionCache')
-fun flushInstructionCache(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FlushInstructionCache called".utf16())
-	return 0
-}
-
-@dllExport('lstrlenW')
-fun lstrlenW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrlenW called".utf16())
-	return 0
-}
-
-@dllExport('lstrcmpiW')
-fun lstrcmpiW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrcmpiW called".utf16())
-	return 0
-}
-
-@dllExport('LoadLibraryA')
-fun loadLibraryA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadLibraryA called".utf16())
-	return 0
-}
-
-@dllExport('GetFullPathNameW')
-fun getFullPathNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetFullPathNameW called".utf16())
-	return 0
-}
-
-@dllExport('FindFirstFileW')
-fun findFirstFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindFirstFileW called".utf16())
-	return 0
-}
-
-@dllExport('FindClose')
-fun findClose(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindClose called".utf16())
-	return 0
-}
-
-@dllExport('FileTimeToSystemTime')
-fun fileTimeToSystemTime(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FileTimeToSystemTime called".utf16())
-	return 0
-}
-
-@dllExport('FileTimeToLocalFileTime')
-fun fileTimeToLocalFileTime(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FileTimeToLocalFileTime called".utf16())
-	return 0
-}
-
-@dllExport('GetTimeFormatW')
-fun getTimeFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetTimeFormatW called".utf16())
-	return 0
-}
-
-@dllExport('GetDateFormatW')
-fun getDateFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDateFormatW called".utf16())
-	return 0
-}
-
-@dllExport('VirtualFree')
-fun virtualFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("VirtualFree called".utf16())
-	return 0
-}
-
-@dllExport('VirtualAlloc')
-fun virtualAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("VirtualAlloc called".utf16())
-	return 0
-}
-
-@dllExport('SizeofResource')
-fun sizeofResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SizeofResource called".utf16())
-	return 0
-}
-
-@dllExport('LockResource')
-fun lockResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LockResource called".utf16())
-	return 0
-}
-
-@dllExport('LoadResource')
-fun loadResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadResource called".utf16())
-	return 0
-}
-
-@dllExport('HeapSize')
-fun heapSize(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapSize called".utf16())
-	return 0
-}
-
-@dllExport('HeapReAlloc')
-fun heapReAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapReAlloc called".utf16())
-	return 0
-}
-
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
-	return 0
-}
-
-@dllExport('UuidEqual')
-fun uuidEqual(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("UuidEqual called".utf16())
-	return 0
-}
-
-@dllExport('PathStripPathW')
-fun pathStripPathW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PathStripPathW called".utf16())
-	return 0
-}
-
-@dllExport('PathCompactPathExW')
-fun pathCompactPathExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PathCompactPathExW called".utf16())
-	return 0
-}
-
-@dllExport('PathFindFileNameW')
-fun pathFindFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PathFindFileNameW called".utf16())
+	tofitaDebugLog("??_U@YAPEAX_K@Z aka `void * __cdecl operator new[](unsigned __int64)` called".utf16())
 	return 0
 }
 
@@ -3127,34 +1373,6 @@ fun getFileTitleW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetOpenFileNameW')
-fun getOpenFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetOpenFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetSaveFileNameW')
-fun getSaveFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSaveFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('PageSetupDlgW')
-fun pageSetupDlgW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PageSetupDlgW called".utf16())
-	return 0
-}
-
-@dllExport('PrintDlgW')
-fun printDlgW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PrintDlgW called".utf16())
-	return 0
-}
-
 @dllExport('ReplaceTextW')
 fun replaceTextW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -3162,45 +1380,10 @@ fun replaceTextW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CloseHandle')
-fun closeHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CloseHandle called".utf16())
-	return 0
-}
-
-@dllExport('CreateFileW')
-fun createFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFileW called".utf16())
-	return 0
-}
-
-@dllExport('FindClose')
-fun findClose(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindClose called".utf16())
-	return 0
-}
-
-@dllExport('FindFirstFileW')
-fun findFirstFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindFirstFileW called".utf16())
-	return 0
-}
-
 @dllExport('FormatMessageW')
 fun formatMessageW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("FormatMessageW called".utf16())
-	return 0
-}
-
-@dllExport('GetDateFormatW')
-fun getDateFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDateFormatW called".utf16())
 	return 0
 }
 
@@ -3218,101 +1401,10 @@ fun getLocalTime(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetModuleFileNameW')
-fun getModuleFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
-@dllExport('GetTimeFormatW')
-fun getTimeFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetTimeFormatW called".utf16())
-	return 0
-}
-
 @dllExport('GetUserDefaultUILanguage')
 fun getUserDefaultUILanguage(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetUserDefaultUILanguage called".utf16())
-	return 0
-}
-
-@dllExport('GlobalFree')
-fun globalFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GlobalFree called".utf16())
-	return 0
-}
-
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
-	return 0
-}
-
-@dllExport('HeapReAlloc')
-fun heapReAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapReAlloc called".utf16())
-	return 0
-}
-
-@dllExport('LocalFree')
-fun localFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LocalFree called".utf16())
-	return 0
-}
-
-@dllExport('MulDiv')
-fun mulDiv(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MulDiv called".utf16())
-	return 0
-}
-
-@dllExport('MultiByteToWideChar')
-fun multiByteToWideChar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MultiByteToWideChar called".utf16())
-	return 0
-}
-
-@dllExport('ReadFile')
-fun readFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReadFile called".utf16())
-	return 0
-}
-
-@dllExport('WideCharToMultiByte')
-fun wideCharToMultiByte(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WideCharToMultiByte called".utf16())
-	return 0
-}
-
-@dllExport('WriteFile')
-fun writeFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WriteFile called".utf16())
-	return 0
-}
-
-@dllExport('lstrlenW')
-fun lstrlenW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrlenW called".utf16())
 	return 0
 }
 
@@ -3337,13 +1429,6 @@ fun _wcsnicmp(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('_wtoi')
-fun _wtoi(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("_wtoi called".utf16())
-	return 0
-}
-
 @dllExport('iswctype')
 fun iswctype(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -3358,73 +1443,10 @@ fun wcsncmp(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('wcsncpy')
-fun wcsncpy(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsncpy called".utf16())
-	return 0
-}
-
-@dllExport('wcsrchr')
-fun wcsrchr(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsrchr called".utf16())
-	return 0
-}
-
-@dllExport('DragAcceptFiles')
-fun dragAcceptFiles(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragAcceptFiles called".utf16())
-	return 0
-}
-
-@dllExport('DragFinish')
-fun dragFinish(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragFinish called".utf16())
-	return 0
-}
-
-@dllExport('DragQueryFileW')
-fun dragQueryFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragQueryFileW called".utf16())
-	return 0
-}
-
-@dllExport('SHAddToRecentDocs')
-fun sHAddToRecentDocs(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SHAddToRecentDocs called".utf16())
-	return 0
-}
-
 @dllExport('ShellExecuteW')
 fun shellExecuteW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("ShellExecuteW called".utf16())
-	return 0
-}
-
-@dllExport('CreateFontIndirectW')
-fun createFontIndirectW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFontIndirectW called".utf16())
-	return 0
-}
-
-@dllExport('DeleteDC')
-fun deleteDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
-}
-
-@dllExport('DeleteObject')
-fun deleteObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteObject called".utf16())
 	return 0
 }
 
@@ -3442,31 +1464,10 @@ fun endPage(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetDeviceCaps')
-fun getDeviceCaps(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDeviceCaps called".utf16())
-	return 0
-}
-
 @dllExport('GetTextMetricsW')
 fun getTextMetricsW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetTextMetricsW called".utf16())
-	return 0
-}
-
-@dllExport('Rectangle')
-fun rectangle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Rectangle called".utf16())
-	return 0
-}
-
-@dllExport('SelectObject')
-fun selectObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectObject called".utf16())
 	return 0
 }
 
@@ -3519,13 +1520,6 @@ fun deferWindowPos(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('DialogBoxParamW')
-fun dialogBoxParamW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DialogBoxParamW called".utf16())
-	return 0
-}
-
 @dllExport('DrawMenuBar')
 fun drawMenuBar(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -3540,94 +1534,10 @@ fun endDeferWindowPos(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('EndDialog')
-fun endDialog(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDialog called".utf16())
-	return 0
-}
-
-@dllExport('GetDC')
-fun getDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDC called".utf16())
-	return 0
-}
-
-@dllExport('GetMonitorInfoW')
-fun getMonitorInfoW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetMonitorInfoW called".utf16())
-	return 0
-}
-
-@dllExport('GetWindowTextLengthW')
-fun getWindowTextLengthW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetWindowTextLengthW called".utf16())
-	return 0
-}
-
-@dllExport('IsDialogMessageW')
-fun isDialogMessageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsDialogMessageW called".utf16())
-	return 0
-}
-
-@dllExport('LoadAcceleratorsW')
-fun loadAcceleratorsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadAcceleratorsW called".utf16())
-	return 0
-}
-
-@dllExport('LoadCursorW')
-fun loadCursorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadCursorW called".utf16())
-	return 0
-}
-
-@dllExport('LoadIconW')
-fun loadIconW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadIconW called".utf16())
-	return 0
-}
-
-@dllExport('MessageBoxW')
-fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MessageBoxW called".utf16())
-	return 0
-}
-
-@dllExport('MonitorFromRect')
-fun monitorFromRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MonitorFromRect called".utf16())
-	return 0
-}
-
-@dllExport('RegisterClassExW')
-fun registerClassExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RegisterClassExW called".utf16())
-	return 0
-}
-
 @dllExport('RegisterWindowMessageW')
 fun registerWindowMessageW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("RegisterWindowMessageW called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseDC')
-fun releaseDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseDC called".utf16())
 	return 0
 }
 
@@ -3638,458 +1548,10 @@ fun setProcessDefaultLayout(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetRect')
-fun setRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRect called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowPos')
-fun setWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowTextW')
-fun setWindowTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowTextW called".utf16())
-	return 0
-}
-
-@dllExport('TranslateAcceleratorW')
-fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TranslateAcceleratorW called".utf16())
-	return 0
-}
-
-@dllExport('UpdateWindow')
-fun updateWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("UpdateWindow called".utf16())
-	return 0
-}
-
 @dllExport('WinHelpW')
 fun winHelpW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("WinHelpW called".utf16())
-	return 0
-}
-
-@dllExport('SetRect')
-fun setRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRect called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseDC')
-fun releaseDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseDC called".utf16())
-	return 0
-}
-
-@dllExport('GetDC')
-fun getDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDC called".utf16())
-	return 0
-}
-
-@dllExport('UpdateWindow')
-fun updateWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("UpdateWindow called".utf16())
-	return 0
-}
-
-@dllExport('TranslateAcceleratorW')
-fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TranslateAcceleratorW called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowPos')
-fun setWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('SetProcessDefaultLayout')
-fun setProcessDefaultLayout(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetProcessDefaultLayout called".utf16())
-	return 0
-}
-
-@dllExport('RegisterWindowMessageW')
-fun registerWindowMessageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RegisterWindowMessageW called".utf16())
-	return 0
-}
-
-@dllExport('RegisterClassExW')
-fun registerClassExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RegisterClassExW called".utf16())
-	return 0
-}
-
-@dllExport('MonitorFromRect')
-fun monitorFromRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MonitorFromRect called".utf16())
-	return 0
-}
-
-@dllExport('LoadCursorW')
-fun loadCursorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadCursorW called".utf16())
-	return 0
-}
-
-@dllExport('LoadAcceleratorsW')
-fun loadAcceleratorsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadAcceleratorsW called".utf16())
-	return 0
-}
-
-@dllExport('IsDialogMessageW')
-fun isDialogMessageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsDialogMessageW called".utf16())
-	return 0
-}
-
-@dllExport('GetMonitorInfoW')
-fun getMonitorInfoW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetMonitorInfoW called".utf16())
-	return 0
-}
-
-@dllExport('EndDeferWindowPos')
-fun endDeferWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDeferWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('DeferWindowPos')
-fun deferWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeferWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('BeginDeferWindowPos')
-fun beginDeferWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BeginDeferWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('WinHelpW')
-fun winHelpW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WinHelpW called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowTextW')
-fun setWindowTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowTextW called".utf16())
-	return 0
-}
-
-@dllExport('MessageBoxW')
-fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MessageBoxW called".utf16())
-	return 0
-}
-
-@dllExport('LoadIconW')
-fun loadIconW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadIconW called".utf16())
-	return 0
-}
-
-@dllExport('GetWindowTextLengthW')
-fun getWindowTextLengthW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetWindowTextLengthW called".utf16())
-	return 0
-}
-
-@dllExport('EndDialog')
-fun endDialog(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDialog called".utf16())
-	return 0
-}
-
-@dllExport('DrawMenuBar')
-fun drawMenuBar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DrawMenuBar called".utf16())
-	return 0
-}
-
-@dllExport('DialogBoxParamW')
-fun dialogBoxParamW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DialogBoxParamW called".utf16())
-	return 0
-}
-
-@dllExport('DeleteDC')
-fun deleteDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
-}
-
-@dllExport('CreateFontIndirectW')
-fun createFontIndirectW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFontIndirectW called".utf16())
-	return 0
-}
-
-@dllExport('EndPage')
-fun endPage(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndPage called".utf16())
-	return 0
-}
-
-@dllExport('GetDeviceCaps')
-fun getDeviceCaps(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDeviceCaps called".utf16())
-	return 0
-}
-
-@dllExport('GetTextMetricsW')
-fun getTextMetricsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetTextMetricsW called".utf16())
-	return 0
-}
-
-@dllExport('DeleteObject')
-fun deleteObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteObject called".utf16())
-	return 0
-}
-
-@dllExport('SelectObject')
-fun selectObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectObject called".utf16())
-	return 0
-}
-
-@dllExport('SetMapMode')
-fun setMapMode(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetMapMode called".utf16())
-	return 0
-}
-
-@dllExport('SetViewportOrgEx')
-fun setViewportOrgEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetViewportOrgEx called".utf16())
-	return 0
-}
-
-@dllExport('StartDocW')
-fun startDocW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("StartDocW called".utf16())
-	return 0
-}
-
-@dllExport('StartPage')
-fun startPage(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("StartPage called".utf16())
-	return 0
-}
-
-@dllExport('TextOutW')
-fun textOutW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TextOutW called".utf16())
-	return 0
-}
-
-@dllExport('EndDoc')
-fun endDoc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDoc called".utf16())
-	return 0
-}
-
-@dllExport('Rectangle')
-fun rectangle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Rectangle called".utf16())
-	return 0
-}
-
-@dllExport('CreateStatusWindowW')
-fun createStatusWindowW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateStatusWindowW called".utf16())
-	return 0
-}
-
-@dllExport('GetOpenFileNameW')
-fun getOpenFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetOpenFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('FindTextW')
-fun findTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindTextW called".utf16())
-	return 0
-}
-
-@dllExport('ChooseFontW')
-fun chooseFontW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ChooseFontW called".utf16())
-	return 0
-}
-
-@dllExport('GetFileTitleW')
-fun getFileTitleW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetFileTitleW called".utf16())
-	return 0
-}
-
-@dllExport('ReplaceTextW')
-fun replaceTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReplaceTextW called".utf16())
-	return 0
-}
-
-@dllExport('PrintDlgW')
-fun printDlgW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PrintDlgW called".utf16())
-	return 0
-}
-
-@dllExport('PageSetupDlgW')
-fun pageSetupDlgW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PageSetupDlgW called".utf16())
-	return 0
-}
-
-@dllExport('GetSaveFileNameW')
-fun getSaveFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSaveFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('IsTextUnicode')
-fun isTextUnicode(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsTextUnicode called".utf16())
-	return 0
-}
-
-@dllExport('RegOpenKeyW')
-fun regOpenKeyW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RegOpenKeyW called".utf16())
-	return 0
-}
-
-@dllExport('DragAcceptFiles')
-fun dragAcceptFiles(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragAcceptFiles called".utf16())
-	return 0
-}
-
-@dllExport('ShellExecuteW')
-fun shellExecuteW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ShellExecuteW called".utf16())
-	return 0
-}
-
-@dllExport('DragFinish')
-fun dragFinish(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragFinish called".utf16())
-	return 0
-}
-
-@dllExport('DragQueryFileW')
-fun dragQueryFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragQueryFileW called".utf16())
-	return 0
-}
-
-@dllExport('SHAddToRecentDocs')
-fun sHAddToRecentDocs(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SHAddToRecentDocs called".utf16())
-	return 0
-}
-
-@dllExport('wcsrchr')
-fun wcsrchr(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsrchr called".utf16())
-	return 0
-}
-
-@dllExport('_snwprintf')
-fun _snwprintf(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("_snwprintf called".utf16())
-	return 0
-}
-
-@dllExport('_vsnwprintf')
-fun _vsnwprintf(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("_vsnwprintf called".utf16())
-	return 0
-}
-
-@dllExport('_wtoi')
-fun _wtoi(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("_wtoi called".utf16())
 	return 0
 }
 
@@ -4100,227 +1562,10 @@ fun _assert(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('iswctype')
-fun iswctype(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("iswctype called".utf16())
-	return 0
-}
-
-@dllExport('wcsncmp')
-fun wcsncmp(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsncmp called".utf16())
-	return 0
-}
-
-@dllExport('wcsncpy')
-fun wcsncpy(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("wcsncpy called".utf16())
-	return 0
-}
-
-@dllExport('_wcsnicmp')
-fun _wcsnicmp(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("_wcsnicmp called".utf16())
-	return 0
-}
-
-@dllExport('GetModuleFileNameW')
-fun getModuleFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetLocalTime')
-fun getLocalTime(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetLocalTime called".utf16())
-	return 0
-}
-
-@dllExport('FormatMessageW')
-fun formatMessageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FormatMessageW called".utf16())
-	return 0
-}
-
-@dllExport('FindClose')
-fun findClose(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindClose called".utf16())
-	return 0
-}
-
-@dllExport('CreateFileW')
-fun createFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFileW called".utf16())
-	return 0
-}
-
-@dllExport('CloseHandle')
-fun closeHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CloseHandle called".utf16())
-	return 0
-}
-
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
-	return 0
-}
-
-@dllExport('LocalFree')
-fun localFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LocalFree called".utf16())
-	return 0
-}
-
-@dllExport('lstrlenW')
-fun lstrlenW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrlenW called".utf16())
-	return 0
-}
-
-@dllExport('GetDateFormatW')
-fun getDateFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDateFormatW called".utf16())
-	return 0
-}
-
-@dllExport('GetTimeFormatW')
-fun getTimeFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetTimeFormatW called".utf16())
-	return 0
-}
-
-@dllExport('GlobalFree')
-fun globalFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GlobalFree called".utf16())
-	return 0
-}
-
-@dllExport('GetUserDefaultUILanguage')
-fun getUserDefaultUILanguage(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetUserDefaultUILanguage called".utf16())
-	return 0
-}
-
-@dllExport('MulDiv')
-fun mulDiv(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MulDiv called".utf16())
-	return 0
-}
-
-@dllExport('GetFileSize')
-fun getFileSize(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetFileSize called".utf16())
-	return 0
-}
-
-@dllExport('HeapReAlloc')
-fun heapReAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapReAlloc called".utf16())
-	return 0
-}
-
-@dllExport('ReadFile')
-fun readFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReadFile called".utf16())
-	return 0
-}
-
-@dllExport('WriteFile')
-fun writeFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WriteFile called".utf16())
-	return 0
-}
-
-@dllExport('MultiByteToWideChar')
-fun multiByteToWideChar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MultiByteToWideChar called".utf16())
-	return 0
-}
-
-@dllExport('WideCharToMultiByte')
-fun wideCharToMultiByte(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WideCharToMultiByte called".utf16())
-	return 0
-}
-
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
-@dllExport('FindFirstFileW')
-fun findFirstFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindFirstFileW called".utf16())
-	return 0
-}
-
-@dllExport('GetStdHandle')
-fun getStdHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetStdHandle called".utf16())
-	return 0
-}
-
-@dllExport('GetConsoleMode')
-fun getConsoleMode(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetConsoleMode called".utf16())
-	return 0
-}
-
-@dllExport('SetLastError')
-fun setLastError(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetLastError called".utf16())
-	return 0
-}
-
-@dllExport('RaiseException')
-fun raiseException(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RaiseException called".utf16())
-	return 0
-}
-
 @dllExport('GetStartupInfoA')
 fun getStartupInfoA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetStartupInfoA called".utf16())
-	return 0
-}
-
-@dllExport('GetCommandLineA')
-fun getCommandLineA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCommandLineA called".utf16())
 	return 0
 }
 
@@ -4335,27 +1580,6 @@ fun readProcessMemory(stub SizeOfPointer) SizeOfPointer {
 fun getModuleFileNameA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetModuleFileNameA called".utf16())
-	return 0
-}
-
-@dllExport('WriteFile')
-fun writeFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WriteFile called".utf16())
-	return 0
-}
-
-@dllExport('ReadFile')
-fun readFile(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReadFile called".utf16())
-	return 0
-}
-
-@dllExport('CloseHandle')
-fun closeHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CloseHandle called".utf16())
 	return 0
 }
 
@@ -4380,87 +1604,10 @@ fun getSystemInfo(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('LoadLibraryA')
-fun loadLibraryA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadLibraryA called".utf16())
-	return 0
-}
-
-@dllExport('FormatMessageW')
-fun formatMessageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FormatMessageW called".utf16())
-	return 0
-}
-
-@dllExport('CreateFileW')
-fun createFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFileW called".utf16())
-	return 0
-}
-
 @dllExport('GetFileAttributesW')
 fun getFileAttributesW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetFileAttributesW called".utf16())
-	return 0
-}
-
-@dllExport('GetCurrentDirectoryW')
-fun getCurrentDirectoryW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCurrentDirectoryW called".utf16())
-	return 0
-}
-
-@dllExport('GetFullPathNameW')
-fun getFullPathNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetFullPathNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetConsoleOutputCP')
-fun getConsoleOutputCP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetConsoleOutputCP called".utf16())
-	return 0
-}
-
-@dllExport('GetOEMCP')
-fun getOEMCP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetOEMCP called".utf16())
-	return 0
-}
-
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
-	return 0
-}
-
-@dllExport('TlsAlloc')
-fun tlsAlloc(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsAlloc called".utf16())
-	return 0
-}
-
-@dllExport('TlsSetValue')
-fun tlsSetValue(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TlsSetValue called".utf16())
 	return 0
 }
 
@@ -4475,13 +1622,6 @@ fun createThread(stub SizeOfPointer) SizeOfPointer {
 fun exitThread(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("ExitThread called".utf16())
-	return 0
-}
-
-@dllExport('LocalFree')
-fun localFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LocalFree called".utf16())
 	return 0
 }
 
@@ -4506,13 +1646,6 @@ fun terminateThread(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('WaitForSingleObject')
-fun waitForSingleObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WaitForSingleObject called".utf16())
-	return 0
-}
-
 @dllExport('SetThreadPriority')
 fun setThreadPriority(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -4527,24 +1660,10 @@ fun getThreadPriority(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetCurrentThread')
-fun getCurrentThread(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCurrentThread called".utf16())
-	return 0
-}
-
 @dllExport('OpenThread')
 fun openThread(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("OpenThread called".utf16())
-	return 0
-}
-
-@dllExport('IsDebuggerPresent')
-fun isDebuggerPresent(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsDebuggerPresent called".utf16())
 	return 0
 }
 
@@ -4576,52 +1695,10 @@ fun tryEnterCriticalSection(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetEnvironmentStringsW')
-fun getEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetEnvironmentStringsW called".utf16())
-	return 0
-}
-
-@dllExport('FreeEnvironmentStringsW')
-fun freeEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FreeEnvironmentStringsW called".utf16())
-	return 0
-}
-
-@dllExport('MultiByteToWideChar')
-fun multiByteToWideChar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MultiByteToWideChar called".utf16())
-	return 0
-}
-
-@dllExport('WideCharToMultiByte')
-fun wideCharToMultiByte(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WideCharToMultiByte called".utf16())
-	return 0
-}
-
-@dllExport('GetACP')
-fun getACP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetACP called".utf16())
-	return 0
-}
-
 @dllExport('GetConsoleCP')
 fun getConsoleCP(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetConsoleCP called".utf16())
-	return 0
-}
-
-@dllExport('RtlUnwind')
-fun rtlUnwind(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RtlUnwind called".utf16())
 	return 0
 }
 
@@ -4646,38 +1723,10 @@ fun enumResourceLanguagesA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('FindResourceA')
-fun findResourceA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindResourceA called".utf16())
-	return 0
-}
-
 @dllExport('FindResourceExA')
 fun findResourceExA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("FindResourceExA called".utf16())
-	return 0
-}
-
-@dllExport('LoadResource')
-fun loadResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadResource called".utf16())
-	return 0
-}
-
-@dllExport('SizeofResource')
-fun sizeofResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SizeofResource called".utf16())
-	return 0
-}
-
-@dllExport('LockResource')
-fun lockResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LockResource called".utf16())
 	return 0
 }
 
@@ -4758,48 +1807,6 @@ fun enumCalendarInfoA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetModuleFileNameW')
-fun getModuleFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetCommandLineW')
-fun getCommandLineW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCommandLineW called".utf16())
-	return 0
-}
-
-@dllExport('FindNextFileW')
-fun findNextFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindNextFileW called".utf16())
-	return 0
-}
-
-@dllExport('CompareStringW')
-fun compareStringW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CompareStringW called".utf16())
-	return 0
-}
-
-@dllExport('GetDateFormatW')
-fun getDateFormatW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDateFormatW called".utf16())
-	return 0
-}
-
-@dllExport('FindFirstFileExW')
-fun findFirstFileExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindFirstFileExW called".utf16())
-	return 0
-}
-
 @dllExport('GlobalReAlloc')
 fun globalReAlloc(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -4811,13 +1818,6 @@ fun globalReAlloc(stub SizeOfPointer) SizeOfPointer {
 fun globalSize(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GlobalSize called".utf16())
-	return 0
-}
-
-@dllExport('VirtualFree')
-fun virtualFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("VirtualFree called".utf16())
 	return 0
 }
 
@@ -4842,34 +1842,6 @@ fun deviceIoControl(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('FindClose')
-fun findClose(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FindClose called".utf16())
-	return 0
-}
-
-@dllExport('MulDiv')
-fun mulDiv(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MulDiv called".utf16())
-	return 0
-}
-
-@dllExport('GetLocalTime')
-fun getLocalTime(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetLocalTime called".utf16())
-	return 0
-}
-
-@dllExport('FileTimeToLocalFileTime')
-fun fileTimeToLocalFileTime(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FileTimeToLocalFileTime called".utf16())
-	return 0
-}
-
 @dllExport('FileTimeToDosDateTime')
 fun fileTimeToDosDateTime(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -4884,13 +1856,6 @@ fun peekNamedPipe(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetCPInfo')
-fun getCPInfo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCPInfo called".utf16())
-	return 0
-}
-
 @dllExport('GetThreadLocale')
 fun getThreadLocale(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -4902,13 +1867,6 @@ fun getThreadLocale(stub SizeOfPointer) SizeOfPointer {
 fun setThreadLocale(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetThreadLocale called".utf16())
-	return 0
-}
-
-@dllExport('GetUserDefaultLCID')
-fun getUserDefaultLCID(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetUserDefaultLCID called".utf16())
 	return 0
 }
 
@@ -5045,20 +2003,6 @@ fun charLowerBuffW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SendMessageA')
-fun sendMessageA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SendMessageA called".utf16())
-	return 0
-}
-
-@dllExport('PostMessageA')
-fun postMessageA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PostMessageA called".utf16())
-	return 0
-}
-
 @dllExport('DefWindowProcA')
 fun defWindowProcA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5178,13 +2122,6 @@ fun enumPropsA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetWindowLongA')
-fun setWindowLongA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowLongA called".utf16())
-	return 0
-}
-
 @dllExport('GetClassLongA')
 fun getClassLongA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5241,13 +2178,6 @@ fun systemParametersInfoA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('PeekMessageW')
-fun peekMessageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PeekMessageW called".utf16())
-	return 0
-}
-
 @dllExport('UnregisterClassW')
 fun unregisterClassW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5280,27 +2210,6 @@ fun getMenuItemInfoW(stub SizeOfPointer) SizeOfPointer {
 fun setMenuItemInfoW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetMenuItemInfoW called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowTextW')
-fun setWindowTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowTextW called".utf16())
-	return 0
-}
-
-@dllExport('GetWindowTextLengthW')
-fun getWindowTextLengthW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetWindowTextLengthW called".utf16())
-	return 0
-}
-
-@dllExport('MessageBoxW')
-fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MessageBoxW called".utf16())
 	return 0
 }
 
@@ -5346,66 +2255,10 @@ fun showOwnedPopups(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetWindowPos')
-fun setWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('GetWindowPlacement')
-fun getWindowPlacement(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetWindowPlacement called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowPlacement')
-fun setWindowPlacement(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowPlacement called".utf16())
-	return 0
-}
-
-@dllExport('BeginDeferWindowPos')
-fun beginDeferWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BeginDeferWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('DeferWindowPos')
-fun deferWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeferWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('EndDeferWindowPos')
-fun endDeferWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDeferWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('IsWindowVisible')
-fun isWindowVisible(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsWindowVisible called".utf16())
-	return 0
-}
-
 @dllExport('IsIconic')
 fun isIconic(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("IsIconic called".utf16())
-	return 0
-}
-
-@dllExport('BringWindowToTop')
-fun bringWindowToTop(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BringWindowToTop called".utf16())
 	return 0
 }
 
@@ -5430,41 +2283,6 @@ fun enumClipboardFormats(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetActiveWindow')
-fun getActiveWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetActiveWindow called".utf16())
-	return 0
-}
-
-@dllExport('GetKeyState')
-fun getKeyState(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetKeyState called".utf16())
-	return 0
-}
-
-@dllExport('GetCapture')
-fun getCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCapture called".utf16())
-	return 0
-}
-
-@dllExport('SetCapture')
-fun setCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetCapture called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseCapture')
-fun releaseCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseCapture called".utf16())
-	return 0
-}
-
 @dllExport('MsgWaitForMultipleObjects')
 fun msgWaitForMultipleObjects(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5472,24 +2290,10 @@ fun msgWaitForMultipleObjects(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetTimer')
-fun setTimer(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetTimer called".utf16())
-	return 0
-}
-
 @dllExport('KillTimer')
 fun killTimer(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("KillTimer called".utf16())
-	return 0
-}
-
-@dllExport('DrawMenuBar')
-fun drawMenuBar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DrawMenuBar called".utf16())
 	return 0
 }
 
@@ -5514,13 +2318,6 @@ fun getMenuItemCount(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('RemoveMenu')
-fun removeMenu(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RemoveMenu called".utf16())
-	return 0
-}
-
 @dllExport('DeleteMenu')
 fun deleteMenu(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5532,13 +2329,6 @@ fun deleteMenu(stub SizeOfPointer) SizeOfPointer {
 fun getMenuItemRect(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetMenuItemRect called".utf16())
-	return 0
-}
-
-@dllExport('UpdateWindow')
-fun updateWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("UpdateWindow called".utf16())
 	return 0
 }
 
@@ -5556,24 +2346,10 @@ fun getForegroundWindow(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetForegroundWindow')
-fun setForegroundWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetForegroundWindow called".utf16())
-	return 0
-}
-
 @dllExport('WindowFromDC')
 fun windowFromDC(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("WindowFromDC called".utf16())
-	return 0
-}
-
-@dllExport('GetDC')
-fun getDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDC called".utf16())
 	return 0
 }
 
@@ -5588,13 +2364,6 @@ fun getDCEx(stub SizeOfPointer) SizeOfPointer {
 fun getWindowDC(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetWindowDC called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseDC')
-fun releaseDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseDC called".utf16())
 	return 0
 }
 
@@ -5619,13 +2388,6 @@ fun invalidateRgn(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('RedrawWindow')
-fun redrawWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RedrawWindow called".utf16())
-	return 0
-}
-
 @dllExport('ScrollWindowEx')
 fun scrollWindowEx(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5633,24 +2395,10 @@ fun scrollWindowEx(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('ShowScrollBar')
-fun showScrollBar(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ShowScrollBar called".utf16())
-	return 0
-}
-
 @dllExport('EnableScrollBar')
 fun enableScrollBar(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("EnableScrollBar called".utf16())
-	return 0
-}
-
-@dllExport('AdjustWindowRectEx')
-fun adjustWindowRectEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("AdjustWindowRectEx called".utf16())
 	return 0
 }
 
@@ -5665,20 +2413,6 @@ fun messageBeep(stub SizeOfPointer) SizeOfPointer {
 fun setCursorPos(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetCursorPos called".utf16())
-	return 0
-}
-
-@dllExport('SetCursor')
-fun setCursor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetCursor called".utf16())
-	return 0
-}
-
-@dllExport('GetCursorPos')
-fun getCursorPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetCursorPos called".utf16())
 	return 0
 }
 
@@ -5724,20 +2458,6 @@ fun getCaretPos(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('ClientToScreen')
-fun clientToScreen(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ClientToScreen called".utf16())
-	return 0
-}
-
-@dllExport('ScreenToClient')
-fun screenToClient(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ScreenToClient called".utf16())
-	return 0
-}
-
 @dllExport('MapWindowPoints')
 fun mapWindowPoints(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5749,20 +2469,6 @@ fun mapWindowPoints(stub SizeOfPointer) SizeOfPointer {
 fun windowFromPoint(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("WindowFromPoint called".utf16())
-	return 0
-}
-
-@dllExport('GetSysColor')
-fun getSysColor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSysColor called".utf16())
-	return 0
-}
-
-@dllExport('GetSysColorBrush')
-fun getSysColorBrush(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSysColorBrush called".utf16())
 	return 0
 }
 
@@ -5787,38 +2493,10 @@ fun frameRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetRect')
-fun setRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRect called".utf16())
-	return 0
-}
-
 @dllExport('InflateRect')
 fun inflateRect(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("InflateRect called".utf16())
-	return 0
-}
-
-@dllExport('IntersectRect')
-fun intersectRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IntersectRect called".utf16())
-	return 0
-}
-
-@dllExport('OffsetRect')
-fun offsetRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("OffsetRect called".utf16())
-	return 0
-}
-
-@dllExport('GetDesktopWindow')
-fun getDesktopWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDesktopWindow called".utf16())
 	return 0
 }
 
@@ -5857,13 +2535,6 @@ fun getLastActivePopup(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetWindow')
-fun getWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetWindow called".utf16())
-	return 0
-}
-
 @dllExport('CallNextHookEx')
 fun callNextHookEx(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5878,13 +2549,6 @@ fun destroyCursor(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CopyImage')
-fun copyImage(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CopyImage called".utf16())
-	return 0
-}
-
 @dllExport('CreateIconIndirect')
 fun createIconIndirect(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -5896,20 +2560,6 @@ fun createIconIndirect(stub SizeOfPointer) SizeOfPointer {
 fun getIconInfo(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetIconInfo called".utf16())
-	return 0
-}
-
-@dllExport('SetScrollInfo')
-fun setScrollInfo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetScrollInfo called".utf16())
-	return 0
-}
-
-@dllExport('GetScrollInfo')
-fun getScrollInfo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetScrollInfo called".utf16())
 	return 0
 }
 
@@ -5931,13 +2581,6 @@ fun trackPopupMenuEx(stub SizeOfPointer) SizeOfPointer {
 fun childWindowFromPointEx(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("ChildWindowFromPointEx called".utf16())
-	return 0
-}
-
-@dllExport('DrawIconEx')
-fun drawIconEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DrawIconEx called".utf16())
 	return 0
 }
 
@@ -5997,13 +2640,6 @@ fun extTextOutA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CreateFontIndirectW')
-fun createFontIndirectW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateFontIndirectW called".utf16())
-	return 0
-}
-
 @dllExport('EnumFontFamiliesExW')
 fun enumFontFamiliesExW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6022,20 +2658,6 @@ fun getCharABCWidthsW(stub SizeOfPointer) SizeOfPointer {
 fun getTextExtentExPointW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetTextExtentExPointW called".utf16())
-	return 0
-}
-
-@dllExport('GetObjectW')
-fun getObjectW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetObjectW called".utf16())
-	return 0
-}
-
-@dllExport('TextOutW')
-fun textOutW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TextOutW called".utf16())
 	return 0
 }
 
@@ -6060,13 +2682,6 @@ fun arc(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('BitBlt')
-fun bitBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BitBlt called".utf16())
-	return 0
-}
-
 @dllExport('Chord')
 fun chord(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6081,34 +2696,6 @@ fun combineRgn(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CreateBitmap')
-fun createBitmap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateBitmap called".utf16())
-	return 0
-}
-
-@dllExport('CreateBrushIndirect')
-fun createBrushIndirect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateBrushIndirect called".utf16())
-	return 0
-}
-
-@dllExport('CreateCompatibleBitmap')
-fun createCompatibleBitmap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateCompatibleBitmap called".utf16())
-	return 0
-}
-
-@dllExport('CreateCompatibleDC')
-fun createCompatibleDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateCompatibleDC called".utf16())
-	return 0
-}
-
 @dllExport('CreateDIBitmap')
 fun createDIBitmap(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6120,13 +2707,6 @@ fun createDIBitmap(stub SizeOfPointer) SizeOfPointer {
 fun createEllipticRgn(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("CreateEllipticRgn called".utf16())
-	return 0
-}
-
-@dllExport('CreatePen')
-fun createPen(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreatePen called".utf16())
 	return 0
 }
 
@@ -6158,34 +2738,6 @@ fun createRoundRectRgn(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CreateSolidBrush')
-fun createSolidBrush(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateSolidBrush called".utf16())
-	return 0
-}
-
-@dllExport('DeleteDC')
-fun deleteDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
-}
-
-@dllExport('DeleteObject')
-fun deleteObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteObject called".utf16())
-	return 0
-}
-
-@dllExport('Ellipse')
-fun ellipse(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Ellipse called".utf16())
-	return 0
-}
-
 @dllExport('EqualRgn')
 fun equalRgn(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6207,24 +2759,10 @@ fun extCreateRegion(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('ExtFloodFill')
-fun extFloodFill(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ExtFloodFill called".utf16())
-	return 0
-}
-
 @dllExport('FillRgn')
 fun fillRgn(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("FillRgn called".utf16())
-	return 0
-}
-
-@dllExport('GetROP2')
-fun getROP2(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetROP2 called".utf16())
 	return 0
 }
 
@@ -6263,13 +2801,6 @@ fun getCurrentObject(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetDeviceCaps')
-fun getDeviceCaps(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDeviceCaps called".utf16())
-	return 0
-}
-
 @dllExport('GetDIBits')
 fun getDIBits(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6288,13 +2819,6 @@ fun getMapMode(stub SizeOfPointer) SizeOfPointer {
 fun getObjectType(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetObjectType called".utf16())
-	return 0
-}
-
-@dllExport('GetPixel')
-fun getPixel(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetPixel called".utf16())
 	return 0
 }
 
@@ -6361,31 +2885,10 @@ fun intersectClipRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('LineTo')
-fun lineTo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LineTo called".utf16())
-	return 0
-}
-
-@dllExport('MaskBlt')
-fun maskBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MaskBlt called".utf16())
-	return 0
-}
-
 @dllExport('OffsetRgn')
 fun offsetRgn(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("OffsetRgn called".utf16())
-	return 0
-}
-
-@dllExport('PatBlt')
-fun patBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PatBlt called".utf16())
 	return 0
 }
 
@@ -6424,13 +2927,6 @@ fun rectVisible(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('Rectangle')
-fun rectangle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Rectangle called".utf16())
-	return 0
-}
-
 @dllExport('RestoreDC')
 fun restoreDC(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6442,13 +2938,6 @@ fun restoreDC(stub SizeOfPointer) SizeOfPointer {
 fun realizePalette(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("RealizePalette called".utf16())
-	return 0
-}
-
-@dllExport('RoundRect')
-fun roundRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RoundRect called".utf16())
 	return 0
 }
 
@@ -6473,38 +2962,10 @@ fun extSelectClipRgn(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SelectObject')
-fun selectObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectObject called".utf16())
-	return 0
-}
-
 @dllExport('SelectPalette')
 fun selectPalette(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SelectPalette called".utf16())
-	return 0
-}
-
-@dllExport('SetBkColor')
-fun setBkColor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetBkColor called".utf16())
-	return 0
-}
-
-@dllExport('SetMapMode')
-fun setMapMode(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetMapMode called".utf16())
-	return 0
-}
-
-@dllExport('SetPixel')
-fun setPixel(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetPixel called".utf16())
 	return 0
 }
 
@@ -6515,24 +2976,10 @@ fun setPolyFillMode(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('StretchBlt')
-fun stretchBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("StretchBlt called".utf16())
-	return 0
-}
-
 @dllExport('SetRectRgn')
 fun setRectRgn(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetRectRgn called".utf16())
-	return 0
-}
-
-@dllExport('SetROP2')
-fun setROP2(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetROP2 called".utf16())
 	return 0
 }
 
@@ -6557,13 +3004,6 @@ fun setTextAlign(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CreateDIBSection')
-fun createDIBSection(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateDIBSection called".utf16())
-	return 0
-}
-
 @dllExport('SetArcDirection')
 fun setArcDirection(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6575,13 +3015,6 @@ fun setArcDirection(stub SizeOfPointer) SizeOfPointer {
 fun extCreatePen(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("ExtCreatePen called".utf16())
-	return 0
-}
-
-@dllExport('MoveToEx')
-fun moveToEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MoveToEx called".utf16())
 	return 0
 }
 
@@ -6606,38 +3039,10 @@ fun lPtoDP(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('Polygon')
-fun polygon(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Polygon called".utf16())
-	return 0
-}
-
-@dllExport('Polyline')
-fun polyline(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Polyline called".utf16())
-	return 0
-}
-
-@dllExport('PolyBezier')
-fun polyBezier(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PolyBezier called".utf16())
-	return 0
-}
-
 @dllExport('SetViewportExtEx')
 fun setViewportExtEx(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("SetViewportExtEx called".utf16())
-	return 0
-}
-
-@dllExport('SetViewportOrgEx')
-fun setViewportOrgEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetViewportOrgEx called".utf16())
 	return 0
 }
 
@@ -6704,34 +3109,6 @@ fun dragQueryFileA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('DragQueryFileW')
-fun dragQueryFileW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragQueryFileW called".utf16())
-	return 0
-}
-
-@dllExport('ShellExecuteW')
-fun shellExecuteW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ShellExecuteW called".utf16())
-	return 0
-}
-
-@dllExport('DragFinish')
-fun dragFinish(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragFinish called".utf16())
-	return 0
-}
-
-@dllExport('DragAcceptFiles')
-fun dragAcceptFiles(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DragAcceptFiles called".utf16())
-	return 0
-}
-
 @dllExport('OleInitialize')
 fun oleInitialize(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6743,13 +3120,6 @@ fun oleInitialize(stub SizeOfPointer) SizeOfPointer {
 fun oleUninitialize(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("OleUninitialize called".utf16())
-	return 0
-}
-
-@dllExport('ImageList_Create')
-fun imageList_Create(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ImageList_Create called".utf16())
 	return 0
 }
 
@@ -6785,13 +3155,6 @@ fun imageList_Add(stub SizeOfPointer) SizeOfPointer {
 fun imageList_Replace(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("ImageList_Replace called".utf16())
-	return 0
-}
-
-@dllExport('ImageList_AddMasked')
-fun imageList_AddMasked(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ImageList_AddMasked called".utf16())
 	return 0
 }
 
@@ -6865,6 +3228,7 @@ fun imageList_DragShowNolock(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// TODO reported as unresolved
 @dllExport('_TrackMouseEvent')
 fun _TrackMouseEvent(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -6886,150 +3250,10 @@ fun initCommonControlsEx(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('DialogBoxParamW')
-fun dialogBoxParamW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DialogBoxParamW called".utf16())
-	return 0
-}
-
-@dllExport('EndDialog')
-fun endDialog(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("EndDialog called".utf16())
-	return 0
-}
-
-@dllExport('GetSysColor')
-fun getSysColor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetSysColor called".utf16())
-	return 0
-}
-
-@dllExport('LoadAcceleratorsW')
-fun loadAcceleratorsW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadAcceleratorsW called".utf16())
-	return 0
-}
-
-@dllExport('LoadCursorW')
-fun loadCursorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadCursorW called".utf16())
-	return 0
-}
-
-@dllExport('LoadIconW')
-fun loadIconW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadIconW called".utf16())
-	return 0
-}
-
-@dllExport('MessageBoxW')
-fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MessageBoxW called".utf16())
-	return 0
-}
-
-@dllExport('SetWindowPos')
-fun setWindowPos(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowPos called".utf16())
-	return 0
-}
-
-@dllExport('TranslateAcceleratorW')
-fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("TranslateAcceleratorW called".utf16())
-	return 0
-}
-
-@dllExport('UpdateWindow')
-fun updateWindow(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("UpdateWindow called".utf16())
-	return 0
-}
-
 @dllExport('CopyRect')
 fun copyRect(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("CopyRect called".utf16())
-	return 0
-}
-
-@dllExport('MessageBoxA')
-fun messageBoxA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MessageBoxA called".utf16())
-	return 0
-}
-
-@dllExport('LoadBitmapA')
-fun loadBitmapA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadBitmapA called".utf16())
-	return 0
-}
-
-@dllExport('InflateRect')
-fun inflateRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InflateRect called".utf16())
-	return 0
-}
-
-@dllExport('SetCapture')
-fun setCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetCapture called".utf16())
-	return 0
-}
-
-@dllExport('SendMessageA')
-fun sendMessageA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SendMessageA called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseCapture')
-fun releaseCapture(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseCapture called".utf16())
-	return 0
-}
-
-@dllExport('OffsetRect')
-fun offsetRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("OffsetRect called".utf16())
-	return 0
-}
-
-@dllExport('DrawIconEx')
-fun drawIconEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DrawIconEx called".utf16())
-	return 0
-}
-
-@dllExport('KillTimer')
-fun killTimer(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("KillTimer called".utf16())
-	return 0
-}
-
-@dllExport('IntersectRect')
-fun intersectRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IntersectRect called".utf16())
 	return 0
 }
 
@@ -7040,38 +3264,10 @@ fun setWindowLongPtrA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetRect')
-fun setRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetRect called".utf16())
-	return 0
-}
-
-@dllExport('ReleaseDC')
-fun releaseDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ReleaseDC called".utf16())
-	return 0
-}
-
 @dllExport('RegisterClassExA')
 fun registerClassExA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("RegisterClassExA called".utf16())
-	return 0
-}
-
-@dllExport('PtInRect')
-fun ptInRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PtInRect called".utf16())
-	return 0
-}
-
-@dllExport('LoadCursorA')
-fun loadCursorA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadCursorA called".utf16())
 	return 0
 }
 
@@ -7082,48 +3278,6 @@ fun getWindowLongPtrA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetDC')
-fun getDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDC called".utf16())
-	return 0
-}
-
-@dllExport('DefWindowProcA')
-fun defWindowProcA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DefWindowProcA called".utf16())
-	return 0
-}
-
-@dllExport('WinHelpW')
-fun winHelpW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WinHelpW called".utf16())
-	return 0
-}
-
-@dllExport('SetBrushOrgEx')
-fun setBrushOrgEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetBrushOrgEx called".utf16())
-	return 0
-}
-
-@dllExport('PatBlt')
-fun patBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PatBlt called".utf16())
-	return 0
-}
-
-@dllExport('CreatePatternBrush')
-fun createPatternBrush(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreatePatternBrush called".utf16())
-	return 0
-}
-
 @dllExport('CreatePalette')
 fun createPalette(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -7131,248 +3285,10 @@ fun createPalette(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CreateBitmap')
-fun createBitmap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateBitmap called".utf16())
-	return 0
-}
-
-@dllExport('MoveToEx')
-fun moveToEx(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("MoveToEx called".utf16())
-	return 0
-}
-
-@dllExport('LineTo')
-fun lineTo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LineTo called".utf16())
-	return 0
-}
-
 @dllExport('GetTextExtentPoint32A')
 fun getTextExtentPoint32A(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetTextExtentPoint32A called".utf16())
-	return 0
-}
-
-@dllExport('SetPixel')
-fun setPixel(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetPixel called".utf16())
-	return 0
-}
-
-@dllExport('GetPixel')
-fun getPixel(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetPixel called".utf16())
-	return 0
-}
-
-@dllExport('ExcludeClipRect')
-fun excludeClipRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ExcludeClipRect called".utf16())
-	return 0
-}
-
-@dllExport('CreateCompatibleBitmap')
-fun createCompatibleBitmap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateCompatibleBitmap called".utf16())
-	return 0
-}
-
-@dllExport('SetBkColor')
-fun setBkColor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetBkColor called".utf16())
-	return 0
-}
-
-@dllExport('ExtTextOutA')
-fun extTextOutA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("ExtTextOutA called".utf16())
-	return 0
-}
-
-@dllExport('SelectPalette')
-fun selectPalette(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectPalette called".utf16())
-	return 0
-}
-
-@dllExport('SelectClipRgn')
-fun selectClipRgn(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectClipRgn called".utf16())
-	return 0
-}
-
-@dllExport('RealizePalette')
-fun realizePalette(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("RealizePalette called".utf16())
-	return 0
-}
-
-@dllExport('GetObjectA')
-fun getObjectA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetObjectA called".utf16())
-	return 0
-}
-
-@dllExport('GetClipRgn')
-fun getClipRgn(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetClipRgn called".utf16())
-	return 0
-}
-
-@dllExport('FillRgn')
-fun fillRgn(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("FillRgn called".utf16())
-	return 0
-}
-
-@dllExport('DeleteObject')
-fun deleteObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteObject called".utf16())
-	return 0
-}
-
-@dllExport('DeleteDC')
-fun deleteDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
-}
-
-@dllExport('CreateSolidBrush')
-fun createSolidBrush(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateSolidBrush called".utf16())
-	return 0
-}
-
-@dllExport('CreateRectRgn')
-fun createRectRgn(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateRectRgn called".utf16())
-	return 0
-}
-
-@dllExport('CreateCompatibleDC')
-fun createCompatibleDC(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreateCompatibleDC called".utf16())
-	return 0
-}
-
-@dllExport('CombineRgn')
-fun combineRgn(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CombineRgn called".utf16())
-	return 0
-}
-
-@dllExport('BitBlt')
-fun bitBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BitBlt called".utf16())
-	return 0
-}
-
-@dllExport('StretchBlt')
-fun stretchBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("StretchBlt called".utf16())
-	return 0
-}
-
-@dllExport('SelectObject')
-fun selectObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SelectObject called".utf16())
-	return 0
-}
-
-@dllExport('Rectangle')
-fun rectangle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("Rectangle called".utf16())
-	return 0
-}
-
-@dllExport('CreatePen')
-fun createPen(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreatePen called".utf16())
-	return 0
-}
-
-@dllExport('??3@YAXPEAX@Z')
-fun ?? 3 @ YAXPEAX @ Z(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("??3@YAXPEAX@Z called".utf16())
-	return 0
-}
-
-@dllExport('abs')
-fun abs(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("abs called".utf16())
-	return 0
-}
-
-@dllExport('srand')
-fun srand(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("srand called".utf16())
-	return 0
-}
-
-@dllExport('rand')
-fun rand(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("rand called".utf16())
-	return 0
-}
-
-@dllExport('??2@YAPEAX_K@Z')
-fun ?? 2 @ YAPEAX_K @ Z(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("??2@YAPEAX_K@Z called".utf16())
-	return 0
-}
-
-@dllExport('GetModuleFileNameW')
-fun getModuleFileNameW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetModuleFileNameW called".utf16())
-	return 0
-}
-
-@dllExport('GetProcessHeap')
-fun getProcessHeap(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetProcessHeap called".utf16())
-	return 0
-}
-
-@dllExport('LoadLibraryA')
-fun loadLibraryA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadLibraryA called".utf16())
 	return 0
 }
 
@@ -7390,13 +3306,6 @@ fun lstrlenA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('WaitForSingleObject')
-fun waitForSingleObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("WaitForSingleObject called".utf16())
-	return 0
-}
-
 @dllExport('ReleaseMutex')
 fun releaseMutex(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -7411,13 +3320,6 @@ fun createMutexA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CloseHandle')
-fun closeHandle(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CloseHandle called".utf16())
-	return 0
-}
-
 @dllExport('lstrcpyW')
 fun lstrcpyW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -7425,9 +3327,205 @@ fun lstrcpyW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('HeapFree')
-fun heapFree(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("HeapFree called".utf16())
+@dllExport('FindResourceW')
+fun findResourceW(hModule HModule, lpName ConstArrayPointer<ClangWideChar>, lpType ConstArrayPointer<ClangWideChar>) HRsrc // Find a resource in the specified module
+{
+	tofitaDebugLog("findResourceW called".utf16())
+	return findResourceExW(hModule, lpType, lpName, make_lang_id(lang_neutral, sub_lang_neutral))
+}
+
+@dllExport('LoadResource')
+fun loadResource(hModule HModule, hResInfo HRsrc) HGlobal // Load a resource from the specified module
+{
+	tofitaDebugLog("loadResource called".utf16())
+	return hResInfo as! HGlobal
+}
+
+// HGDIOBJ -> Handle
+@dllExport('DeleteObject')
+fun deleteObject(ho Handle) Bool32 // BOOL -> Bool (return type)
+{
+	tofitaDebugLog("deleteObject called".utf16())
+	return Bool32.True
+}
+
+@dllExport('SelectObject')
+fun selectObject(
+	hdc Handle, // HDC -> Handle
+	h Handle // HGDIOBJ -> Handle
+) Handle // HGDIOBJ -> Handle (return type)
+{
+	tofitaDebugLog("selectObject called".utf16())
+	return null
+}
+
+@dllExport('CreateFontIndirectW')
+fun createFontIndirectW(
+	lplf LogFontW // const LOGFONTW * -> ConstPointer<LogFontW>
+) Handle // HFONT -> Handle
+{
+	tofitaDebugLog("createFontIndirectW called".utf16())
+	return null
+}
+
+@dllExport('SystemParametersInfoW')
+fun systemParametersInfoW(
+	uiAction UInt32, // UINT -> UInt32
+	uiParam UInt32, // UINT -> UInt32
+	pvParam ArrayPointer<Void>, // PVOID -> Pointer<Void>
+	fWinIni UInt32 // UINT -> UInt32
+) Bool32 // BOOL -> Bool
+{
+	tofitaDebugLog("systemParametersInfoW called".utf16())
+	return Bool32.False
+}
+
+@dllExport('GetCurrentDirectoryW')
+fun getCurrentDirectoryW(buflen UInt32, buf ArrayPointer<ClangWideChar>) UInt32
+{
+	tofitaDebugLog("getCurrentDirectoryW called".utf16())
 	return 0
+}
+
+@dllExport('PeekMessageW')
+fun peekMessageW(lpMsg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 // Retrieve a message from the queue
+{
+	tofitaDebugLog("peekMessageW called".utf16())
+	return Bool32.True
+}
+
+@dllExport('GetWindow')
+fun getWindow(
+	hWnd HWnd, // Handle to the window to retrieve information about
+	uCmd UInt32 // Specifies the function to be performed; it determines the relationship of the retrieved window to the specified window
+) HWnd
+{
+	tofitaDebugLog("getWindow called".utf16())
+	return null
+}
+
+@dllExport('SetForegroundWindow')
+fun setForegroundWindow(window HWnd) {
+	tofitaDebugLog("setForegroundWindow called".utf16())
+}
+
+@dllExport('GetActiveWindow')
+fun getActiveWindow() HWnd {
+	tofitaDebugLog("getActiveWindow called".utf16())
+	return null
+}
+
+@dllExport('SetWindowLongA')
+fun setWindowLongA(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
+	// TODO
+	tofitaDebugLog("SetWindowLongA called".utf16())
+	return 0
+}
+
+@dllExport('GetDeviceCaps')
+fun getDeviceCaps(
+	hdc Handle, // HDC -> Handle
+	index Int // int -> Int
+) Int // Return type int -> Int
+{
+	tofitaDebugLog("getDeviceCaps called".utf16())
+	return 0
+}
+
+@dllExport('AdjustWindowRectEx')
+fun adjustWindowRectEx(
+	lpRect Rect, // LPRECT -> Pointer to ClangRect (modifiable, in/out)
+	dwStyle UInt32, // DWORD -> UInt32
+	bMenu Bool, // BOOL -> Bool
+	dwExStyle UInt32 // DWORD -> UInt32
+) Bool32 // BOOL -> Bool (return type)
+{
+	tofitaDebugLog("adjustWindowRectEx called".utf16())
+	return Bool32.True
+}
+
+@dllExport('PostMessageA')
+fun postMessageA(
+	hWnd HWnd, // Handle to the window whose window procedure will receive the message (optional)
+	msg UInt32, // The message to be sent
+	wParam UInt32, // Additional message-specific information
+	lParam Int // Additional message-specific information
+) Bool32
+{
+	tofitaDebugLog("postMessageA called".utf16())
+	return Bool32.True
+}
+
+@dllExport('FindResourceA')
+fun findResourceA(hModule HModule, lpName ConstArrayPointer<ClangChar>, lpType ConstArrayPointer<ClangChar>) HRsrc // Find a resource in the specified module
+{
+	tofitaDebugLog("findResourceA called".utf16())
+	return null
+}
+
+@dllExport('SendMessageA')
+fun sendMessageA(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) LResult
+{
+	tofitaDebugLog("SendMessageA called".utf16())
+	return null
+}
+
+@dllExport('SetWindowPos')
+fun setWindowPos(
+	hWnd HWnd, // Handle to the window
+	hWndInsertAfter HWnd, // Handle to the window to precede this one in the Z order (optional)
+	x Int, // The new position of the left side of the window
+	y Int, // The new position of the top side of the window
+	cx Int, // The new width of the window
+	cy Int, // The new height of the window
+	uFlags UInt32 // Window positioning flags
+) Bool32 // Determine whether a window is a child of another window
+{
+	tofitaDebugLog("setWindowPos called".utf16())
+	return Bool32.True
+}
+
+@dllExport('GetCursorPos')
+fun getCursorPos(
+	lpPoint Point // LPPOINT -> Pointer to ClangPoint (output structure for cursor position)
+) Bool32 // BOOL -> Bool (return type)
+{
+	tofitaDebugLog("getCursorPos called".utf16())
+	return Bool32.True
+}
+
+@dllExport('GetCapture')
+fun getCapture() HWnd {
+	tofitaDebugLog("getCapture called".utf16())
+	return null
+}
+
+@dllExport('CharLowerW')
+fun charLowerW(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
+	tofitaDebugLog("charLowerW called".utf16())
+	return null
+}
+
+@dllExport('SetPixel')
+fun setPixel(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
+	tofitaDebugLog("setPixel called".utf16())
+	return null
+}
+
+@dllExport('wcsrchr')
+fun wcsrchr(ws ConstArrayPointer<ClangWideChar>, wc ClangWideChar) ArrayPointer<ClangWideChar> {
+	tofitaDebugLog("wcsrchr called".utf16())
+	return null // TODO
+}
+
+@dllExport('sprintf')
+@nativeVariadic
+fun sprintf(destination ArrayPointer<ClangChar>, format ConstArrayPointer<ClangWideChar>, ...args) Void {
+	tofitaDebugLog("sprintf called".utf16())
+}
+
+@dllExport('lstrcpynW')
+fun lstrcpynW(lpString1 ArrayPointer<ClangWideChar>, lpString2 ConstArrayPointer<ClangWideChar>, iMaxLength Int) ArrayPointer<ClangWideChar> {
+	tofitaDebugLog("lstrcpynW called".utf16())
+	return null
 }

@@ -25,16 +25,6 @@ class DLGTEMPLATE {
 	let cy Int16
 }
 
-@inline fun lstrlenW(str ConstArrayPointer<ClangWideChar>) Int {
-	var i = 0
-	while str[i] != 0 as! ClangWideChar {
-		i++
-	}
-
-	tofitaDebugLog("lstrlenW %S %d".utf16(), str as! UInt64, i as! UInt64)
-	return i
-}
-
 // TODO handle `#` variation
 fun isAtom(value UInt64) Bool {
 	tofitaDebugLog("isAtom called".utf16())
@@ -56,34 +46,6 @@ fun ntUserReleaseDC(todo Handle, hdc Handle) HDc {
 	return null
 }
 
-fun systemParametersInfoW(
-	uiAction UInt32, // UINT -> UInt32
-	uiParam UInt32, // UINT -> UInt32
-	pvParam ArrayPointer<Void>, // PVOID -> Pointer<Void>
-	fWinIni UInt32 // UINT -> UInt32
-) Bool32 // BOOL -> Bool
-{
-	tofitaDebugLog("systemParametersInfoW called".utf16())
-	return Bool32.False
-}
-
-fun createFontIndirectW(
-	lplf LogFontW // const LOGFONTW * -> ConstPointer<LogFontW>
-) Handle // HFONT -> Handle
-{
-	tofitaDebugLog("createFontIndirectW called".utf16())
-	return null
-}
-
-fun getDeviceCaps(
-	hdc Handle, // HDC -> Handle
-	index Int // int -> Int
-) Int // Return type int -> Int
-{
-	tofitaDebugLog("getDeviceCaps called".utf16())
-	return 0
-}
-
 fun createFontW(
 	cHeight Int, // int -> Int
 	cWidth Int, // int -> Int
@@ -102,15 +64,6 @@ fun createFontW(
 ) Handle // HFONT -> Handle (return type)
 {
 	tofitaDebugLog("createFontW called".utf16())
-	return null
-}
-
-fun selectObject(
-	hdc Handle, // HDC -> Handle
-	h Handle // HGDIOBJ -> Handle
-) Handle // HGDIOBJ -> Handle (return type)
-{
-	tofitaDebugLog("selectObject called".utf16())
 	return null
 }
 
@@ -147,6 +100,7 @@ fun gdiGetCharDimensions(
 	return 0
 }
 
+@dllExport('SetRect')
 fun setRect(
 	lprc Rect, // LPRECT -> Pointer to ClangRect (assuming LPRECT is a pointer to a RECT structure)
 	xLeft Int, // int -> Int
@@ -159,17 +113,6 @@ fun setRect(
 	return Bool32.True
 }
 
-fun adjustWindowRectEx(
-	lpRect Rect, // LPRECT -> Pointer to ClangRect (modifiable, in/out)
-	dwStyle UInt32, // DWORD -> UInt32
-	bMenu Bool, // BOOL -> Bool
-	dwExStyle UInt32 // DWORD -> UInt32
-) Bool32 // BOOL -> Bool (return type)
-{
-	tofitaDebugLog("adjustWindowRectEx called".utf16())
-	return Bool32.True
-}
-
 fun monitorFromWindow(
 	hwnd HWnd, // HWND -> Pointer to ClangWindow (window handle)
 	dwFlags UInt32 // DWORD -> UInt32
@@ -179,25 +122,13 @@ fun monitorFromWindow(
 	return null
 }
 
-fun getActiveWindow() HWnd {
-	tofitaDebugLog("getActiveWindow called".utf16())
-	return null
-}
-
+@dllExport('GetMonitorInfoW')
 fun getMonitorInfoW(
 	hMonitor HMonitor, // HMONITOR -> Pointer to ClangMonitor (monitor handle)
 	lpmi MonitorInfo // LPMONITORINFO -> Pointer to ClangMonitorInfo (output structure)
 ) Bool32 // BOOL -> Bool (return type)
 {
 	tofitaDebugLog("getMonitorInfoW called".utf16())
-	return Bool32.True
-}
-
-fun getCursorPos(
-	lpPoint Point // LPPOINT -> Pointer to ClangPoint (output structure for cursor position)
-) Bool32 // BOOL -> Bool (return type)
-{
-	tofitaDebugLog("getCursorPos called".utf16())
 	return Bool32.True
 }
 
@@ -210,6 +141,7 @@ fun monitorFromPoint(
 	return null
 }
 
+@dllExport('ClientToScreen')
 fun clientToScreen(
 	hWnd HWnd, // HWND -> HWnd (input handle to the window)
 	lpPoint Point // LPPOINT -> ClangPoint (pointer to a structure that receives the screen coordinates)
@@ -219,6 +151,7 @@ fun clientToScreen(
 	return Bool32.True
 }
 
+@dllExport('MonitorFromRect')
 fun monitorFromRect(
 	// TODO Rect readonly here
 	lprc Rect, // LPCRECT -> ConstPointer<ClangRect> (input pointer to a rectangle structure)
@@ -229,17 +162,11 @@ fun monitorFromRect(
 	return null
 }
 
+@dllExport('GetDesktopWindow')
 fun getDesktopWindow() HWnd // Function to get the handle to the desktop window, returning HWnd
 {
 	tofitaDebugLog("getDesktopWindow called".utf16())
 	return null
-}
-
-// HGDIOBJ -> Handle
-fun deleteObject(ho Handle) Bool32 // BOOL -> Bool (return type)
-{
-	tofitaDebugLog("deleteObject called".utf16())
-	return Bool32.True
 }
 
 fun ntUserDestroyMenu(menu Handle) {
@@ -255,17 +182,8 @@ fun ntUserSetFocus(focus HWnd) {
 	tofitaDebugLog("ntUserSetFocus called".utf16())
 }
 
-fun setForegroundWindow(window HWnd) {
-	tofitaDebugLog("setForegroundWindow called".utf16())
-}
-
 fun ntUserActivateOtherWindow(window HWnd) {
 	tofitaDebugLog("ntUserActivateOtherWindow called".utf16())
-}
-
-fun getCapture() HWnd {
-	tofitaDebugLog("getCapture called".utf16())
-	return null
 }
 
 fun ntUserShowWindow(hWnd HWnd, nCmdShow Int) Bool32 // Show a specified window
@@ -277,18 +195,6 @@ fun ntUserShowWindow(hWnd HWnd, nCmdShow Int) Bool32 // Show a specified window
 
 fun ntUserDestroyWindow(window HWnd) {
 	tofitaDebugLog("ntUserDestroyWindow called".utf16())
-}
-
-fun findResourceA(hModule HModule, lpName ConstArrayPointer<ClangChar>, lpType ConstArrayPointer<ClangChar>) HRsrc // Find a resource in the specified module
-{
-	tofitaDebugLog("findResourceA called".utf16())
-	return null
-}
-
-fun loadResource(hModule HModule, hResInfo HRsrc) HGlobal // Load a resource from the specified module
-{
-	tofitaDebugLog("loadResource called".utf16())
-	return hResInfo as! HGlobal
 }
 
 fun make_lang_id(lang UInt16, sub UInt16) UInt16 {
@@ -630,18 +536,6 @@ fun findResourceExW(hModule HModule, lpType ConstArrayPointer<ClangWideChar>, lp
 	}
 }
 
-fun findResourceW(hModule HModule, lpName ConstArrayPointer<ClangWideChar>, lpType ConstArrayPointer<ClangWideChar>) HRsrc // Find a resource in the specified module
-{
-	tofitaDebugLog("findResourceW called".utf16())
-	return findResourceExW(hModule, lpType, lpName, make_lang_id(lang_neutral, sub_lang_neutral))
-}
-
-fun peekMessageW(lpMsg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 // Retrieve a message from the queue
-{
-	tofitaDebugLog("peekMessageW called".utf16())
-	return Bool32.True
-}
-
 fun isChild(hWndParent HWnd, hWnd HWnd) Bool32 // Determine whether a window is a child of another window
 {
 	tofitaDebugLog("isChild called".utf16())
@@ -662,54 +556,15 @@ fun ntUserSetWindowPos(
 	return Bool32.True
 }
 
-fun setWindowPos(
-	hWnd HWnd, // Handle to the window
-	hWndInsertAfter HWnd, // Handle to the window to precede this one in the Z order (optional)
-	x Int, // The new position of the left side of the window
-	y Int, // The new position of the top side of the window
-	cx Int, // The new width of the window
-	cy Int, // The new height of the window
-	uFlags UInt32 // Window positioning flags
-) Bool32 // Determine whether a window is a child of another window
-{
-	tofitaDebugLog("setWindowPos called".utf16())
-	return Bool32.True
-}
-
-fun postMessageA(
-	hWnd HWnd, // Handle to the window whose window procedure will receive the message (optional)
-	msg UInt32, // The message to be sent
-	wParam UInt32, // Additional message-specific information
-	lParam Int // Additional message-specific information
-) Bool32
-{
-	tofitaDebugLog("postMessageA called".utf16())
-	return Bool32.True
-}
-
 // Returns a pointer to the first occurrence of the wide character wc in the C wide string ws.
 fun wcschr(ws ConstArrayPointer<ClangWideChar>, wc ClangWideChar) ArrayPointer<ClangWideChar> {
 	tofitaDebugLog("wcschr called".utf16())
 	return null // TODO
 }
 
-fun wcsrchr(ws ConstArrayPointer<ClangWideChar>, wc ClangWideChar) ArrayPointer<ClangWideChar> {
-	tofitaDebugLog("wcsrchr called".utf16())
-	return null // TODO
-}
-
 fun towupper(wc ClangWideChar) ClangWideChar {
 	tofitaDebugLog("towupper called".utf16())
 	return wc // TODO
-}
-
-fun getWindow(
-	hWnd HWnd, // Handle to the window to retrieve information about
-	uCmd UInt32 // Specifies the function to be performed; it determines the relationship of the retrieved window to the specified window
-) HWnd
-{
-	tofitaDebugLog("getWindow called".utf16())
-	return null
 }
 
 fun win_IsCurrentProcess(hwnd HWnd) HWnd
@@ -746,11 +601,6 @@ fun ntUserGetKeyState(virtKey Int) UInt16
 	return 0
 }
 
-@nativeVariadic
-fun sprintf(destination ArrayPointer<ClangChar>, format ConstArrayPointer<ClangWideChar>, ...args) Void {
-	tofitaDebugLog("sprintf called".utf16())
-}
-
 fun strtol(str ConstArrayPointer<ClangChar>, endptr ArrayPointer<ArrayPointer<ClangChar>>, base Int) Int
 {
 	tofitaDebugLog("strtol called".utf16())
@@ -768,11 +618,6 @@ fun _errno() ConstArrayPointer<Int> {
 	return null
 }
 
-fun lstrcpynW(lpString1 ArrayPointer<ClangWideChar>, lpString2 ConstArrayPointer<ClangWideChar>, iMaxLength Int) ArrayPointer<ClangWideChar> {
-	tofitaDebugLog("lstrcpynW called".utf16())
-	return null
-}
-
 // TODO BOOL WINAPI DECLSPEC_HOTPATCH SetCurrentDirectoryW( LPCWSTR dir )
 fun setCurrentDirectoryW(dir ConstArrayPointer<ClangWideChar>) Bool32 {
 	tofitaDebugLog("setCurrentDirectoryW called".utf16())
@@ -786,17 +631,7 @@ fun charUpperW(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
 	return null
 }
 
-fun charLowerW(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
-	tofitaDebugLog("charLowerW called".utf16())
-	return null
-}
-
-fun getCurrentDirectoryW(buflen UInt32, buf ArrayPointer<ClangWideChar>) UInt32
-{
-	tofitaDebugLog("getCurrentDirectoryW called".utf16())
-	return 0
-}
-
+@dllExport('MultiByteToWideChar')
 fun multiByteToWideChar(codePage UInt32, dwFlags UInt32, lpMultiByteStr ConstArrayPointer<ClangChar>, cbMultiByte Int, lpWideCharStr ArrayPointer<ClangWideChar>, cchWideChar Int) Int
 {
 	tofitaDebugLog("multiByteToWideChar called".utf16())

@@ -422,7 +422,7 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 // TODO reimplement into SEH writer instead of `if`? is it any safer for overflows? faster? x/y bounds?
 // TODO @inline ?
 // TODO Clang may NOT pass Pixel32 as a single uint32_t in argument and cause perf loss
-@fastcall fun setPixel(fb WindowFramebuffer, x Int32, y Int32, pixel ByValue<Pixel32>) Void {
+@fastcall fun setFramebufferPixel(fb WindowFramebuffer, x Int32, y Int32, pixel ByValue<Pixel32>) Void {
 	// TODO merge to single comparison
 	if (x < 0) or (y < 0) {
 		return
@@ -451,7 +451,7 @@ fun outerRect(dc HDc, lprc Rect, brush HBrush) {
 	for y in lprc.top ... lprc.bottom {
 		for x in lprc.left ... lprc.right {
 			if (x == lprc.left or y == lprc.top or y == lprc.bottom - 1 or x == lprc.right - 1) {
-				setPixel(fb, x, y, color)
+				setFramebufferPixel(fb, x, y, color)
 			}
 		}
 	}
@@ -477,7 +477,7 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 			// color.ref.color = color.ref.color ^(lprc as! UInt32) ^(dc as! UInt32)
 			// TODO format
 			// TODO respect brush color/style
-			setPixel(fb, x, y, color)
+			setFramebufferPixel(fb, x, y, color)
 			// TODO ^ this can be unsafe write, cause within bounds
 
 			// TODO this is for demo purposes and to check frame buffer size
@@ -679,12 +679,6 @@ fun enumChildWindows(
 	return Bool32.True
 }
 
-fun sendMessageA(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) LResult
-{
-	tofitaDebugLog("SendMessageA called".utf16())
-	return null
-}
-
 @dllExport('GetAsyncKeyState')
 fun getAsyncKeyState(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -706,18 +700,18 @@ fun getClipboardData(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetDlgItem')
-fun xTODOgetDlgItem(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDlgItem called".utf16())
-	return 0
-}
+@dllExport('lstrlenW')
+@inline fun lstrlenW(str ConstArrayPointer<ClangWideChar>) Int {
+	// const WCHAR *s = str;
+	// while (*s) s++;
+	// return s - str;
+	var i = 0
+	while str[i] != 0 as! ClangWideChar {
+		i++
+	}
 
-@dllExport('GetDlgItemTextW')
-fun xTODOgetDlgItemTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetDlgItemTextW called".utf16())
-	return 0
+	tofitaDebugLog("lstrlenW %S %d".utf16(), str as! UInt64, i as! UInt64)
+	return i
 }
 
 @dllExport('GetFocus')
@@ -888,13 +882,6 @@ fun postMessageW(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) Bool32 {
 	return 0
 }
 
-@dllExport('SendDlgItemMessageW')
-fun xTODOsendDlgItemMessageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SendDlgItemMessageW called".utf16())
-	return 0
-}
-
 @dllExport('SendMessageW')
 fun sendMessageW(
 	hWnd Handle,
@@ -1032,13 +1019,6 @@ fun setClipboardData(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetDlgItemTextW')
-fun xTODOsetDlgItemTextW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetDlgItemTextW called".utf16())
-	return 0
-}
-
 @dllExport('SetFocus')
 fun setFocus(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -1057,12 +1037,6 @@ fun setMenu(stub SizeOfPointer) SizeOfPointer {
 fun setWindowLongW(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
 	// TODO
 	tofitaDebugLog("SetWindowLongW called".utf16())
-	return 0
-}
-
-fun setWindowLongA(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
-	// TODO
-	tofitaDebugLog("SetWindowLongA called".utf16())
 	return 0
 }
 

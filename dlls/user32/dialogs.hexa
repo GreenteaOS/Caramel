@@ -804,6 +804,7 @@ fun dialogBoxParamA(
 	return dialog_DoDialogBox(hwnd, ownerRef.ref)
 }
 
+@dllExport('DialogBoxParamW')
 fun dialogBoxParamW(
 	hInst HInstance,
 	name ConstArrayPointer<ClangWideChar>,
@@ -880,6 +881,7 @@ fun dialogBoxIndirectParamW(
 	return dialogBoxIndirectParamAorW(hInstance, template as! ConstArrayPointer<Void>, owner, dlgProc, param, 0)
 }
 
+@dllExport('EndDialog')
 fun endDialog(hwnd HWnd, retval SignedSizeOfPointer) Bool32 {
 	tofitaDebugLog("endDialog called".utf16())
 	var dlgInfo DIALOGINFO = null
@@ -1065,6 +1067,7 @@ fun dialog_IdToHwnd(hwndDlg HWnd, id Int32) HWnd {
 	return ret
 }
 
+@dllExport('IsDialogMessageW')
 fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 	tofitaDebugLog("isDialogMessageW called".utf16())
 	var hwndDlg = hwndDlg
@@ -1202,11 +1205,13 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 	return Bool32.True
 }
 
+@dllExport('GetDlgItemID')
 fun getDlgCtrlID(hwnd HWnd) Int32 {
 	tofitaDebugLog("getDlgCtrlID called".utf16())
 	return getWindowLongW(hwnd, -12) as! Int32
 }
 
+@dllExport('GetDlgItem')
 fun getDlgItem(hwndDlg HWnd, id Int32) HWnd {
 	tofitaDebugLog("getDlgItem called".utf16())
 	var i Int32 = 0
@@ -1231,6 +1236,7 @@ fun getDlgItem(hwndDlg HWnd, id Int32) HWnd {
 	return ret
 }
 
+@dllExport('SendDlgItemMessageA')
 fun sendDlgItemMessageA(
 	hwnd HWnd,
 	id Int32,
@@ -1248,6 +1254,7 @@ fun sendDlgItemMessageA(
 	}
 }
 
+@dllExport('SendDlgItemMessageW')
 fun sendDlgItemMessageW(
 	hwnd HWnd,
 	id Int32,
@@ -1265,16 +1272,19 @@ fun sendDlgItemMessageW(
 	}
 }
 
+@dllExport('SetDlgItemTextA')
 fun setDlgItemTextA(hwnd HWnd, id Int32, lpString ConstArrayPointer<ClangChar>) Bool32 {
 	tofitaDebugLog("setDlgItemTextA called".utf16())
 	return sendDlgItemMessageA(hwnd, id, 12u32, null, lpString as! LParam) as! Bool32
 }
 
+@dllExport('SetDlgItemTextW')
 fun setDlgItemTextW(hwnd HWnd, id Int32, lpString ConstArrayPointer<ClangWideChar>) Bool32 {
 	tofitaDebugLog("setDlgItemTextW called".utf16())
 	return sendDlgItemMessageW(hwnd, id, 12u32, null, lpString as! LParam) as! Bool32
 }
 
+@dllExport('GetDlgItemTextA')
 fun getDlgItemTextA(
 	hwnd HWnd,
 	id Int32,
@@ -1290,6 +1300,7 @@ fun getDlgItemTextA(
 	return sendDlgItemMessageA(hwnd, id, 13u32, len as! WParam, str as! LParam) as! UInt32
 }
 
+@dllExport('GetDlgItemTextW')
 fun getDlgItemTextW(
 	hwnd HWnd,
 	id Int32,
@@ -1304,6 +1315,7 @@ fun getDlgItemTextW(
 	return sendDlgItemMessageW(hwnd, id, 13u32, len as! WParam, str as! LParam) as! UInt32
 }
 
+@dllExport('SetDlgItemInt')
 fun setDlgItemInt(
 	hwnd HWnd,
 	id Int32,
@@ -1323,6 +1335,7 @@ fun setDlgItemInt(
 	return Bool32.True
 }
 
+@dllExport('GetDlgItemInt')
 fun getDlgItemInt(
 	hwnd HWnd,
 	id Int32,
