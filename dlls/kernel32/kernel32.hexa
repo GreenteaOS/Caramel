@@ -53,6 +53,17 @@ fun heapAlloc(heap Handle, flags UInt32, bytes SizeOfPointer) ArrayPointer<UInt8
 	return localAlloc(0, bytes) as! ArrayPointer<UInt8>
 }
 
+@dllExport('HeapFree')
+fun heapFree(
+	hHeap Handle,
+	dwFlags UInt32,
+	lpMem VoidPointer
+) Bool32 {
+	// TODO
+	tofitaDebugLog("HeapFree()\n".utf16())
+	return Bool32.True
+}
+
 // TODO move to crt
 @dllExport('free')
 fun free(@hide pointer SizeOfPointer) Void {
@@ -101,13 +112,6 @@ fun getCurrentProcessId(stub SizeOfPointer) SizeOfPointer {
 fun getCurrentThreadId(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("getCurrentThreadId()\n".utf16())
-	return 0
-}
-
-@dllExport('GetLastError')
-fun getLastError(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("getLastError()\n".utf16())
 	return 0
 }
 
@@ -221,6 +225,22 @@ fun queryPerformanceCounter(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// TODO PEB/atomic
+var lastError UInt32 = 0
+@dllExport('SetLastError')
+fun setLastError(dwErrCode UInt32) Void {
+	// TODO
+	tofitaDebugLog("setLastError(%d)\n".utf16(), dwErrCode)
+	lastError = dwErrCode
+}
+
+@dllExport('GetLastError')
+fun getLastError() UInt32 {
+	// TODO
+	tofitaDebugLog("getLastError()\n".utf16())
+	return lastError
+}
+
 @dllExport('SetUnhandledExceptionFilter')
 fun setUnhandledExceptionFilter(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -275,6 +295,37 @@ fun writeProfileStringW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("writeProfileStringW()\n".utf16())
 	return 0
+}
+
+@dllExport('WideCharToMultiByte')
+fun wideCharToMultiByte(
+	codePage UInt32,
+	dwFlags UInt32,
+	lpWideCharStr ConstArrayPointer<ClangWideChar>,
+	cchWideChar Int,
+	lpMultiByteStr ArrayPointer<ClangChar>,
+	cbMultiByte Int,
+	lpDefaultChar ConstArrayPointer<ClangChar>,
+	lpUsedDefaultChar ArrayPointer<Bool>
+) Int {
+	tofitaDebugLog("wideCharToMultiByte()\n".utf16())
+	return 0 // TODO
+}
+
+@dllExport('GetProcessHeap')
+fun getProcessHeap() Handle {
+	tofitaDebugLog("getProcessHeap()".utf16())
+	return null // TODO
+}
+
+@dllExport('MulDiv')
+fun mulDiv(
+	nNumber Int,
+	nNumerator Int,
+	nDenominator Int
+) Int {
+	tofitaDebugLog("mulDiv()".utf16())
+	return nNumber // TODO
 }
 
 // TODO @linkName('_DllMainCRTStartup')

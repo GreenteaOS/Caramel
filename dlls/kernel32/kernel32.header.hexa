@@ -29,22 +29,27 @@ fun heapAlloc(heap Handle, flags UInt32, bytes SizeOfPointer) ArrayPointer<Void>
 declare VoidPointer = ConstArrayPointer<Void>
 
 // TODO only header here, impl in other files
+@linkName('HeapFree')
+@dllImport
+declare
 fun heapFree(
 	hHeap Handle,
 	dwFlags UInt32,
 	lpMem VoidPointer
-) Bool32 {
-	return Bool32.True // TODO
-}
+) Bool32
 
+@linkName('MulDiv')
+@dllImport
+declare
 fun mulDiv(
 	nNumber Int,
 	nNumerator Int,
 	nDenominator Int
-) Int {
-	return nNumber // TODO
-}
+) Int
 
+@linkName('WideCharToMultiByte')
+@dllImport
+declare
 fun wideCharToMultiByte(
 	codePage UInt32,
 	dwFlags UInt32,
@@ -54,16 +59,22 @@ fun wideCharToMultiByte(
 	cbMultiByte Int,
 	lpDefaultChar ConstArrayPointer<ClangChar>,
 	lpUsedDefaultChar ArrayPointer<Bool>
-) Int {
-	return 0 // TODO
-}
+) Int
 
-fun getProcessHeap() Handle {
-	return null // TODO
-}
+@linkName('GetProcessHeap')
+@dllImport
+declare
+fun getProcessHeap() Handle
 
+@linkName('SetLastError')
+@dllImport
+declare
 fun setLastError(
 	dwErrCode UInt32
-) Void {
-	// TODO
-}
+) Void
+
+// TODO Hexa: well just `@dllImport('GetLastError')` also error if @linkName present too
+@linkName('GetLastError')
+@dllImport
+declare
+fun getLastError() UInt32
