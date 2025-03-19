@@ -93,7 +93,7 @@ Do **NOT** create computer program substantially similar in its expression to th
 - Use different programming languages, here we use Hexa and NASM assembly dialect
 - Extend default functionality and show this as a clear intent to the user
 - Apply visual language (style guide) and naming distinct from the original
-- In the properties or other user facing elements textually express program goal is to achieve the interoperability
+- In the properties or other user facing elements textually express that program goal is to achieve the interoperability
 
 ## Trademarks
 
