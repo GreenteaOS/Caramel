@@ -20,7 +20,26 @@ In case contributor does attempts at reverse engineering: all corresponding cont
 
 Most countries follow similar rules:
 
-- USA [Digital Millennium Copyright Act `(f) Reverse Engineering. (1) (2) (3)`](https://www.govinfo.gov/content/pkg/PLAW-105publ304/html/PLAW-105publ304.htm)
+- **USA** - [Digital Millennium Copyright Act `(f) Reverse Engineering. (1) (2) (3)`](https://www.govinfo.gov/content/pkg/PLAW-105publ304/html/PLAW-105publ304.htm)
+- **United Kingdom** - Copyright, Designs and Patents Act 1988 (as amended) *Despite Brexit, the UK retained the decompilation exception in Section 50B*
+- **Switzerland** - Federal Act on Copyright and Related Rights (1992, amended 2020) *Article 21 permits decompilation for interoperability*
+- **Norway** - Copyright Act (Lov om opphavsrett til åndsverk) of 2018 *Section 39h implements EEA-aligned decompilation rights*
+- **Iceland** - Copyright Act No. 73/1972 (as amended) *Implements the EEA Agreement including software decompilation provisions*
+- **Japan** - Copyright Law (as amended in 2018) *Article 30-4 permits reverse engineering for interoperability purposes*
+- **South Korea** - Copyright Act (as amended in 2011) *Article 101-4 explicitly allows decompilation for interoperability*
+- **Singapore** - Copyright Act (2021) *Section 54 provides specific exceptions for decompilation*
+- **Australia** - Copyright Act 1968 (as amended) *Section 47D allows reverse engineering for creating interoperable products*
+- **New Zealand** - Copyright Act 1994 (as amended) *Section 80A-80C permits decompilation for interoperability*
+- **Canada** - Copyright Act (as amended in 2012) *Section 30.6 permits reverse engineering for interoperability*
+- **Brazil** - Software Law (Law No. 9,609/1998) *Article 6 contains specific provisions for reverse engineering for interoperability*
+- **Chile** - Intellectual Property Law (Law No. 17.336, as amended in 2010) *Article 71Ñ provides for reverse engineering exceptions*
+- **Colombia** - Law 1915 of 2018 *Article 7 introduces exceptions for interoperability purposes*
+- **Israel** - Copyright Law of 2007 (as amended) *Section 24(c) permits reverse engineering for interoperability*
+- **South Africa** - Copyright Amendment Bill (pending implementation) *Includes specific provisions for computer program interoperability*
+- **Morocco** - Law No. 2-00 on Copyright and Related Rights (as amended) *Contains provisions for software interoperability aligned with EU standards*
+- **China** - Copyright Law (as amended in 2020) *Article 17 provides limited recognition of software reverse engineering*
+- **Russia** - Civil Code of the Russian Federation (Part 4) *Article 1280 contains limited decompilation rights for interoperability*
+- **India** - Copyright Act, 1957 (as amended) *Section 52(1)(ab) provides some limited exceptions but less explicit than EU law*
 
 ### Illegal use of works protected by copyright
 
