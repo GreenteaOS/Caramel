@@ -43,9 +43,11 @@ Most countries follow similar rules:
 
 ### Illegal use of works protected by copyright
 
-All contributors should be expected **at any moment be willing to provide evidence of the proper reverse engineering techniques being in use**.
+All contributors should **be willing to provide evidence of the proper reverse engineering techniques being in use**.
 
-Screenshots of the reverse engineering software (with related project files), video and step by step description of the knowledge obtaining process applied with the sole goals as described per this guideline (i.e. interoperability). **Additional information may be requested.**
+Screenshots of the reverse engineering software (with related project files), or videos, or a step by step description of the knowledge obtaining process, applied with the sole goals as described per this guideline (i.e. interoperability). **Additional information may be requested.**
+
+This documentation approach focuses on demonstrating interoperability purposes rather than requiring exhaustive evidence of each reverse engineering step. Contributors should understand that in case of specific legal questions, more detailed information about their process might be necessary.
 
 ### Amount and purpose
 
