@@ -30,9 +30,9 @@ Screenshots of the reverse engineering software (with related project files), vi
 
 ### Right to reverse engineer
 
-As per [`Article 6 Decompilation 1. (a)`](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex%3A31991L0250) you should own a **legal copy/license** of the software **before** doing any attempts at reverse engineering. The software should be officially deprecated/obsolete.
+As per [`Article 6 Decompilation 1. (a)`](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex%3A31991L0250) you should own a **legal copy/license** of the software **before** doing any attempts at reverse engineering. The software should be **officially deprecated/obsolete**.
 
-As a safety measure we assume that most contributions obtained a right to use a copy of the listed program bundles at some point in their lifetime:
+As a safety measure we assume that most contributions obtained a right to use a copy of some of the listed program bundles at some point in their lifetime ("Pro" and other versions included):
 
 - Windows XP
 - Windows Vista
@@ -41,9 +41,9 @@ As a safety measure we assume that most contributions obtained a right to use a 
 
 > [!CAUTION]
 >
-> *Windows 7 is still supported*
+> *Windows 7 is still supported or may have technical support being provided*
 
-We assume that **none** of the contributors had the right to utilize *any* of the "server", "beta" or other editions.
+We assume that **none** of the contributors had the right to utilize *any* of the "server", "beta" or other editions beyound the desktop ones.
 
 > [!NOTE]
 >
