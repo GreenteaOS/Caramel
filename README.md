@@ -47,6 +47,17 @@ All contributors should be expected **at any moment be willing to provide eviden
 
 Screenshots of the reverse engineering software (with related project files), video and step by step description of the knowledge obtaining process applied with the sole goals as described per this guideline (i.e. interoperability). **Additional information may be requested.**
 
+### Amount and purpose
+
+Decompilation is strictly limited to what's necessary for interoperability purposes.
+
+Creating an open source, non-commercial, interoperable plugin is transformative and serves public interest.
+
+- Prefer using a clean room implementation approach
+- Make sure the necessary information is not already readily available
+- Limit the decompilation to the parts needed for interoperability
+- Avoid direct copying of code or implementation details
+
 ### Right to reverse engineer
 
 As per [`Article 6 Decompilation 1. (a)`](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex%3A31991L0250) you should own a **legal copy/license** of the software **before** doing any attempts at reverse engineering. The software should be **officially deprecated/obsolete**.
