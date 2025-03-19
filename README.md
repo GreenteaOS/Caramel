@@ -76,7 +76,7 @@ As a safety measure we assume that most contributions obtained a right to use a 
 >
 > *Windows 7 is still supported or may have technical support being provided*
 
-We assume that **none** of the contributors had the right to utilize *any* of the "server", "beta" or other editions beyound the desktop ones.
+We assume that **none** of the contributors had the right to utilize *any* of the "server", "beta" or other editions beyond the desktop ones.
 
 > [!NOTE]
 >
