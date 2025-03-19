@@ -51,12 +51,13 @@ Screenshots of the reverse engineering software (with related project files), vi
 
 Decompilation is strictly limited to what's necessary for interoperability purposes.
 
-Creating an open source, non-commercial, interoperable plugin is transformative and serves public interest.
+Creating an open source, non-commercial, interoperable plugin is beneficial to the public interest and serves essential compatibility purposes.
 
 - Prefer using a clean room implementation approach
 - Make sure the necessary information is not already readily available
 - Limit the decompilation to the parts needed for interoperability
 - Avoid direct copying of code or implementation details
+- Include comments in code that reference public documentation where available
 
 ### Right to reverse engineer
 
