@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Oleh Petrenko
+// Copyright (C) 2022-2025 Oleh Petrenko
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -36,13 +36,13 @@ fun localAlloc(flags UInt32, bytes SizeOfPointer) HLocal {
 		// TODO non-loop align
 	}
 
-	// TODO allocate buffer via VAlloc every time current one is exchausted
+	// TODO allocate buffer via VAlloc every time current one is exhausted
 	return result as! HLocal
 }
 
 @dllExport('GlobalAlloc')
 fun globalAlloc(flags UInt32, bytes SizeOfPointer) HGlobal {
-	return localAlloc(0, bytes) as! HGlobal
+	return localAlloc(flags, bytes) as! HGlobal
 	// TODO corresponding *Free* functions should check for != null,
 	// do MemProbe and check the tag of heap block to actually be a heap
 	// and only then do rc--
@@ -50,7 +50,7 @@ fun globalAlloc(flags UInt32, bytes SizeOfPointer) HGlobal {
 
 @dllExport('HeapAlloc')
 fun heapAlloc(heap Handle, flags UInt32, bytes SizeOfPointer) ArrayPointer<UInt8> {
-	return localAlloc(0, bytes) as! ArrayPointer<UInt8>
+	return localAlloc(flags, bytes) as! ArrayPointer<UInt8>
 }
 
 @dllExport('HeapFree')
@@ -74,7 +74,7 @@ fun free(@hide pointer SizeOfPointer) Void {
 @dllExport('DeleteCriticalSection')
 fun deleteCriticalSection(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("deleteCriticalSection()\n".utf16())
+	tofitaDebugLog("deleteCriticalSection()".utf16())
 	return 0
 }
 
@@ -83,56 +83,56 @@ fun enterCriticalSection(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	// TODO Hexa: code gen into just L"string"
 	// ^ and NOT count for .c String.new() generation
-	tofitaDebugLog("enterCriticalSection()\n".utf16())
+	tofitaDebugLog("enterCriticalSection()".utf16())
 	return 0
 }
 
 @dllExport('FreeLibrary')
 fun freeLibrary(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("freeLibrary()\n".utf16())
+	tofitaDebugLog("freeLibrary()".utf16())
 	return 0
 }
 
 @dllExport('GetCurrentProcess')
 fun getCurrentProcess(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getCurrentProcess()\n".utf16())
+	tofitaDebugLog("getCurrentProcess()".utf16())
 	return 0
 }
 
 @dllExport('GetCurrentProcessId')
 fun getCurrentProcessId(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getCurrentProcessId()\n".utf16())
+	tofitaDebugLog("getCurrentProcessId()".utf16())
 	return 0
 }
 
 @dllExport('GetCurrentThreadId')
 fun getCurrentThreadId(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getCurrentThreadId()\n".utf16())
+	tofitaDebugLog("getCurrentThreadId()".utf16())
 	return 0
 }
 
 @dllExport('GetLocaleInfoW')
 fun getLocaleInfoW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getLocaleInfoW()\n".utf16())
+	tofitaDebugLog("getLocaleInfoW()".utf16())
 	return 0
 }
 
 @dllExport('GetModuleHandleA')
 fun getModuleHandleA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getModuleHandleA()\n".utf16())
+	tofitaDebugLog("getModuleHandleA(%s)".utf16(), stub as! UInt64)
 	return 0
 }
 
 @dllExport('GetModuleHandleW')
 fun getModuleHandleW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getModuleHandleW()\n".utf16())
+	tofitaDebugLog("getModuleHandleW(%S)".utf16(), stub as! UInt64)
 	return 0
 }
 
@@ -146,14 +146,14 @@ fun getProcAddress(module HModule, lpProcName ConstArrayPointer<ClangChar>) Size
 @dllExport('GetProfileIntW')
 fun getProfileIntW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getProfileIntW()\n".utf16())
+	tofitaDebugLog("getProfileIntW()".utf16())
 	return 0
 }
 
 @dllExport('GetStartupInfoW')
 fun getStartupInfoW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getStartupInfoW()\n".utf16())
+	tofitaDebugLog("getStartupInfoW()".utf16())
 	return 0
 }
 
@@ -172,42 +172,42 @@ fun getSystemTimeAsFileTime(stub SizeOfPointer) SizeOfPointer {
 @dllExport('GetTickCount')
 fun getTickCount(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getTickCount()\n".utf16())
+	tofitaDebugLog("getTickCount()".utf16())
 	return 0
 }
 
 @dllExport('GetVersionExW')
 fun getVersionExW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getVersionExW()\n".utf16())
+	tofitaDebugLog("getVersionExW()".utf16())
 	return 0
 }
 
 @dllExport('GlobalLock')
 fun globalLock(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("globalLock()\n".utf16())
+	tofitaDebugLog("globalLock()".utf16())
 	return 0
 }
 
 @dllExport('GlobalUnlock')
 fun globalUnlock(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("globalUnlock()\n".utf16())
+	tofitaDebugLog("globalUnlock()".utf16())
 	return 0
 }
 
 @dllExport('InitializeCriticalSection')
 fun initializeCriticalSection(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("initializeCriticalSection()\n".utf16())
+	tofitaDebugLog("initializeCriticalSection()".utf16())
 	return 0
 }
 
 @dllExport('LeaveCriticalSection')
 fun leaveCriticalSection(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("leaveCriticalSection()\n".utf16())
+	tofitaDebugLog("leaveCriticalSection()".utf16())
 	return 0
 }
 
@@ -221,7 +221,7 @@ fun loadLibraryW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule {
 @dllExport('QueryPerformanceCounter')
 fun queryPerformanceCounter(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("queryPerformanceCounter()\n".utf16())
+	tofitaDebugLog("queryPerformanceCounter()".utf16())
 	return 0
 }
 
@@ -230,70 +230,70 @@ var lastError UInt32 = 0
 @dllExport('SetLastError')
 fun setLastError(dwErrCode UInt32) Void {
 	// TODO
-	tofitaDebugLog("setLastError(%d)\n".utf16(), dwErrCode)
+	tofitaDebugLog("setLastError(%d)".utf16(), dwErrCode)
 	lastError = dwErrCode
 }
 
 @dllExport('GetLastError')
 fun getLastError() UInt32 {
 	// TODO
-	tofitaDebugLog("getLastError()\n".utf16())
+	tofitaDebugLog("getLastError()".utf16())
 	return lastError
 }
 
 @dllExport('SetUnhandledExceptionFilter')
 fun setUnhandledExceptionFilter(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("setUnhandledExceptionFilter()\n".utf16())
+	tofitaDebugLog("setUnhandledExceptionFilter()".utf16())
 	return 0
 }
 
 @dllExport('Sleep')
 fun sleep(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("sleep()\n".utf16())
+	tofitaDebugLog("sleep()".utf16())
 	return 0
 }
 
 @dllExport('TerminateProcess')
 fun terminateProcess(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("terminateProcess()\n".utf16())
+	tofitaDebugLog("terminateProcess()".utf16())
 	return 0
 }
 
 @dllExport('TlsGetValue')
 fun tlsGetValue(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("tlsGetValue()\n".utf16())
+	tofitaDebugLog("tlsGetValue()".utf16())
 	return 0
 }
 
 @dllExport('UnhandledExceptionFilter')
 fun unhandledExceptionFilter(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("unhandledExceptionFilter()\n".utf16())
+	tofitaDebugLog("unhandledExceptionFilter()".utf16())
 	return 0
 }
 
 @dllExport('VirtualProtect')
 fun virtualProtect(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("virtualProtect()\n".utf16())
+	tofitaDebugLog("virtualProtect()".utf16())
 	return 0
 }
 
 @dllExport('VirtualQuery')
 fun virtualQuery(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("virtualQuery()\n".utf16())
+	tofitaDebugLog("virtualQuery()".utf16())
 	return 0
 }
 
 @dllExport('WriteProfileStringW')
 fun writeProfileStringW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("writeProfileStringW()\n".utf16())
+	tofitaDebugLog("writeProfileStringW()".utf16())
 	return 0
 }
 
@@ -308,7 +308,7 @@ fun wideCharToMultiByte(
 	lpDefaultChar ConstArrayPointer<ClangChar>,
 	lpUsedDefaultChar ArrayPointer<Bool>
 ) Int {
-	tofitaDebugLog("wideCharToMultiByte()\n".utf16())
+	tofitaDebugLog("wideCharToMultiByte()".utf16())
 	return 0 // TODO
 }
 
