@@ -3294,11 +3294,56 @@ fun setWindowLongPtrA(hWnd HWnd, nIndex Int32, dwNewLong SizeOfPointer) SizeOfPo
 	return previous
 }
 
+@struct
+class WindowClassExA {
+	var cbSize UInt32
+	var style UInt32
+	var lpfnWndProc WindowProcedure
+	var cbClsExtra Int32
+	var cbWndExtra Int32
+	var hInstance HInstance
+	var hIcon HIcon
+	var hCursor HCursor
+	var hbrBackground HBrush
+	var lpszMenuName ConstArrayPointer<ClangChar>
+	var lpszClassName ConstArrayPointer<ClangChar>
+	var hIconSm HIcon
+}
+
 @dllExport('RegisterClassExA')
-fun registerClassExA(stub SizeOfPointer) SizeOfPointer {
+fun registerClassExA(wc WindowClassExA) Atom {
 	// TODO
-	tofitaDebugLog("RegisterClassExA called".utf16())
-	return 0
+	tofitaDebugLog("RegisterClassExA called {%s}".utf16(), wc.lpszClassName as! UInt64)
+	var lpszMenuName ArrayByValue<ClangWideChar, 4096> = [0]
+	var utf16zClassName ArrayByValue<ClangWideChar, 4096> = [0]
+
+	var i = 0
+	while true {
+		utf16zClassName[i] = wc.lpszClassName[i]
+		if utf16zClassName[i] as! UInt16 == 0 {
+			break
+		}
+
+		i++
+	}
+
+	tofitaDebugLog("RegisterClassExA utf8 {%S}".utf16(), utf16zClassName as! UInt64)
+	let wcw WindowClass = WindowClass() // TODO on stack
+	// wcw.cbSize = sizeOf<WindowClass>()
+	wcw.style = wc.style
+	wcw.lpfnWndProc = wc.lpfnWndProc
+	wcw.cbClsExtra = wc.cbClsExtra
+	// TODO respect cbWndExtra
+	wcw.cbWndExtra = wc.cbWndExtra
+	wcw.hInstance = wc.hInstance
+	wcw.hIcon = wc.hIcon
+	wcw.hCursor = wc.hCursor
+	wcw.hbrBackground = wc.hbrBackground
+	wcw.lpszMenuName = lpszMenuName.ref
+	wcw.utf16zClassName = utf16zClassName.ref
+	// wcw.hIconSm = 0
+
+	return registerClassW(wcw)
 }
 
 @dllExport('GetWindowLongPtrA')
