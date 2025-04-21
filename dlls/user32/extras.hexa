@@ -3665,7 +3665,47 @@ fun setWindowPos(
 	uFlags UInt32 // Window positioning flags
 ) Bool32 // Determine whether a window is a child of another window
 {
-	tofitaDebugLog("setWindowPos called".utf16())
+	tofitaDebugLog("SetWindowPos called with hWnd %8 hWndInsertAfter %8".utf16(), hWnd as! UInt64, hWndInsertAfter as! UInt64)
+	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+	tofitaDebugLog("> cx %d cy %d".utf16(), cx as! UInt64, cy as! UInt64)
+	tofitaDebugLog("> uFlags %u".utf16(), uFlags as! UInt64)
+	// sendMessageW(hWnd, Message.WM_MOVE, null, null)
+	// NOTE set default values
+	let info = MINMAXINFO()
+	// Send both as LParam and WParam for now
+	sendMessageW(hWnd, Message.WM_GET_MIN_MAX_INFO, info as! WParam, info as! LParam)
+
+	// if (uFlags & SWP_NOMOVE) == 0 {
+	// info.ptReserved.x = x
+	// info.ptReserved.y = y
+	// }
+
+	let window = handleToWindow(hWnd)
+	if window == null {
+		tofitaDebugLog("> window == null".utf16())
+		return null
+	}
+
+	if info.ptMinTrackSize.ref.x > window.width or info.ptMinTrackSize.ref.y > window.height {
+		window.width = info.ptMinTrackSize.ref.x
+		window.height = info.ptMinTrackSize.ref.y
+		tofitaDebugLog("> new size %d x %d".utf16(), window.width as! UInt64, window.height as! UInt64)
+
+		// NOTE check `windowId != 0`
+		let payload = ShowWindowPayload()
+		payload.windowId = window.windowId
+		payload.nCmdShow = CmdShow.SW_UNCHANGED
+		payload.x = -1
+		payload.y = -1
+		payload.width = window.width
+		payload.height = window.height
+		tofitaShowWindow(payload)
+
+		// NOTE wParam set to null (indicating a size change without specific flags like SIZE_MAXIMIZED)
+		let lParam = LParam.makeULong(window.width as! UInt16, window.height as! UInt16) as! LParam
+		sendMessageW(hWnd, Message.WM_SIZE, null, lParam)
+	}
+
 	return Bool32.True
 }
 
