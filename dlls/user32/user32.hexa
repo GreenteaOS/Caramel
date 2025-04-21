@@ -972,14 +972,24 @@ fun loadMenuW(hInstance HInstance, lpMenuName ConstArrayPointer<ClangWideChar>) 
 }
 
 @dllExport('LoadStringW')
-fun loadStringW(stub SizeOfPointer) SizeOfPointer {
+fun loadStringW(hInstance HInstance?, uID UInt32, lpBuffer ArrayPointer<ClangWideChar>, nBufferMax Int) Int {
 	// TODO
-	return 0
+	var result ConstArrayPointer<ClangWideChar> = "?".utf16()
 	tofitaDebugLog("LoadStringW called %S id %d".utf16(), result as! UInt64, uID)
+	if let lpBuffer = lpBuffer, nBufferMax > 0 {
+		lpBuffer[0] = result[0]
+		lpBuffer[1] = 0
+		return 1
+	}
+
+	let lpBuffer = lpBuffer as! ArrayPointer<SizeOfPointer>
+	// lpBuffer[0] = result as! SizeOfPointer // TODO Hexa: SizeOfPointer = ConstArrayPointer must not be allowed
+	lpBuffer[0] = result as! SizeOfPointer
+	return 1
 }
 
 @dllExport('MapVirtualKeyExW')
-fun mapVirtualKeyExW(stub SizeOfPointer) SizeOfPointer {
+fun mapVirtualKeyExW(vkCode Int, scanCode Int, flags Int, lpTranslate ArrayPointer<ClangWideChar>) Int {
 	// TODO
 	tofitaDebugLog("MapVirtualKeyExW called".utf16())
 	return 0
