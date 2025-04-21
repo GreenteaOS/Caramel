@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Oleh Petrenko
+// Copyright (C) 2022-2025 Oleh Petrenko
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -54,6 +54,9 @@ class Window {
 	var clipY Int32 = 0
 	var clipWidth Int32 = 0
 	var clipHeight Int32 = 0
+
+	// TODO others + unset state (i.e. `SizeOfPointer?` + support this in code gen + maybe this is `Array<SizeOfPointer?>`)
+	var windowLongPtrA SizeOfPointer = 0
 
 	new () {
 		windowIsWindowSecret = windowIsWindow

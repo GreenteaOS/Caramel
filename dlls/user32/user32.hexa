@@ -1041,10 +1041,12 @@ fun setWindowLongW(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
 }
 
 @dllExport('SetWindowLongPtrW')
-fun setWindowLongPtrW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetWindowLongPtrW called".utf16())
-	return 0
+fun setWindowLongPtrW(hWnd HWnd, nIndex Int32, dwNewLong SizeOfPointer) SizeOfPointer {
+	// TODO same as A?
+	tofitaDebugLog("SetWindowLongPtrW called %8 with index %u".utf16(), hWnd as! UInt64, nIndex as! UInt64)
+	let previous = handleToWindow(hWnd).windowLongPtrA
+	handleToWindow(hWnd).windowLongPtrA = dwNewLong
+	return previous
 }
 
 @dllExport('ToAsciiEx')
