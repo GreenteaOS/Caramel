@@ -1011,9 +1011,26 @@ fun extFloodFill(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetObjectW')
-fun getObjectW(stub SizeOfPointer) SizeOfPointer {
+fun getObjectW(hObject SizeOfPointer, nSize Int32, lpvObject SizeOfPointer) Int32 {
 	// TODO
-	tofitaDebugLog("GetObjectW called".utf16())
+	tofitaDebugLog("GetObjectW called with hObject %8 nSize %d".utf16(), hObject as! UInt64, nSize as! UInt64)
+	tofitaDebugLog("> lpvObject %8".utf16(), lpvObject as! UInt64)
+
+	if true {
+		tofitaDebugLog("> assuming BITMAP".utf16())
+		let bitmap BITMAP = lpvObject as! BITMAP
+		bitmap.bmWidth = 72
+		bitmap.bmHeight = 112
+		bitmap.bmBitsPixel = 8i16
+		bitmap.bmPlanes = 1i16
+		bitmap.bmWidthBytes = 72
+		bitmap.bmType = 0
+		var bmBits ArrayByValue<ClangWideChar, 8064> = [0]
+		bitmap.bmBits = bmBits as! SizeOfPointer // TODO .address
+
+		return 0
+	}
+
 	return 0
 }
 
