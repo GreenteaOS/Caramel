@@ -493,8 +493,13 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 		return null
 	}
 	let fb = window.fb.ref
+	if fb == null {
+		tofitaDebugLog("> window == null, cancelling".utf16())
+		return null
+	}
 	// We do this every time, cause window may be resized
 	njraaGetOrCreateWindowFramebuffer(fb)
+	// TODO ^ only for overlapped + cache it
 	let rcPaint = ps.rcPaint.ref
 	rcPaint.left = 0
 	rcPaint.left = window.clipX
@@ -561,6 +566,11 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 	tofitaDebugLog("> lprc.left %u".utf16(), lprc.left as! UInt64)
 	tofitaDebugLog("> lprc.right %u".utf16(), lprc.right as! UInt64)
 
+	if dc == null {
+		tofitaDebugLog("> dc == null, cancelling".utf16())
+		return 0
+	}
+
 	let fb = dc as! WindowFramebuffer
 	// TODO validate != null and that it is actually a WindowFrameBuffer
 
@@ -569,6 +579,7 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 	color.ref.color = 0xFFE1E1E1u32 // TODO brush
 	if brush as! Int != 7 {
 		color.ref.color = 0xFFF0F0F0u32 // TODO brush
+		color.ref.color = brush as! UInt32 // TODO brush
 	}
 
 	for y in lprc.top ... lprc.bottom {
@@ -919,8 +930,8 @@ fun getWindowTextW(
 }
 
 @dllExport('InvalidateRect')
-fun invalidateRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
+fun invalidateRect(hWnd HWnd?, lprc ConstArrayPointer<ClangWideChar>?, bErase Bool32) Bool32 {
 	// TODO: Mark rectangle for repainting
 	tofitaDebugLog("InvalidateRect called with hWnd %8".utf16(), hWnd as! UInt64)
 	tofitaDebugLog("> lprc %8 bErase %u".utf16(), lprc as! UInt64, bErase as! UInt64)
