@@ -593,18 +593,20 @@ fun time(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+var random = 1
+
 @dllExport('rand')
-fun rand(stub SizeOfPointer) SizeOfPointer {
+fun rand() Int32 {
 	// TODO
 	tofitaDebugLog("rand called".utf16())
-	return 0
+	random++
+	return random
 }
 
 @dllExport('srand')
-fun srand(stub SizeOfPointer) SizeOfPointer {
+fun srand(seed UInt32) Void {
 	// TODO
-	tofitaDebugLog("srand called".utf16())
-	return 0
+	tofitaDebugLog("srand called with seed %u".utf16(), seed)
 }
 
 @dllExport('memcmp')
