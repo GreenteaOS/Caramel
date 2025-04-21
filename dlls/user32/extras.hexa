@@ -3352,10 +3352,17 @@ fun createMutexA(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('lstrcpyW')
-fun lstrcpyW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrcpyW called".utf16())
-	return 0
+fun lstrcpyW(lpString ArrayPointer<ClangWideChar>, sourceString ConstArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
+	// TODO SEH
+	tofitaDebugLog("lstrcpyW called '%S'".utf16(), sourceString as! UInt64)
+	var i = 0
+	while sourceString[i] as! Int != 0 {
+		lpString[i] = sourceString[i]
+		i += 1
+	}
+
+	lpString[i] = 0
+	return lpString
 }
 
 @dllExport('FindResourceW')
