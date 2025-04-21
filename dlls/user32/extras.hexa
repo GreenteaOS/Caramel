@@ -2644,10 +2644,11 @@ fun getTextMetricsA(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetObjectA')
-fun getObjectA(stub SizeOfPointer) SizeOfPointer {
+fun getObjectA(hObject SizeOfPointer, nSize Int32, lpvObject SizeOfPointer) Int32 {
 	// TODO
-	tofitaDebugLog("GetObjectA called".utf16())
-	return 0
+	tofitaDebugLog("GetObjectA called with hObject %8 nSize %d".utf16(), hObject as! UInt64, nSize as! UInt64)
+	tofitaDebugLog("> lpvObject %8".utf16(), lpvObject as! UInt64)
+	return getObjectW(hObject, nSize, lpvObject)
 }
 
 @dllExport('ExtTextOutA')
