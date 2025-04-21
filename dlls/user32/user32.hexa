@@ -894,10 +894,17 @@ fun getWindowLongPtrW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetWindowRect')
-fun getWindowRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	return 0
+fun getWindowRect(hWnd HWnd, lprc Rect?) Bool32 {
 	tofitaDebugLog("GetWindowRect called with hWnd %8 lprc %8".utf16(), hWnd as! UInt64, lprc as! UInt64)
+	if let rc = lprc {
+		// TODO: Get window dimensions
+		rc.left = 0
+		rc.top = 0
+		rc.right = 0
+		rc.bottom = 0
+		return Bool32.True
+	}
+	return Bool32.False
 }
 
 @dllExport('GetWindowTextW')
