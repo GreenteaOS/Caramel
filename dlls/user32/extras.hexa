@@ -1319,10 +1319,10 @@ fun __CxxFrameHandler(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('abs')
-fun abs(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("abs called".utf16())
-	return 0
+fun abs(value Int32) Int32 {
+	// NOTE need a bit cast to `UInt64` for logging
+	tofitaDebugLog("abs called with %d".utf16(), value as! UInt64)
+	return value < 0 ? -value : value // Basic implementation
 }
 
 @dllExport('??_V@YAXPEAX@Z')
