@@ -1033,10 +1033,23 @@ fun getROP2(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('LineTo')
-fun lineTo(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LineTo called".utf16())
-	return 0
+fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
+	// TODO: Implement drawing a line from the DC's current pen position to (x, y).
+	// 1. Get the DC structure for hdc.
+	// 2. Get the current pen position (startX, startY) from the DC.
+	// 3. Get the currently selected pen object (HPEN) from the DC.
+	// 4. Get the PenData for the selected HPEN using getSpecificGdiData<PenData>(...).
+	// 5. Get the DC's target surface (bitmap/framebuffer).
+	// 6. Implement a line drawing algorithm (e.g., Bresenham's) using the pen's color, width, and style.
+	// 7. Apply clipping based on the DC's clipping region.
+	// 8. Draw the pixels onto the surface.
+	// 9. Update the DC's current pen position to (x, y).
+	// 10. Return success/failure.
+	// NOTE maybe make `tofitaDebugLog` as `debuglog(variadic template)` and pass va args as native array of SizeOfPointer
+	tofitaDebugLog("LineTo called on DC %8".utf16(), hdc as! UInt64)
+	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+	// Placeholder: Needs DC, PenData retrieval, and line drawing algorithm
+	return Bool32.False // Indicate failure until implemented
 }
 
 @dllExport('MaskBlt')
