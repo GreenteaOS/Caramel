@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Oleh Petrenko
+// Copyright (C) 2022-2025 Oleh Petrenko
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -13,37 +13,37 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 @dllExport('RegCloseKey')
-fun regCloseKey(stub SizeOfPointer) SizeOfPointer {
+fun regCloseKey(key SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("regCloseKey()\n".utf16())
+	tofitaDebugLog("regCloseKey(%8)\n".utf16(), key as! UInt64)
 	return 0
 }
 
 @dllExport('RegCreateKeyExW')
-fun regCreateKeyExW(stub SizeOfPointer) SizeOfPointer {
+fun regCreateKeyExW(key SizeOfPointer, lpSubKey ConstArrayPointer<ClangWideChar>) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("regCreateKeyExW()\n".utf16())
+	tofitaDebugLog("regCreateKeyExW(%S)\n".utf16(), lpSubKey as! UInt64)
 	return 0
 }
 
 @dllExport('RegOpenKeyExW')
-fun regOpenKeyExW(stub SizeOfPointer) SizeOfPointer {
+fun regOpenKeyExW(key SizeOfPointer, lpSubKey ConstArrayPointer<ClangWideChar>) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("regOpenKeyExW()\n".utf16())
+	tofitaDebugLog("regOpenKeyExW(%S)\n".utf16(), lpSubKey as! UInt64)
 	return 0
 }
 
 @dllExport('RegQueryValueExW')
-fun regQueryValueExW(stub SizeOfPointer) SizeOfPointer {
+fun regQueryValueExW(key SizeOfPointer, lpValueName ConstArrayPointer<ClangWideChar>) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("regQueryValueExW()\n".utf16())
+	tofitaDebugLog("regQueryValueExW(%S)\n".utf16(), lpValueName as! UInt64)
 	return 0
 }
 
 @dllExport('RegSetValueExW')
-fun regSetValueExW(stub SizeOfPointer) SizeOfPointer {
+fun regSetValueExW(key SizeOfPointer, lpValueName ConstArrayPointer<ClangWideChar>) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("regSetValueExW()\n".utf16())
+	tofitaDebugLog("regSetValueExW(%S)\n".utf16(), lpValueName as! UInt64)
 	return 0
 }
 
