@@ -558,11 +558,51 @@ fun adjustWindowRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+enum RasterOperation : UInt32 {
+	SrcCopy = 0x00CC0020
+	PatCopy = 0x00F00021
+}
+
+fun randomize(state UInt32) UInt32 {
+	var state = state
+	state ^= state << 13
+	state ^= state >> 17
+	state ^= state << 5
+	return state
+}
+
 @dllExport('BitBlt')
-fun bitBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("BitBlt called".utf16())
-	return 0
+fun bitBlt(
+	hdc HDc, // Destination DC
+	x Int32, // Destination X
+	y Int32, // Destination Y
+	cx Int32, // Width
+	cy Int32, // Height
+	hdcSrc HDc?, // Source DC (optional, depends on dwRop)
+	x1 Int32, // Source X
+	y1 Int32, // Source Y
+	dwRop RasterOperation // Raster operation code (e.g., SRCCOPY, PATCOPY)
+) Bool32 {
+	// TODO: Implement block transfer of pixel data. This is complex.
+	// Needs to handle various ROP codes, source/destination DCs (memory or screen),
+	// clipping, potential stretching (though StretchBlt is separate), brush patterns (for PATCOPY etc.).
+	tofitaDebugLog("BitBlt called on DC %8 from DC %8".utf16(), hdc as! UInt64, hdcSrc as! UInt64)
+	tofitaDebugLog("> ROP %u".utf16(), dwRop as! UInt64)
+	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+	tofitaDebugLog("> cx %d cy %d".utf16(), cx as! UInt64, cy as! UInt64)
+	tofitaDebugLog("> x1 %d y1 %d".utf16(), x1 as! UInt64, y1 as! UInt64)
+	// Placeholder: Needs extensive implementation covering ROPs, clipping, surfaces.
+
+	// let rect = Rect(x, y, x + cx, y + cy)
+	let rect = Rect()
+	rect.left = x
+	rect.top = y
+	rect.right = x + cx
+	rect.bottom = y + cy
+	// NOTE Hexa: `fillRect(hdc, rect, random(rand()) as! HBrush)` generates `called object type 'int32_t' (aka 'int') is not a function or function pointer`
+	fillRect(hdc, rect, randomize(rand() as! UInt32) as! HBrush)
+
+	return Bool32.False // Indicate failure until implemented
 }
 
 @dllExport('DeleteDC')
