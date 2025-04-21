@@ -2511,10 +2511,19 @@ fun frameRect(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('InflateRect')
-fun inflateRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("InflateRect called".utf16())
-	return 0
+fun inflateRect(lprc Rect?, dx Int32, dy Int32) Bool32 {
+	tofitaDebugLog("InflateRect called with dx %d, dy %d".utf16(), dx as! UInt64, dy as! UInt64)
+
+	if let lprc = lprc {
+		lprc.left -= dx
+		lprc.top -= dy
+		lprc.right += dx
+		lprc.bottom += dy
+		return Bool32.True // Success
+	}
+
+	tofitaDebugLog("InflateRect: lprc is null".utf16())
+	return Bool32.False
 }
 
 @dllExport('SetParent')
