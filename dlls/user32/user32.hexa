@@ -1046,7 +1046,7 @@ fun openClipboard(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('PostMessageW')
-fun postMessageW(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) Bool32 {
+fun postMessageW(hWnd HWnd, msg Message, wParam WParam, lParam LParam) Bool32 {
 	// TODO
 	tofitaDebugLog("PostMessageW called".utf16())
 	return 0
@@ -1055,13 +1055,20 @@ fun postMessageW(hWnd HWnd, msg UInt32, wParam WParam, lParam LParam) Bool32 {
 @dllExport('SendMessageW')
 fun sendMessageW(
 	hWnd Handle,
-	msg UInt32,
+	msg Message,
 	wParam WParam,
 	lParam LParam
 ) LResult {
 	// TODO
-	return 0
 	tofitaDebugLog("sendMessageW called".utf16())
+	var result LResult? = null
+	let window = handleToWindow(hWnd)
+	if window == null {
+		tofitaDebugLog("> window == null".utf16())
+		return null
+	}
+	result = window.proc(hWnd, msg, wParam, lParam)
+	return result // TODO Hexa: `LResult?` is not allowed cause `LResult` is not nullable
 }
 
 @dllExport('GetClientRect')
