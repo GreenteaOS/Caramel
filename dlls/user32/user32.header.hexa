@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Oleh Petrenko
+// Copyright (C) 2022-2025 Oleh Petrenko
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -109,8 +109,17 @@ fun setRect(
 	yBottom Int // int -> Int
 ) Bool32 // BOOL -> Bool (return type)
 {
-	tofitaDebugLog("setRect called".utf16())
-	return Bool32.True
+	tofitaDebugLog("SetRect called with lprc %8".utf16(), lprc as! UInt64)
+	tofitaDebugLog("left %d top %d".utf16(), xLeft as! UInt64, yTop as! UInt64)
+	tofitaDebugLog("right %d bottom %d".utf16(), xRight as! UInt64, yBottom as! UInt64)
+	if let rc = lprc {
+		rc.left = xLeft
+		rc.top = yTop
+		rc.right = xRight
+		rc.bottom = yBottom
+		return Bool32.True
+	}
+	return Bool32.False
 }
 
 fun monitorFromWindow(
