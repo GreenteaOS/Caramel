@@ -996,10 +996,35 @@ fun mapVirtualKeyExW(vkCode Int, scanCode Int, flags Int, lpTranslate ArrayPoint
 }
 
 @dllExport('MoveWindow')
-fun moveWindow(stub SizeOfPointer) SizeOfPointer {
+fun moveWindow(hwnd HWnd, x Int32, y Int32, width Int32, height Int32, repaint Bool32) Bool32 {
 	// TODO change position too
 	tofitaDebugLog("MoveWindow called".utf16())
-	return 0
+
+	if let window = handleToWindow(hwnd), window.width != width or window.height != height {
+		window.x = x
+		window.y = y
+		window.width = width
+		window.height = height
+
+		// NOTE check `windowId != 0`
+		// let payload = ShowWindowPayload()
+		// payload.windowId = window.windowId
+		// payload.nCmdShow = CmdShow.SW_UNCHANGED
+		// payload.x = x
+		// payload.y = y
+		// payload.width = width
+		// payload.height = height
+		// tofitaShowWindow(payload)
+
+		let lParam = LParam.makeULong(window.width as! UInt16, window.height as! UInt16) as! LParam
+		sendMessageW(hwnd, Message.WM_SIZE, null, lParam)
+	}
+
+	if repaint != Bool32.False {
+		updateWindow(hwnd)
+	}
+
+	return Bool32.False
 }
 
 @dllExport('OpenClipboard')
