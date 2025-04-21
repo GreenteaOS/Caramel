@@ -2019,10 +2019,10 @@ fun charLowerBuffW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('DefWindowProcA')
-fun defWindowProcA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
+fun defWindowProcA(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResult? {
+	// TODO !!!
 	tofitaDebugLog("DefWindowProcA called".utf16())
-	return 0
+	return defWindowProcW(hWnd, uMsg, wParam, lParam)
 }
 
 @dllExport('CallWindowProcA')
