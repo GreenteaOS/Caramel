@@ -3302,10 +3302,13 @@ fun registerClassExA(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetWindowLongPtrA')
-fun getWindowLongPtrA(stub SizeOfPointer) SizeOfPointer {
+fun getWindowLongPtrA(hWnd HWnd, nIndex Int32) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetWindowLongPtrA called".utf16())
-	return 0
+	tofitaDebugLog("GetWindowLongPtrA called %8 with index %u".utf16(), hWnd as! UInt64, nIndex as! UInt64)
+	let result = handleToWindow(hWnd).windowLongPtrA
+	// TODO Hexa: `.windowLongPtrA` nullable check
+	tofitaDebugLog("GetWindowLongPtrA result %8".utf16(), result as! UInt64)
+	return result
 }
 
 @dllExport('CreatePalette')
