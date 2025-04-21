@@ -294,8 +294,8 @@ fun createWindowExW(
 @dllExport('CreateWindowExA')
 fun createWindowExA(
 	dwExStyle UInt32,
-	lpClassName ConstArrayPointer<ClangWideChar>,
-	lpWindowName ConstArrayPointer<ClangWideChar>,
+	lpClassName ConstArrayPointer<ClangChar>, // TODO must be MayBeAtomA MayBeAtomW
+	lpWindowName ConstArrayPointer<ClangChar>,
 	dwStyle UInt32,
 	x Int32,
 	y Int32,
@@ -307,6 +307,30 @@ fun createWindowExA(
 	lpParam LParam
 ) HWnd {
 	tofitaDebugLog("CreateWindowExA called {%s} of {%s}".utf16(), lpWindowName as! UInt64, lpClassName as! UInt64)
+	var utf16zClassName ArrayByValue<ClangWideChar, 4096> = [0]
+	var i = 0
+	while lpClassName != null { // TODO avoid infinite loop
+		utf16zClassName[i] = lpClassName[i]
+		if utf16zClassName[i] as! UInt16 == 0 {
+			break
+		}
+
+		i++
+	}
+
+	var utf16zWindowName ArrayByValue<ClangWideChar, 4096> = [0]
+	var i = 0
+	while lpWindowName != null { // TODO avoid infinite loop
+		utf16zWindowName[i] = lpWindowName[i]
+		if utf16zWindowName[i] as! UInt16 == 0 {
+			break
+		}
+
+		i++
+	}
+
+	tofitaDebugLog("CreateWindowExA calls createWindowExW {%S} of {%S}".utf16(), utf16zClassName as! UInt64, utf16zWindowName as! UInt64)
+	return createWindowExW(dwExStyle, utf16zClassName.ref, utf16zWindowName.ref, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam)
 	return null // TODO
 }
 
