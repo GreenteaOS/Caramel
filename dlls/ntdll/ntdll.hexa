@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Oleh Petrenko
+// Copyright (C) 2022-2025 Oleh Petrenko
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,19 @@
 // TODO @linkName('KiFastSystemCall')
 fun kiFastSystemCall(rcx UInt64, rdx Payload) UInt64 {
 	return tofitaFastSystemCall(rcx as! TofitaSyscalls, rdx)
+}
+
+@linkName('NtCurrentTeb')
+@dllExport
+fun ntCurrentTeb() SizeOfPointer {
+	// return
+	#if bit64 // TODO format
+		return readgsqword(0x60u32)
+	#end
+	#if bit32
+		// #else TODO Hexa: bug
+		return readfsdword(0x18u32)
+	#end
 }
 
 // TODO calling convention
