@@ -1060,10 +1060,25 @@ fun moveToEx(hdc HDc, x Int32, y Int32, lpptPoint Point?) Bool32 {
 }
 
 @dllExport('PatBlt')
-fun patBlt(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PatBlt called".utf16())
-	return 0
+fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation) Bool32 {
+	// TODO: Implement pattern blit. Fills the specified rectangle using the
+	// currently selected brush and the specified ROP code.
+	// Requires handling the brush (solid or pattern), the ROP logic, clipping.
+	tofitaDebugLog("PatBlt called on DC %8, ROP %u".utf16(), hdc as! UInt64, dwRop as! UInt64)
+	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+	tofitaDebugLog("> cx %d cy %d".utf16(), cx as! UInt64, cy as! UInt64)
+	// Placeholder: Needs DC, Brush retrieval, ROP implementation, clipping.
+
+	// let rect = Rect(x, y, x + cx, y + cy)
+	let rect = Rect()
+	rect.left = x
+	rect.top = y
+	rect.right = x + cx
+	rect.bottom = y + cy
+	// NOTE Hexa: `fillRect(hdc, rect, random(rand()) as! HBrush)` generates `called object type 'int32_t' (aka 'int') is not a function or function pointer`
+	fillRect(hdc, rect, randomize(rand() as! UInt32) as! HBrush)
+
+	return Bool32.False // Indicate failure until implemented
 }
 
 @dllExport('PolyBezier')
