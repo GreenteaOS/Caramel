@@ -223,8 +223,68 @@ fun createWindowExW(
 		window.fb.ref.ownerWindowId = windowId
 	}
 
-	// Initial paint
+	// TODO Hexa: make @struct `new` allocate on stack instead of heap so no need for this
+	// TODO ^ update c2hexa to not produce .ref accordingly
+	// TODO Hexa: ByValue passes constructors and { fields }
+	// ^ some fields have setter but still require initialization
+	let createStruct ByValue<CREATESTRUCT> = ByValue<CREATESTRUCT>()
+	tofitaDebugLog("> createStruct.ref.lpCreateParams = {%8}".utf16(), lpParam as! UInt64)
+	createStruct.ref.lpCreateParams = lpParam
+	createStruct.ref.hInstance = hInstance
+	createStruct.ref.hMenu = hMenu
+	createStruct.ref.hwndParent = hWndParent
+	createStruct.ref.cy = payload.nHeight
+	createStruct.ref.cx = payload.nWidth
+	createStruct.ref.y = y
+	createStruct.ref.x = x
+	createStruct.ref.dwStyle = dwStyle
+	createStruct.ref.dwExStyle = dwExStyle
+	createStruct.ref.lpszName = payload.lpWindowName as! SizeOfPointer // TODO Hexa: .address
+	createStruct.ref.lpszClass = lpClassName as! SizeOfPointer // TODO Hexa: .address
+
 	// TODO should be called somewhere else, in syscall of windows creation?
+	// TODO use sendMessage for WM_CREATE and WM_NON_CLIENT_CREATE
+	// TODO Must return non-zero to proceed
+	sendMessageW(hWnd, Message.WM_NON_CLIENT_CREATE, null, createStruct.ref as! LParam)
+
+	// TODO WM_NCCALCSIZE
+
+	/*
+	WM_NCCALCSIZE is sent immediately after WM_NCCREATE during window creation, but only under certain conditions:
+	The window has a non-client area that needs sizing (e.g., borders, title bar, scroll bars).
+	It’s sent before WM_CREATE to allow the application to adjust the client area size based on the non-client features.
+
+	It’s sent when the window’s style or extended style implies a non-client area (e.g., WS_CAPTION, WS_BORDER, WS_THICKFRAME, WS_EX_CLIENTEDGE). If the window is purely client-area (e.g., a popup with no border), it might not be sent during creation.
+	It’s also sent later (post-creation) whenever the non-client area needs recalculation, like during resizing or style changes, but that’s not relevant to initial creation.
+
+	// If dwStyle or dwExStyle implies a non-client area:
+	let ncParams = NCCALCSIZE_PARAMS() // Fill with appropriate rects
+	sendMessage(hWnd, Message.WM_NCCALCSIZE, false, ncParams as! LParam)
+
+	// Optional: WM_NCCALCSIZE if non-client area exists
+	if (dwStyle & (WS_CAPTION | WS_BORDER | WS_THICKFRAME)) { // Example condition
+		let ncParams = NCCALCSIZE_PARAMS()
+		// Fill ncParams.rgrc[0] with proposed window rect (x, y, x+nWidth, y+nHeight)
+		ncParams.rgrc[0].left = x
+		ncParams.rgrc[0].top = y
+		ncParams.rgrc[0].right = x + payload.nWidth
+		ncParams.rgrc[0].bottom = y + payload.nHeight
+		sendMessage(hWnd, Message.WM_NCCALCSIZE, false, ncParams as! LParam)
+	}
+
+	When sent during creation:
+	wParam is FALSE.
+	lParam points to an NCCALCSIZE_PARAMS structure containing proposed window rectangles.
+	Post-creation (e.g., resizing):
+	wParam is TRUE.
+	lParam points to NCCALCSIZE_PARAMS.
+
+	However, for completeness in mimicking CreateWindowEx, you could send it if your window uses styles like WS_OVERLAPPEDWINDOW or WS_EX_WINDOWEDGE. Most apps ignore it during creation and let DefWindowProc handle the default sizing.
+	*/
+	// TODO Must return non-zero to proceed?
+	sendMessageW(hWnd, Message.WM_CREATE, null, createStruct.ref as! LParam)
+
+	// Initial paint - post WM_PAINT asynchronously
 	postMessage(hWnd, Message.WM_PAINT, null, null)
 
 	tofitaDebugLog("> CreateWindowExW done".utf16())
