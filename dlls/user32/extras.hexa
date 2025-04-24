@@ -923,10 +923,27 @@ fun vswprintf(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('wcsncpy')
-fun wcsncpy(stub SizeOfPointer) SizeOfPointer {
+fun wcsncpy(dest ArrayPointer<ClangWideChar>, src ConstArrayPointer<ClangWideChar>, count SizeOfPointer) ArrayPointer<ClangWideChar> {
 	// TODO
-	tofitaDebugLog("wcsncpy called".utf16())
-	return 0
+	tofitaDebugLog("wcsncpy called %S %u\n".utf16(), src as! UInt64, count as! UInt64)
+
+	var i = 0u32
+	while i < count {
+		// TODO Hexa: `ClangWideChar.nullTerminator`
+		if src[i] == (0 as! ClangWideChar) {
+			break
+		}
+		dest[i] = src[i]
+		i += 1u32
+	}
+
+	while i < count {
+		dest[i] = 0 // TODO Hexa: must not accept `0`
+		// TODO dest[i] = 0 as! ClangWideChar
+		i += 1u32
+	}
+
+	return dest
 }
 
 @dllExport('wcstod')
