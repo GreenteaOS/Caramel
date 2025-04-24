@@ -122,18 +122,131 @@ fun getLocaleInfoW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+fun simpleAtoW(ascii8z ConstArrayPointer<ClangChar>, utf16z ArrayPointer<ClangWideChar>) Void {
+	var i = 0
+	while ascii8z != null { // Check for a null basically
+		utf16z[i] = ascii8z[i] as! ClangWideChar
+		if ascii8z[i] as! UInt8 == 0 {
+			break
+		}
+
+		i++
+	}
+}
+
 @dllExport('GetModuleHandleA')
-fun getModuleHandleA(stub SizeOfPointer) SizeOfPointer {
+fun getModuleHandleA(lpLibFileName ConstArrayPointer<ClangChar>) HModule {
 	// TODO
-	tofitaDebugLog("getModuleHandleA(%s)".utf16(), stub as! UInt64)
-	return 0
+	// Does not increase the DLL's reference count
+	tofitaDebugLog("getModuleHandleA(%s)".utf16(), lpLibFileName as! UInt64)
+	if lpLibFileName == null {
+		return getModuleHandleW(null)
+	}
+	var utf16z ArrayByValue<ClangWideChar, 4096> = [0]
+	simpleAtoW(lpLibFileName, utf16z.ref)
+	return getModuleHandleW(utf16z.ref)
+}
+
+// Custom towlower function to convert a wide character to lowercase
+fun towlower(c ClangWideChar) ClangWideChar {
+	// Handle ASCII letters A-Z
+	// TODO Hexa: `c.charCode`
+	if (c as! Int) >= 65 /*'A'*/ and (c as! Int) <= 90 /*'Z'*/ {
+		// TODO Hexa: `ClangWideChar.fromCharCode(UInt16)`
+		return ((c as! Int) + (97 /*'a'*/ - 65 /*'A'*/)) as! ClangWideChar
+	}
+	// Return unchanged for non-uppercase letters
+	return c
+}
+
+// Custom _wcsicmp function for case-insensitive wide string comparison
+fun _wcsicmp(a ConstArrayPointer<ClangWideChar>, b ConstArrayPointer<ClangWideChar>) Int {
+	var str1 = a
+	var str2 = b
+
+	if str1 == null or str2 == null {
+		// TODO Hexa: `(str1 != null ? 1 : -1)` i.e. `Bool`
+		return (str1 == str2) ? 0 : (str1 ? 1 : -1)
+	}
+
+	while str1[0] != null and str2[0] != null {
+		var c1 = towlower(str1[0]) as! Int
+		var c2 = towlower(str2[0]) as! Int
+		if c1 != c2 {
+			// TODO Hexa: `c1.subtract(c2)` or something like `c1.difference(c2)`
+			return (c1 - c2)
+		}
+		str1++
+		str2++
+	}
+
+	return towlower(str1[0]) as! Int - towlower(str2[0]) as! Int
+}
+
+// Function to find a loaded DLL by its short name and return its base address
+fun findDllByName(dllName ConstArrayPointer<ClangWideChar>) HModule {
+	// Get the PEB from the TEB (Thread Environment Block)
+	// TODO 32-bit
+	tofitaDebugLog("findDllByName(%S)".utf16(), dllName as! UInt64)
+	let teb = ntCurrentTeb() as! TIB64
+	let peb = teb.peb as! PEB64
+
+	tofitaDebugLog("> teb %8".utf16(), teb as! UInt64)
+	tofitaDebugLog("> peb %8".utf16(), peb as! UInt64)
+
+	// Get the head of the InLoadOrderModuleList
+	let ldrData = peb.ldrData as! PEB_LDR_DATA
+	let head LIST_ENTRY = ldrData.inMemoryOrderModuleList.ref
+	var entry LIST_ENTRY = head.forwardLink
+
+	tofitaDebugLog("> head %8".utf16(), head as! UInt64)
+	tofitaDebugLog("> entry %8".utf16(), entry as! UInt64)
+
+	// Iterate through the module list
+	while entry != head {
+		// Get the LDR_DATA_TABLE_ENTRY for the current module
+		// TODO Hexa: `.meta` for field offset
+		// let module = CONTAINING_RECORD(
+		// entry, sizeOf<LDR_DATA_TABLE_ENTRY>(), "InLoadOrderLinks") as! LDR_DATA_TABLE_ENTRY
+		let moduleAt = (entry as! SizeOfPointer) - sizeOf<SizeOfPointer>() - sizeOf<SizeOfPointer>()
+		let module = moduleAt as! LDR_DATA_TABLE_ENTRY
+
+		// Check if baseDllName is valid and compare with the target name (case-insensitive)
+		tofitaDebugLog("> baseDllName(%S)".utf16(), module.baseDllName.ref.buffer as! UInt64)
+		if module.baseDllName.ref.buffer != 0 and module.baseDllName.ref.length > 0 {
+			if _wcsicmp(
+					module.baseDllName.ref.buffer as! ConstArrayPointer<ClangWideChar>,
+					dllName
+				) == 0 {
+				// Match found, return the base address
+				return module.dllBase as! HModule
+			}
+		}
+
+		// Move to the next module
+		entry = entry.forwardLink
+	}
+
+	// DLL not found
+	return null
 }
 
 @dllExport('GetModuleHandleW')
-fun getModuleHandleW(stub SizeOfPointer) SizeOfPointer {
+fun getModuleHandleW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule {
 	// TODO
-	tofitaDebugLog("getModuleHandleW(%S)".utf16(), stub as! UInt64)
-	return 0
+	// Does not increase the DLL's reference count
+	tofitaDebugLog("getModuleHandleW(%S)".utf16(), lpLibFileName as! UInt64)
+	if lpLibFileName == null {
+		let teb = ntCurrentTeb() as! TIB64
+		let peb = teb.peb as! PEB64
+		let base = peb.imageBaseAddress
+		tofitaDebugLog("getModuleHandleW(NULL) is %8 with header %s".utf16(), base as! UInt64, base as! UInt64)
+		return base as! HModule
+	}
+
+	let result = findDllByName(lpLibFileName)
+	tofitaDebugLog("> found at %8 with header %s".utf16(), result as! UInt64, result as! UInt64)
+	return result
 }
 
 @dllExport('GetProcAddress')
@@ -214,8 +327,8 @@ fun leaveCriticalSection(stub SizeOfPointer) SizeOfPointer {
 @dllExport('LoadLibraryW')
 fun loadLibraryW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule {
 	// TODO
-	tofitaDebugLog("loadLibraryW(%S)\n".utf16(), lpLibFileName as! UInt64)
-	return 0
+	tofitaDebugLog("loadLibraryW(%S)".utf16(), lpLibFileName as! UInt64)
+	return getModuleHandleW(lpLibFileName)
 }
 
 @dllExport('QueryPerformanceCounter')

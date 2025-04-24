@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Oleh Petrenko
+// Copyright (C) 2022-2025 Oleh Petrenko
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -78,3 +78,13 @@ fun setLastError(
 @dllImport
 declare
 fun getLastError() UInt32
+
+@linkName('GetModuleHandleA')
+@dllImport
+declare
+fun getModuleHandleA(lpLibFileName ConstArrayPointer<ClangChar>) HModule
+
+@linkName('GetModuleHandleW')
+@dllImport
+declare
+fun getModuleHandleW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule
