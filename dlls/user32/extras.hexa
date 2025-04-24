@@ -1075,6 +1075,7 @@ fun getObjectW(hObject SizeOfPointer, nSize Int32, lpvObject SizeOfPointer) Int3
 	tofitaDebugLog("GetObjectW called with hObject %8 nSize %d".utf16(), hObject as! UInt64, nSize as! UInt64)
 	tofitaDebugLog("> lpvObject %8".utf16(), lpvObject as! UInt64)
 
+	// TODO Hexa: `case (BITMAP.meta.sizeOf):`
 	if true {
 		tofitaDebugLog("> assuming BITMAP".utf16())
 		let bitmap BITMAP = lpvObject as! BITMAP
@@ -1404,8 +1405,8 @@ fun _CxxThrowException(stub SizeOfPointer) SizeOfPointer {
 @dllExport('??2@YAPEAX_K@Z')
 fun cpp_cdecl_operator_new(bytes SizeOfPointer) SizeOfPointer {
 	// TODO
-	return 0
 	tofitaDebugLog("`??2@YAPEAX_K@Z` aka `void * __cdecl operator new(unsigned __int64)` called".utf16())
+	return heapAlloc(getProcessHeap(), flags: 0, bytes) as! SizeOfPointer
 }
 
 @dllExport('??3@YAXPEAX@Z')
