@@ -22,7 +22,8 @@ fun kiFastSystemCall(rcx UInt64, rdx Payload) UInt64 {
 fun ntCurrentTeb() SizeOfPointer {
 	// return
 	#if bit64 // TODO format
-		return readgsqword(0x60u32)
+	// TODO `0x60u32`?
+		return readgsqword(0x30u32)
 	#end
 	#if bit32
 		// #else TODO Hexa: bug
