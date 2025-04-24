@@ -828,10 +828,10 @@ fun loadLibraryA(lpLibFileName ConstArrayPointer<ClangChar>) HModule {
 }
 
 @dllExport('LockResource')
-fun lockResource(stub SizeOfPointer) SizeOfPointer {
-	// TODO
+fun lockResource(handle Handle) Handle {
+	// TODO this is supposedly no-op
 	tofitaDebugLog("LockResource called".utf16())
-	return 0
+	return handle
 }
 
 @dllExport('ReleaseSemaphore')
@@ -3644,7 +3644,8 @@ fun postMessageA(
 fun findResourceA(hModule HModule, lpName ConstArrayPointer<ClangChar>, lpType ConstArrayPointer<ClangChar>) HRsrc // Find a resource in the specified module
 {
 	tofitaDebugLog("findResourceA called".utf16())
-	return null
+	// TODO `A`
+	return findResourceExW(hModule, lpType, lpName, make_lang_id(lang_neutral, sub_lang_neutral))
 }
 
 @dllExport('SendMessageA')
