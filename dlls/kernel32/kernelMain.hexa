@@ -29,6 +29,11 @@ void *tmemcpy(void *dest, const void *src, uint64_t count) {
 // TODO
 #define memcpy(z,u,x) tmemcpy(z,u,x)
 
+// Clang workaround
+void __chkstk(void) asm("__chkstk");
+void __chkstk(void) {
+}
+
 #define HEXA_NO_DEFAULT_INCLUDES
 #define HEXA_MAIN mainHexa
 #define HeapAlloc heapAlloc_
