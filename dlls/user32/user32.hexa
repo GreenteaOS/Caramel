@@ -982,20 +982,109 @@ fun loadMenuW(hInstance HInstance, lpMenuName ConstArrayPointer<ClangWideChar>) 
 	return 0
 }
 
+// Helper function to resolve HMODULE when NULL
+fun getDefaultModule(hModule HModule) HModule {
+	return hModule ? hModule : getModuleHandleW(null)
+}
+
+fun makeIntResourceW(i UInt32) ConstArrayPointer<ClangWideChar> {
+	let truncated = i as! UInt16
+	let address = truncated as! SizeOfPointer
+	return address as! ConstArrayPointer<ClangWideChar>
+}
+
 @dllExport('LoadStringW')
 fun loadStringW(hInstance HInstance?, uID UInt32, lpBuffer ArrayPointer<ClangWideChar>, nBufferMax Int) Int {
-	// TODO
-	var result ConstArrayPointer<ClangWideChar> = "?".utf16()
-	tofitaDebugLog("LoadStringW called %S id %d".utf16(), result as! UInt64, uID)
+	tofitaDebugLog("LoadStringW called %8 with id %d".utf16(), hInstance as! UInt64, uID)
+
+	// Fill at least something
 	if let lpBuffer = lpBuffer, nBufferMax > 0 {
-		lpBuffer[0] = result[0]
+		// TODO Hexa: must not accept numbers for `ClangWideChar`
+		lpBuffer[0] = 63 // '?'.charCodeAt(0)
+		lpBuffer[1] = 0
+	}
+
+	// Resolve module
+	let hModule = getDefaultModule(hInstance)
+	if hModule == null {
+		tofitaDebugLog("> could not find resource".utf16())
+		return 0
+	}
+
+	// String resources are stored in blocks of 16 strings, with uID determining the block
+	let block UInt32 = uID >> 4 // Block ID (uID / 16)
+	let index UInt32 = uID & 0xF // Index within block (uID % 16)
+
+	// Find the string resource block (RT_STRING)
+	let rt_string = 6 as! ConstArrayPointer<ClangWideChar>
+	let hResource = findResourceW(hModule, makeIntResourceW(block + 1), rt_string)
+	if hResource == null {
+		tofitaDebugLog("> could not find resource".utf16())
+		return 0
+	}
+
+	// Load and lock the resource
+	let hMem = loadResource(hModule, hResource)
+	if hMem == null {
+		tofitaDebugLog("> could not load resource".utf16())
+		return 0
+	}
+
+	var resourceData = lockResource(hMem) as! ConstArrayPointer<ClangWideChar>
+	if resourceData == null {
+		tofitaDebugLog("> could not lock resource".utf16())
+		return 0
+	}
+
+	// Navigate to the specific string in the block
+	for i in 0u32 ... index {
+		// Skip length-prefixed string
+		resourceData = (
+			(resourceData[0] + 1) * sizeOf<ClangWideChar>()
+			+ resourceData.address
+		) as! ConstArrayPointer<ClangWideChar>
+	}
+
+	// Get string length and copy to buffer
+	var length = resourceData[0] as! SizeOfPointer // Length of the string (stored in first WCHAR)
+	if length == 0 {
+		tofitaDebugLog("> could not get string length".utf16())
+		return 0
+	}
+
+	// Ensure buffer is large enough
+	if nBufferMax > 0 {
+		if length >= nBufferMax {
+			length = nBufferMax - 1u32
+		} // Truncate if needed
+
+		wcsncpy(lpBuffer, resourceData.offsetItems(1), length)
+		lpBuffer[length as! Int] = 0 // Null-terminate
+		// TODO Hexa: `ClangWideChar.nullTerminator` instead of 0
+		// TODO Hexa: also do not accept `0` for `ClangWideChar`
+	}
+
+	let message = "> loaded string %S".utf16()
+	tofitaDebugLog(message, resourceData.offsetItems(1) as! UInt64)
+	// TODO bug in code gen `tofitaDebugLog("> loaded string %S".utf16(), resourceData.offsetItems(1) as! UInt64)`
+
+	return length as! Int
+}
+
+@dllExport('LoadStringA')
+fun loadStringA(hInstance HInstance?, uID UInt32, lpBuffer ArrayPointer<ClangChar>, nBufferMax Int) Int {
+	// TODO
+	// var result ConstArrayPointer<ClangChar> = [0]
+	tofitaDebugLog("LoadStringA called %8 id %d".utf16(), hInstance as! UInt64, uID)
+	if let lpBuffer = lpBuffer, nBufferMax > 0 {
+		lpBuffer[0] = 63 // TODO Hexa
 		lpBuffer[1] = 0
 		return 1
 	}
 
 	let lpBuffer = lpBuffer as! ArrayPointer<SizeOfPointer>
 	// lpBuffer[0] = result as! SizeOfPointer // TODO Hexa: SizeOfPointer = ConstArrayPointer must not be allowed
-	lpBuffer[0] = result as! SizeOfPointer
+	// lpBuffer[0] = result as! SizeOfPointer
 	return 1
 }
 
