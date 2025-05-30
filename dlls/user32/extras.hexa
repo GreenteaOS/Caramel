@@ -1127,9 +1127,49 @@ fun createBrushIndirect(stub SizeOfPointer) SizeOfPointer {
 @dllExport('CreateCompatibleBitmap')
 fun createCompatibleBitmap(hdc HDc, nWidth Int32, nHeight Int32) HBitmap {
 	tofitaDebugLog("CreateCompatibleBitmap called with hdc %8".utf16(), hdc as! UInt64)
-	tofitaDebugLog("nWidth %d nHeight %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
-	// TODO: Create bitmap compatible with DC
-	return null
+	tofitaDebugLog("> nWidth %d nHeight %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
+	// TODO Create bitmap compatible with DC
+
+	// Validate inputs
+	if nWidth <= 0 or nHeight <= 0 {
+		tofitaDebugLog("Invalid dimensions".utf16())
+		return null
+	}
+
+	// Get the DC structure
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("Invalid DC".utf16())
+		return null
+	}
+
+	// Create a new bitmap structure
+	let bitmap = @heap new Bitmap()
+	bitmap.width = nWidth
+	bitmap.height = nHeight
+	// TODO Hexa infer constant type: Incompatible types `Int16` and value of `Int`
+	bitmap.bitsPerPixel = 32i16 // 32-bit color (RGBA) for simplicity
+	bitmap.bytesPerRow = ((nWidth * bitmap.bitsPerPixel + 31) / 32) * 4 // Align to 4-byte boundary
+	bitmap.bits = malloc(
+		// TODO Hexa: Incompatible types `UInt64` and value of `SizeOfPointer`hexa
+		bitmap.bytesPerRow * (nHeight as! UInt64)
+	) as! ArrayPointer<UInt8>
+
+	if bitmap.bits == null {
+		tofitaDebugLog("Failed to allocate bitmap bits".utf16())
+		free(bitmap as! RuntimeAllocated)
+		return null
+	}
+
+	// Initialize bitmap to white (0xFFFFFFFF)
+	memset(
+		bitmap.bits,
+		0xFF,
+		bitmap.bytesPerRow * (nHeight as! SizeOfPointer)
+	)
+
+	tofitaDebugLog("Created bitmap %8".utf16(), bitmap as! UInt64)
+	return bitmap as! HBitmap
 }
 
 @dllExport('CreateDIBSection')
