@@ -637,11 +637,17 @@ fun getSysColorBrush(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+let defaultDC DC = DC()
+
 @dllExport('GetDC')
 fun getDC(hWnd HWnd?) HDc {
-	// TODO: Retrieve device context
+	// TODO Retrieve device context
 	tofitaDebugLog("GetDC called with hWnd %8".utf16(), hWnd as! UInt64)
-	return null
+	let window = handleToWindow(hWnd)
+	if window == null {
+		return defaultDC as! HDc
+	}
+	return window.dc.ref as! HDc
 }
 
 @dllExport('AdjustWindowRect')
@@ -2569,17 +2575,17 @@ fun windowFromDC(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetDCEx')
-fun getDCEx(stub SizeOfPointer) SizeOfPointer {
+fun getDCEx(hWnd HWnd, hrgnClip HRgn?, flags Int) HDc {
 	// TODO
 	tofitaDebugLog("GetDCEx called".utf16())
-	return 0
+	return getDC(hWnd)
 }
 
 @dllExport('GetWindowDC')
-fun getWindowDC(stub SizeOfPointer) SizeOfPointer {
+fun getWindowDC(hWnd HWnd) HDc {
 	// TODO
 	tofitaDebugLog("GetWindowDC called".utf16())
-	return 0
+	return getDC(hWnd)
 }
 
 @dllExport('GetUpdateRect')
