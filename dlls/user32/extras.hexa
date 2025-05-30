@@ -520,7 +520,100 @@ fun loadCursorW(hInstance HInstance?, lpCursorName ConstArrayPointer<ClangWideCh
 fun loadBitmapW(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangWideChar>) HBitmap {
 	// TODO
 	tofitaDebugLog("LoadBitmapW called %8 %S".utf16(), hInstance as! UInt64, lpBitmapName as! UInt64)
-	return 0
+	return loadBitmapA(hInstance, lpBitmapName)
+}
+
+@dllExport('LoadBitmapA')
+fun loadBitmapA(hModule HModule, lpBitmapName ConstArrayPointer<ClangChar>) HBitmap {
+	tofitaDebugLog("loadBitmapA called %8 %8".utf16(), hModule as! UInt64, lpBitmapName as! UInt64)
+
+	// Resolve module
+	let hModule = getDefaultModule(hModule)
+	if hModule == null {
+		return null
+	}
+
+	// Convert ANSI name to Unicode (if not an ID)
+	var wszName ArrayByValue<ClangWideChar, 256> = [0]
+	var namedResource = true
+	if is_int_resource(lpBitmapName as! UInt64) {
+		// wszName[0] = lpBitmapName as! UInt64 as! ClangWideChar
+		namedResource = false
+	} else {
+		let cp_acp = 0u32
+		multiByteToWideChar(cp_acp, 0, lpBitmapName, -1, wszName.ref, 256)
+	}
+
+	// Find the bitmap resource
+	let rt_bitmap = makeIntResourceW(2)
+	let hResource = namedResource ? findResourceW(hModule, wszName.ref, rt_bitmap) : findResourceW(hModule, lpBitmapName, rt_bitmap)
+	if hResource == null {
+		tofitaDebugLog("loadBitmapA findResourceW failed".utf16())
+		return null
+	}
+
+	// Load and lock the resource
+	let hMem = loadResource(hModule, hResource)
+	if hMem == null {
+		tofitaDebugLog("loadBitmapA loadResource failed".utf16())
+		return null
+	}
+	let bmi = lockResource(hMem) as! BITMAPINFO
+	if bmi == null {
+		tofitaDebugLog("loadBitmapA lockResource failed".utf16())
+		return null
+	}
+
+	// Get the bitmap size
+	let resourceSize UInt32 = sizeOfResource(hModule, hResource)
+	if resourceSize < sizeOf<BITMAPINFOHEADER>() {
+		tofitaDebugLog("loadBitmapA sizeOfResource failed".utf16())
+		return null
+	}
+
+	// Create a DIB section for the bitmap
+	let hdc = getDC(null)
+	// TODO Hexa `let bits = ByValue<ArrayPointer<Void>> ()` produces `void bits_; ;`
+	var bits ArrayByValue<ArrayPointer<UInt8>, 1> = [0]
+	let dib_rgb_colors = 0u32
+	let hBitmap HBitmap = createDIBSection(hdc, bmi, dib_rgb_colors, bits.ref, null, 0)
+	releaseDC(null, hdc)
+
+	if hBitmap != null and bits[0] != null {
+		let bitmap = hBitmap as! Bitmap
+		let totalSize = bitmap.bytesPerRow * bitmap.height
+		let header = bmi.bmiHeader.ref
+		let bitDepth = header.biBitCount
+		// TODO `let numColors = if bitDepth <= 8 { header.biClrUsed != 0 ? header.biClrUsed : (1u32 << bitDepth) } else { 0u32 }`
+		let numColors = (bitDepth <= 8) ? ((header.biClrUsed != 0) ? header.biClrUsed : (1u32 << bitDepth)) : 0u32
+		let colorTableBytes = numColors * 4u32
+		let pixelDataOffset = sizeOf<BITMAPINFOHEADER>() + colorTableBytes
+		memcpy(
+			bits[0],
+			(bmi as! ArrayPointer<UInt8>).offsetItems(pixelDataOffset),
+			totalSize as! Int
+		)
+
+		// Copy the bitmap data (skip BITMAPINFOHEADER)
+
+		/*
+		let destination = bits[0]
+		tofitaDebugLog("loadBitmapA memcpy destination %8".utf16(), destination as! UInt64)
+		let bmiHeaderSize = sizeOf<BITMAPINFOHEADER>()
+		memcpy(
+			destination,
+			(bmi as! UInt64 + bmiHeaderSize) as! ArrayPointer<UInt8>,
+			(resourceSize - bmiHeaderSize) as! Int
+		)
+
+
+		*/
+	} else {
+		tofitaDebugLog("loadBitmapA memcpy failed".utf16())
+	}
+
+	tofitaDebugLog("loadBitmapA done %8".utf16(), hBitmap as! UInt64)
+	return hBitmap
 }
 
 @dllExport('LoadAcceleratorsW')
