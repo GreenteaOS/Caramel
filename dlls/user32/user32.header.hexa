@@ -492,6 +492,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 								let icon = offset
 								// TODO Hexa: `let bmp = return whatever`
 								tofitaDebugLog("findResourceExW found resource %S at %8".utf16(), icon as! UInt64, icon as! UInt64)
+								lastSizeOfResource = dataEntry.size
 								return icon as! HRsrc
 							} else {
 								tofitaDebugLog("[ExeResourceLoader] Ignoring by name %8...\n".utf16(), byNameEntry.unionName.ref.id)

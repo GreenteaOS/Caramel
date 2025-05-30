@@ -940,11 +940,15 @@ fun releaseSemaphore(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+var lastSizeOfResource UInt32 = 0
 @dllExport('SizeofResource')
-fun sizeofResource(stub SizeOfPointer) SizeOfPointer {
+fun sizeOfResource(hModule HModule, hResource HRsrc) UInt32 {
 	// TODO
-	tofitaDebugLog("SizeofResource called".utf16())
-	return 0
+	// [in, optional] HMODULE hModule,  // Module handle (NULL = current process)
+	// [in]           HRSRC   hResInfo  // Resource handle from
+	tofitaDebugLog("sizeOfResource called".utf16())
+	tofitaDebugLog("sizeOfResource result %u".utf16(), lastSizeOfResource)
+	return lastSizeOfResource
 }
 
 @dllExport('VirtualAlloc')
