@@ -1225,7 +1225,63 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 	tofitaDebugLog("LineTo called on DC %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	// Placeholder: Needs DC, PenData retrieval, and line drawing algorithm
-	return Bool32.False // Indicate failure until implemented
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return Bool32.False
+	}
+
+	let bitmap = dc.hBitmap as! Bitmap
+	if bitmap == null {
+		tofitaDebugLog("> No bitmap selected".utf16())
+		return Bool32.False
+	}
+
+	// Get start and end points
+	let startX = dc.penPosX
+	let startY = dc.penPosY
+	let endX = x
+	let endY = y
+
+	// Simple line drawing algorithm (DDA-like, not Bresenham's for simplicity)
+	let dx = endX - startX
+	let dy = endY - startY
+	let steps = if dx > dy { dx } else { dy } // Max of absolute values
+	if steps == 0 {
+		tofitaDebugLog("> No movement".utf16())
+		return Bool32.True // No movement
+	}
+
+	let xInc = dx as! Float / steps as! Float
+	let yInc = dy as! Float / steps as! Float
+	var currentX = startX as! Float
+	var currentY = startY as! Float
+
+	// Black color (RGBA: 0, 0, 0, 255)
+	// TODO Hexa: Range start and end must be of the same type, but got `Int...Int32`
+	// ^ also infer 0/123 to be u32 or i64 from the other part of the range
+	for i in 0i32 ... steps {
+		let pixelX = currentX as! Int32
+		let pixelY = currentY as! Int32
+		if pixelX >= 0 and pixelX < bitmap.width and pixelY >= 0 and pixelY < bitmap.height {
+			let offset = (pixelY * bitmap.bytesPerRow + pixelX * 4) as! Int
+			bitmap.bits[offset] = 0 // Blue
+			bitmap.bits[offset + 1] = 0 // Green
+			bitmap.bits[offset + 2] = 0 // Red
+			bitmap.bits[offset + 3] = 255 // Alpha
+		}
+		currentX += xInc
+		currentY += yInc
+	}
+
+	// Update pen position
+	dc.penPosX = endX
+	dc.penPosY = endY
+
+	tofitaDebugLog("> Drew line from (%d, %d) to (%d, %d)".utf16(), startX as! UInt64, startY as! UInt64)
+	tofitaDebugLog("> to (%d, %d)".utf16(), endX as! UInt64, endY as! UInt64)
+	return Bool32.True
 }
 
 @dllExport('MaskBlt')
