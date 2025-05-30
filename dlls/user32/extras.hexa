@@ -1133,10 +1133,101 @@ fun createCompatibleBitmap(hdc HDc, nWidth Int32, nHeight Int32) HBitmap {
 }
 
 @dllExport('CreateDIBSection')
-fun createDIBSection(stub SizeOfPointer) SizeOfPointer {
+fun createDIBSection(
+	hdc HDc,
+	info BITMAPINFO,
+	usage UInt32,
+	bp ArrayPointer<ArrayPointer<UInt8>>,
+	hfilemap Handle,
+	offset UInt32
+) HBitmap {
 	// TODO
 	tofitaDebugLog("CreateDIBSection called".utf16())
-	return 0
+
+	// Check if file mapping is used (not supported in this draft)
+	if hfilemap != null {
+		tofitaDebugLog("CreateDIBSection: file mapping not supported".utf16())
+		return null
+	}
+
+	// Access the BITMAPINFOHEADER
+	let header = info.bmiHeader.ref
+	if header.biSize != sizeOf<BITMAPINFOHEADER>() {
+		tofitaDebugLog("CreateDIBSection: invalid BITMAPINFOHEADER size".utf16())
+		return null
+	}
+
+	// Extract bitmap properties
+	let width = header.biWidth
+	let height = header.biHeight
+	let bitDepth = header.biBitCount
+	let compression = header.biCompression
+
+	// Support only uncompressed bitmaps for now
+	if compression != 0 { // BI_RGB = 0
+		tofitaDebugLog("CreateDIBSection: only uncompressed bitmaps supported".utf16())
+		return null
+	}
+
+	// Validate dimensions
+	if width <= 0 or height == 0 {
+		tofitaDebugLog("CreateDIBSection: invalid dimensions".utf16())
+		return null
+	}
+
+	// Handle top-down (negative height) vs bottom-up bitmaps
+	let absHeight = height < 0 ? -height : height
+	let isTopDown = height < 0
+
+	// Calculate bytes per row (padded to 4-byte boundary)
+	let bytesPerRow = ((width * bitDepth + 31) / 32) * 4u32
+	let totalSize UInt32 = absHeight * bytesPerRow
+
+	// Allocate memory for the bitmap bits
+	let bits = malloc(totalSize) as! ArrayPointer<UInt8>
+	if bits == null {
+		tofitaDebugLog("CreateDIBSection: failed to allocate bitmap bits".utf16())
+		return null
+	}
+
+	// Handle color table for bit depths <= 8
+	var colorTable ArrayPointer<ByValue<RGBQUAD>> = null
+	var colorTableSize UInt32 = 0
+	if bitDepth <= 8 {
+		let numColors UInt32 = header.biClrUsed != 0 ? header.biClrUsed : (1u32 << bitDepth)
+		colorTableSize = numColors
+		let colorTableBytes = numColors * sizeOf<RGBQUAD>()
+		colorTable = malloc(colorTableBytes) as! ArrayPointer<ByValue<RGBQUAD>>
+		if colorTable == null {
+			free(bits as! RuntimeAllocated)
+			tofitaDebugLog("CreateDIBSection: failed to allocate color table".utf16())
+			return null
+		}
+
+		// Copy color table from BITMAPINFO
+		let srcColorTable = (info as! ArrayPointer<UInt8> + sizeOf<BITMAPINFOHEADER>()) as! ArrayPointer<ByValue<RGBQUAD>>
+		memcpy(colorTable, srcColorTable as! ConstArrayPointer<UInt8>, colorTableBytes as! Int)
+	}
+
+	// Create and populate the Bitmap structure
+	let bitmap = new Bitmap()
+	bitmap.width = width
+	bitmap.height = absHeight
+	bitmap.bitsPerPixel = bitDepth as! Int16 // TODO Hexa: `bitDepth.toSignedSaturated`/clamped + ensure its not runtime field
+	bitmap.bytesPerRow = bytesPerRow as! Int32
+	bitmap.bits = bits
+	bitmap.colorTable = colorTable
+	bitmap.colorTableSize = colorTableSize
+	bitmap.isTopDown = isTopDown
+
+	// Set the bits pointer if provided
+	if bp != null {
+		bp[0] = bits
+	}
+
+	// Log success and return the handle
+	tofitaDebugLog("CreateDIBSection: created bitmap %8".utf16(), bitmap as! UInt64)
+	return bitmap as! HBitmap
 }
 
 @dllExport('CreatePen')
