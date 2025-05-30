@@ -1245,6 +1245,24 @@ fun moveToEx(hdc HDc, x Int32, y Int32, lpptPoint Point?) Bool32 {
 	tofitaDebugLog("MoveToEx called on DC %8 with point %8".utf16(), hdc as! UInt64, lpptPoint as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	// Placeholder: Needs DC implementation
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return Bool32.False
+	}
+
+	// Store previous position if requested
+	if let lpptPoint = lpptPoint {
+		lpptPoint.x = dc.penPosX
+		lpptPoint.y = dc.penPosY
+	}
+
+	// Update pen position
+	dc.penPosX = x
+	dc.penPosY = y
+
+	tofitaDebugLog("> Moved to (%d, %d)".utf16(), x as! UInt64, y as! UInt64)
 	return Bool32.True // Assume success
 }
 
