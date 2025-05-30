@@ -882,10 +882,17 @@ fun deleteDC(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('CreateCompatibleDC')
-	return 0
 fun createCompatibleDC(hdc HDc?) HDc {
 	// TODO Create memory DC compatible with hdc's device
 	tofitaDebugLog("CreateCompatibleDC called with hdc %8".utf16(), hdc as! UInt64)
+	// TODO ensure heap
+	let dc DC = @heap DC()
+	tofitaDebugLog("> allocated DC at %8".utf16(), dc as! UInt64)
+	// TODO move `=` into definition
+	dc.penPosX = 0
+	dc.penPosY = 0
+
+	return dc as! HDc
 }
 
 @dllExport('strcpy')
