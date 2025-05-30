@@ -673,13 +673,13 @@ fun randomize(state UInt32) UInt32 {
 @dllExport('BitBlt')
 fun bitBlt(
 	hdc HDc, // Destination DC
-	x Int32, // Destination X
-	y Int32, // Destination Y
+	xDest Int32, // Destination X
+	yDest Int32, // Destination Y
 	cx Int32, // Width
 	cy Int32, // Height
 	hdcSrc HDc?, // Source DC (optional, depends on dwRop)
-	x1 Int32, // Source X
-	y1 Int32, // Source Y
+	xSrc Int32, // Source X
+	ySrc Int32, // Source Y
 	dwRop RasterOperation // Raster operation code (e.g., SRCCOPY, PATCOPY)
 ) Bool32 {
 	// TODO Implement block transfer of pixel data. This is complex.
@@ -687,12 +687,14 @@ fun bitBlt(
 	// clipping, potential stretching (though StretchBlt is separate), brush patterns (for PATCOPY etc.).
 	tofitaDebugLog("BitBlt called on DC %8 from DC %8".utf16(), hdc as! UInt64, hdcSrc as! UInt64)
 	tofitaDebugLog("> ROP %u".utf16(), dwRop as! UInt64)
-	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+	tofitaDebugLog("> x %d y %d".utf16(), xDest as! UInt64, yDest as! UInt64)
 	tofitaDebugLog("> cx %d cy %d".utf16(), cx as! UInt64, cy as! UInt64)
-	tofitaDebugLog("> x1 %d y1 %d".utf16(), x1 as! UInt64, y1 as! UInt64)
+	tofitaDebugLog("> xSrc %d ySrc %d".utf16(), xSrc as! UInt64, ySrc as! UInt64)
 	// Placeholder: Needs extensive implementation covering ROPs, clipping, surfaces.
 
 	// let rect = Rect(x, y, x + cx, y + cy)
+
+	/*
 	let rect = Rect()
 	rect.left = x
 	rect.top = y
@@ -700,8 +702,176 @@ fun bitBlt(
 	rect.bottom = y + cy
 	// NOTE Hexa: `fillRect(hdc, rect, random(rand()) as! HBrush)` generates `called object type 'int32_t' (aka 'int') is not a function or function pointer`
 	fillRect(hdc, rect, randomize(rand() as! UInt32) as! HBrush)
+	*/
+	let dcDest = hdc as! DC
+	let dcSrc = hdcSrc as! DC
+	if dcDest == null or dcSrc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return Bool32.False
+	}
 
-	return Bool32.False // Indicate failure until implemented
+	// let bmpDest = dcDest.hBitmap as! Bitmap
+	// if bmpDest == null {
+	// tofitaDebugLog("> Invalid destination bitmap, trying framebuffer".utf16())
+	// let fb = dcDest.fb.ref
+	// bytesPerRowDest = fb.width * 4i32
+	// bitsDest = fb.pixels as! ArrayPointer<UInt8>
+	// // TODO null-check here too of `fb.pixels` cause `fb` is by value`
+	// } else {
+	// bytesPerRowDest = bmpDest.bytesPerRow
+	// bitsDest = bmpDest.bits
+	// }
+
+	var bytesPerRowDest = 0i32
+	var bitsDest ArrayPointer<UInt8> = null
+	var widthDest = 0i32
+	var heightDest = 0i32
+	var bppDest = 0i16
+	if let bmpDest = dcDest.hBitmap as! Bitmap {
+		bytesPerRowDest = bmpDest.bytesPerRow
+		bitsDest = bmpDest.bits
+		widthDest = bmpDest.width
+		heightDest = bmpDest.height
+		bppDest = bmpDest.bitsPerPixel
+	} else {
+		tofitaDebugLog("> Invalid destination bitmap, trying framebuffer".utf16())
+		let fb = dcDest.fb.ref
+		bytesPerRowDest = fb.width * 4i32
+		bitsDest = fb.pixels as! ArrayPointer<UInt8>
+		// TODO null-check here too of `fb.pixels` cause `fb` is by value`
+		widthDest = fb.width as! Int32
+		heightDest = fb.height as! Int32
+		bppDest = 32i16
+	}
+
+	// let bmpSrc = dcSrc.hBitmap as! Bitmap
+	// var bytesPerRowSrc = 0i32
+	// var bitsSrc ArrayPointer<UInt8> = null
+	// if bmpSrc == null {
+	// tofitaDebugLog("> Invalid source bitmap, trying framebuffer".utf16())
+	// let fb = dcSrc.fb.ref
+	// bytesPerRowSrc = fb.width * 4i32
+	// bitsSrc = fb.pixels as! ArrayPointer<UInt8>
+	// } else {
+	// bytesPerRowSrc = bmpSrc.bytesPerRow
+	// bitsSrc = bmpSrc.bits
+	// }
+
+	var bytesPerRowSrc = 0i32
+	var bitsSrc ArrayPointer<UInt8> = null
+	var widthSrc = 0i32
+	var heightSrc = 0i32
+	var bppSrc = 0i16
+	var colorTable ArrayPointer<ByValue<RGBQUAD>> = null
+	var colorTableSize = 0u32
+	var isBottomUpSrc = false
+	if let bmpSrc = dcSrc.hBitmap as! Bitmap {
+		bytesPerRowSrc = bmpSrc.bytesPerRow
+		bitsSrc = bmpSrc.bits
+		widthSrc = bmpSrc.width
+		heightSrc = bmpSrc.height
+		bppSrc = bmpSrc.bitsPerPixel
+		colorTable = bmpSrc.colorTable
+		colorTableSize = bmpSrc.colorTableSize
+		isBottomUpSrc = not bmpSrc.isTopDown
+	} else {
+		tofitaDebugLog("> Invalid source bitmap, trying framebuffer".utf16())
+		let fb = dcSrc.fb.ref
+		bytesPerRowSrc = fb.width * 4i32
+		bitsSrc = fb.pixels as! ArrayPointer<UInt8>
+		// TODO null-check here too of `fb.pixels` cause `fb` is by value`
+		widthSrc = fb.width as! Int32
+		heightSrc = fb.height as! Int32
+		bppSrc = 32i16
+	}
+
+	// Validate bounds
+	if xDest < 0 or yDest < 0 or xSrc < 0 or ySrc < 0 or cx <= 0 or cy <= 0 {
+		tofitaDebugLog("> Invalid coordinates or dimensions".utf16())
+		return Bool32.False
+	}
+	if xDest + cx > widthDest or yDest + cy > heightDest or xSrc + cx > widthSrc or ySrc + cy > heightSrc {
+		tofitaDebugLog("> Out of bounds".utf16())
+		return Bool32.False
+	}
+
+	// Only support SRCCOPY
+	if dwRop != RasterOperation.SrcCopy {
+		tofitaDebugLog("> Unsupported ROP".utf16())
+		return Bool32.False
+	}
+
+	// Only support SRCCOPY for the sample code
+
+	/*if dwRop == RasterOperation.SrcCopy {
+		for row in 0 ... cy - 1 {
+			let srcOffset = ((ySrc + row) * bytesPerRowSrc + xSrc * 4) as! Int
+			let destOffset = ((yDest + row) * bytesPerRowDest + xDest * 4) as! Int
+			// TODO rename `offsetItemsBack` ot `offsetItems` and `offsetItemsForward` or `offsetItemsBidirectional`
+			// ^ should not work for `ArrayPointer<Void>`
+			memcpy(bitsDest.offsetItemsBack(destOffset), bitsSrc.offsetItemsBack(srcOffset), cx * 4)
+		}
+	}*/
+	// Handle different bit depths
+	if bppSrc == 8i16 and bppDest == 32i16 {
+		// 8-bit source (indexed) to 32-bit destination (RGBA)
+		if colorTable == null or colorTableSize == 0 {
+			tofitaDebugLog("> Color table missing for 8-bit source".utf16())
+			return Bool32.False
+		}
+
+		// TODO Hexa: `let isBottomUp = if let bmpSrc = dcSrc.hBitmap as! Bitmap { bmpSrc.height > 0 } else { true }`
+		for row in 0 ... cy - 1 {
+			// TODO Hexa: `let srcRow = if isBottomUp { cy - 1 - row } else { row }`
+			let srcRow = isBottomUpSrc? (cy - 1 - row) : row
+			let srcRowOffset = (ySrc + srcRow) * bytesPerRowSrc + xSrc
+			// `let srcRowOffset = (ySrc + row) * bytesPerRowSrc + xSrc`
+			let destRowOffset = ((yDest + row) * bytesPerRowDest + xDest * 4) as! Int
+
+			for col in 0 ... cx - 1 {
+				let srcPixel = bitsSrc[srcRowOffset + col]
+				let destPixelOffset = destRowOffset + col * 4
+				if (srcPixel as! UInt32) < colorTableSize {
+					let color = colorTable[srcPixel as! Int].ref
+					bitsDest[destPixelOffset] = color.rgbBlue
+					bitsDest[destPixelOffset + 1] = color.rgbGreen
+					bitsDest[destPixelOffset + 2] = color.rgbRed
+					bitsDest[destPixelOffset + 3] = 255u8 // Alpha
+					// Log first pixel for debugging
+					if row == 0 and col == 0 {
+						tofitaDebugLog("> First pixel index: %u R %u".utf16(),
+							srcPixel as! UInt64,
+							color.rgbBlue as! UInt64
+						)
+						tofitaDebugLog("> GB: %u,%u".utf16(),
+							color.rgbGreen as! UInt64,
+							color.rgbRed as! UInt64
+						)
+					}
+				} else {
+					tofitaDebugLog("> Invalid pixel index: %u".utf16(), srcPixel as! UInt64)
+					// Invalid index: use black
+					bitsDest[destPixelOffset] = 0u8
+					bitsDest[destPixelOffset + 1] = 0u8
+					bitsDest[destPixelOffset + 2] = 0u8
+					bitsDest[destPixelOffset + 3] = 255u8
+				}
+			}
+		}
+	} else if bppSrc == 32i16 and bppDest == 32i16 {
+		// 32-bit to 32-bit copy
+		for row in 0 ... cy - 1 {
+			let srcOffset = ((ySrc + row) * bytesPerRowSrc + xSrc * 4) as! Int
+			let destOffset = ((yDest + row) * bytesPerRowDest + xDest * 4) as! Int
+			memcpy(bitsDest.offsetItemsBack(destOffset), bitsSrc.offsetItemsBack(srcOffset), cx * 4)
+		}
+	} else {
+		tofitaDebugLog("> Unsupported bit depth combination: src %d, dest %d".utf16(), bppSrc as! UInt64, bppDest as! UInt64)
+		return Bool32.False
+	}
+
+	tofitaDebugLog("> BitBlt completed".utf16())
+	return Bool32.True
 }
 
 @dllExport('DeleteDC')
