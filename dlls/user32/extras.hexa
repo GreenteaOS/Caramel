@@ -3656,8 +3656,27 @@ fun selectObject(
 ) Handle // HGDIOBJ -> Handle (return type)
 {
 	tofitaDebugLog("SelectObject called with hdc %8 h %8".utf16(), hdc as! UInt64, h as! UInt64)
-	// TODO: Select GDI object into DC, return previous
-	return null
+	// TODO Select other GDI objects into DC, return previous
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return null
+	}
+
+	// Assume h is a bitmap (sample code only uses bitmaps)
+	let bitmap = h as! Bitmap
+	if bitmap == null {
+		tofitaDebugLog("> Invalid bitmap".utf16())
+		return null
+	}
+
+	// Store the current bitmap and select the new one
+	let previousBitmap = dc.hBitmap
+	dc.hBitmap = bitmap as! HBitmap
+
+	tofitaDebugLog("> Selected bitmap %8, previous %8".utf16(), bitmap as! UInt64, previousBitmap as! UInt64)
+	return previousBitmap as! Handle
 }
 
 @dllExport('CreateFontIndirectW')
