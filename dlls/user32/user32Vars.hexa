@@ -40,7 +40,7 @@ class Window {
 	var windowId UInt64
 	// TODO Bool isNativeWindow
 	var proc WindowProcedure
-	var fb ByValue<WindowFramebuffer>
+	var dc ByValue<DC>
 	var instanceId UInt64 // Random unique ID
 	let children [Window] = []
 	var x Int32

@@ -193,7 +193,8 @@ fun createWindowExW(
 		tofitaDebugLog("> window added as a child to {%8}".utf16(), parent as! UInt64)
 		// TODO notify both of being added?
 		parent.children.push(window)
-		window.fb = parent.fb
+		// TODO Hexa: clearer that it's a copy?
+		window.dc.ref.fb = parent.dc.ref.fb
 	}
 
 	window.windowId = windowId
@@ -220,7 +221,7 @@ fun createWindowExW(
 		window.clipWidth = window.width
 		window.clipHeight = window.height
 
-		window.fb.ref.ownerWindowId = windowId
+		window.dc.ref.fb.ref.ownerWindowId = windowId
 	}
 
 	// TODO Hexa: make @struct `new` allocate on stack instead of heap so no need for this
@@ -492,11 +493,14 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 		tofitaDebugLog("> window == null, cancelling".utf16())
 		return null
 	}
-	let fb = window.fb.ref
+
+	let dc = window.dc.ref
+	let fb = dc.fb.ref
 	if fb == null {
 		tofitaDebugLog("> window == null, cancelling".utf16())
 		return null
 	}
+
 	// We do this every time, cause window may be resized
 	njraaGetOrCreateWindowFramebuffer(fb)
 	// TODO ^ only for overlapped + cache it
@@ -512,7 +516,7 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 	rcPaint.bottom = window.clipY + window.clipHeight // TODO MIN(fb.height)
 
 	tofitaDebugLog("> BeginPaint done HDc = %8".utf16(), fb as! UInt64)
-	return fb as! HDc
+	return dc as! HDc
 	// TODO ^ proper HDc implementation (at least as a handle with secret)
 }
 
@@ -542,7 +546,7 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 
 fun outerRect(dc HDc, lprc Rect, brush HBrush) {
 	tofitaDebugLog("[internal] outerRect called".utf16())
-	let fb = dc as! WindowFramebuffer
+	let fb = (dc as! DC).fb.ref
 	let color = ByValue<Pixel32>()
 	color.ref.color = 0xFFADADADu32 // TODO brush
 	for y in lprc.top ... lprc.bottom {
@@ -571,7 +575,8 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 		return 0
 	}
 
-	let fb = dc as! WindowFramebuffer
+	let fb = (dc as! DC).fb // Copy
+	let fb = fb.ref
 	// TODO validate != null and that it is actually a WindowFrameBuffer
 
 	let color = ByValue<Pixel32>()
@@ -608,7 +613,8 @@ fun endPaint(hWnd HWnd, ps PaintStruct) Bool32 {
 	if window == null {
 		return Bool32.False
 	}
-	let fb = window.fb.ref
+	let dc = window.dc.ref
+	let fb = dc.fb.ref
 	njraaSwapWindowFramebuffer(fb)
 	// TODO ^ could be there multiple End Paint event? Probably swap after primary WM_PAINT
 	tofitaDebugLog("> EndPaint done".utf16())
@@ -908,7 +914,7 @@ fun getWindowLongPtrW(stub SizeOfPointer) SizeOfPointer {
 fun getWindowRect(hWnd HWnd, lprc Rect?) Bool32 {
 	tofitaDebugLog("GetWindowRect called with hWnd %8 lprc %8".utf16(), hWnd as! UInt64, lprc as! UInt64)
 	if let rc = lprc {
-		// TODO: Get window dimensions
+		// TODO Get window dimensions
 		rc.left = 0
 		rc.top = 0
 		rc.right = 0
@@ -932,7 +938,7 @@ fun getWindowTextW(
 @dllExport('InvalidateRect')
 	return 0
 fun invalidateRect(hWnd HWnd?, lprc ConstArrayPointer<ClangWideChar>?, bErase Bool32) Bool32 {
-	// TODO: Mark rectangle for repainting
+	// TODO Mark rectangle for repainting
 	tofitaDebugLog("InvalidateRect called with hWnd %8".utf16(), hWnd as! UInt64)
 	tofitaDebugLog("> lprc %8 bErase %u".utf16(), lprc as! UInt64, bErase as! UInt64)
 }
@@ -1204,7 +1210,8 @@ fun drawTextW(
 		(lprc.right - lprc.left) as! UInt16,
 		(lprc.bottom - lprc.top) as! UInt16,
 		false,
-		hdc as! WindowFramebuffer,
+		// TODO `HDc` is not actually pointer, so it may crash after `as!`, re-work into a handle
+		(hdc as! DC).fb.ref,
 		false
 	)
 

@@ -442,7 +442,7 @@ fun wsprintfW(stub SizeOfPointer) SizeOfPointer {
 @dllExport('UpdateWindow')
 	return 0
 fun updateWindow(hWnd HWnd) Bool32 {
-	// TODO: Send WM_PAINT if update region exists
+	// TODO Send WM_PAINT if update region exists
 	tofitaDebugLog("UpdateWindow called with hWnd %8".utf16(), hWnd as! UInt64)
 }
 
@@ -470,7 +470,7 @@ fun setCapture(stub SizeOfPointer) SizeOfPointer {
 @dllExport('ReleaseDC')
 	return 0
 fun releaseDC(hWnd HWnd, hdc HDc) Int32 {
-	// TODO: Release device context
+	// TODO Release device context
 	tofitaDebugLog("ReleaseDC called with hWnd %8 hdc %8".utf16(), hWnd as! UInt64, hdc as! UInt64)
 }
 
@@ -583,7 +583,7 @@ fun bitBlt(
 	y1 Int32, // Source Y
 	dwRop RasterOperation // Raster operation code (e.g., SRCCOPY, PATCOPY)
 ) Bool32 {
-	// TODO: Implement block transfer of pixel data. This is complex.
+	// TODO Implement block transfer of pixel data. This is complex.
 	// Needs to handle various ROP codes, source/destination DCs (memory or screen),
 	// clipping, potential stretching (though StretchBlt is separate), brush patterns (for PATCOPY etc.).
 	tofitaDebugLog("BitBlt called on DC %8 from DC %8".utf16(), hdc as! UInt64, hdcSrc as! UInt64)
@@ -615,7 +615,7 @@ fun deleteDC(stub SizeOfPointer) SizeOfPointer {
 @dllExport('CreateCompatibleDC')
 	return 0
 fun createCompatibleDC(hdc HDc?) HDc {
-	// TODO: Create memory DC compatible with hdc's device
+	// TODO Create memory DC compatible with hdc's device
 	tofitaDebugLog("CreateCompatibleDC called with hdc %8".utf16(), hdc as! UInt64)
 }
 
@@ -1042,7 +1042,7 @@ fun createDIBSection(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('CreatePen')
 fun createPen(iStyle Int32, cWidth Int32, color COLORREF) HPen {
-	// TODO: Create pen with style, width, color
+	// TODO Create pen with style, width, color
 	tofitaDebugLog("CreatePen called with iStyle %d".utf16(), iStyle as! UInt64)
 	tofitaDebugLog("cWidth %d color %u".utf16(), cWidth as! UInt64, color as! UInt64)
 	return null
@@ -1050,7 +1050,7 @@ fun createPen(iStyle Int32, cWidth Int32, color COLORREF) HPen {
 
 @dllExport('CreateSolidBrush')
 fun createSolidBrush(color COLORREF) HBrush {
-	// TODO: Create solid brush with color
+	// TODO Create solid brush with color
 	tofitaDebugLog("CreateSolidBrush called with color %u".utf16(), color as! UInt64)
 	return null
 }
@@ -1098,7 +1098,7 @@ fun getObjectW(hObject SizeOfPointer, nSize Int32, lpvObject SizeOfPointer) Int3
 fun getPixel(hdc HDc, x Int32, y Int32) COLORREF {
 	tofitaDebugLog("GetPixel called with hdc %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
-	// TODO: Get pixel color
+	// TODO Get pixel color
 	return 0
 }
 
@@ -1111,7 +1111,7 @@ fun getROP2(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('LineTo')
 fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
-	// TODO: Implement drawing a line from the DC's current pen position to (x, y).
+	// TODO Implement drawing a line from the DC's current pen position to (x, y).
 	// 1. Get the DC structure for hdc.
 	// 2. Get the current pen position (startX, startY) from the DC.
 	// 3. Get the currently selected pen object (HPEN) from the DC.
@@ -1138,7 +1138,7 @@ fun maskBlt(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('MoveToEx')
 fun moveToEx(hdc HDc, x Int32, y Int32, lpptPoint Point?) Bool32 {
-	// TODO: Implement updating the current pen position stored within the DC structure.
+	// TODO Implement updating the current pen position stored within the DC structure.
 	// 1. Get the DC structure for hdc.
 	// 2. If lpptPoint is not null, store the DC's current pen position (e.g., dc.penPosX, dc.penPosY) in it.
 	// 3. Update the DC's current pen position fields with x and y.
@@ -1151,7 +1151,7 @@ fun moveToEx(hdc HDc, x Int32, y Int32, lpptPoint Point?) Bool32 {
 
 @dllExport('PatBlt')
 fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation) Bool32 {
-	// TODO: Implement pattern blit. Fills the specified rectangle using the
+	// TODO Implement pattern blit. Fills the specified rectangle using the
 	// currently selected brush and the specified ROP code.
 	// Requires handling the brush (solid or pattern), the ROP logic, clipping.
 	tofitaDebugLog("PatBlt called on DC %8, ROP %u".utf16(), hdc as! UInt64, dwRop as! UInt64)
@@ -1208,7 +1208,7 @@ fun roundRect(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('SetBkColor')
 fun setBkColor(hdc HDc, color COLORREF) COLORREF {
-	// TODO: Set background color, return previous
+	// TODO Set background color, return previous
 	tofitaDebugLog("SetBkColor called with hdc %8 color %u".utf16(), hdc as! UInt64, color as! UInt64)
 	return 0
 }
@@ -2275,7 +2275,7 @@ fun loadBitmapA(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangChar>)
 fun loadCursorA(hInstance HInstance?, lpCursorName ConstArrayPointer<ClangChar>) HCursor {
 	tofitaDebugLog("LoadCursorA called with hInstance %8".utf16(), hInstance as! UInt64)
 	tofitaDebugLog("lpCursorName %8".utf16(), lpCursorName as! UInt64)
-	// TODO: Load cursor resource
+	// TODO Load cursor resource
 	return null
 }
 
@@ -2772,7 +2772,7 @@ fun extTextOutA(hdc HDc, x Int32, y Int32, options UInt32, lprc ConstArrayPointe
 	tofitaDebugLog("> options %u c %u".utf16(), options as! UInt64, c as! UInt64)
 	tofitaDebugLog("> lprc %8 lpString {%S}".utf16(), lprc as! UInt64, lpString as! UInt64)
 	tofitaDebugLog("> lpDx %8".utf16(), lpDx as! UInt64)
-	// TODO: Draw text with specified options
+	// TODO Draw text with specified options
 	return Bool32.False
 }
 
@@ -2855,7 +2855,7 @@ fun createPenIndirect(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('CreatePatternBrush')
 fun createPatternBrush(hbmp HBitmap) HBrush {
-	// TODO: Create brush from bitmap pattern
+	// TODO Create brush from bitmap pattern
 	tofitaDebugLog("CreatePatternBrush called with hbmp %8".utf16(), hbmp as! UInt64)
 	return null
 }
@@ -2883,7 +2883,7 @@ fun equalRgn(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('ExcludeClipRect')
 fun excludeClipRect(hdc HDc, left Int32, top Int32, right Int32, bottom Int32) Int32 {
-	// TODO: Remove rectangle from clipping region
+	// TODO Remove rectangle from clipping region
 	tofitaDebugLog("ExcludeClipRect called with hdc %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> left %d top %d".utf16(), left as! UInt64, top as! UInt64)
 	tofitaDebugLog("> right %d bottom %d".utf16(), right as! UInt64, bottom as! UInt64)
@@ -3074,7 +3074,7 @@ fun restoreDC(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('RealizePalette')
 fun realizePalette(hdc HDc) UInt32 {
-	// TODO: Map palette entries to system palette
+	// TODO Map palette entries to system palette
 	tofitaDebugLog("RealizePalette called with hdc %8".utf16(), hdc as! UInt64)
 	return 0
 }
@@ -3088,7 +3088,7 @@ fun saveDC(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('SelectClipRgn')
 fun selectClipRgn(hdc HDc, hrgn HRgn?) Int32 {
-	// TODO: Set clipping region
+	// TODO Set clipping region
 	tofitaDebugLog("SelectClipRgn called with hdc %8 hrgn %8".utf16(), hdc as! UInt64, hrgn as! UInt64)
 	return 0
 }
@@ -3102,7 +3102,7 @@ fun extSelectClipRgn(hdc HDc, hrgn HRgn?) Int32 {
 
 @dllExport('SelectPalette')
 fun selectPalette(hdc HDc, hpal HPalette, bForceBkgd Bool32) HPalette {
-	// TODO: Select palette into DC, return previously selected
+	// TODO Select palette into DC, return previously selected
 	tofitaDebugLog("SelectPalette called with hdc %8 hpal %8".utf16(), hdc as! UInt64, hpal as! UInt64)
 	tofitaDebugLog("bForceBkgd %u".utf16(), bForceBkgd as! UInt64)
 	return null
@@ -3211,7 +3211,7 @@ fun setBrushOrgEx(hdc HDc, x Int32, y Int32, lppt Point?) Bool32 {
 	tofitaDebugLog("SetBrushOrgEx called with hdc %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	tofitaDebugLog("> lppt %8".utf16(), lppt as! UInt64)
-	// TODO: Set brush origin, store old in lppt
+	// TODO Set brush origin, store old in lppt
 	return Bool32.True
 }
 
@@ -3473,7 +3473,7 @@ fun getWindowLongPtrA(hWnd HWnd, nIndex Int32) SizeOfPointer {
 
 @dllExport('CreatePalette')
 fun createPalette(lplogpal LogPalette) HPalette {
-	// TODO: Allocate and initialize palette structure
+	// TODO Allocate and initialize palette structure
 	tofitaDebugLog("CreatePalette called with lplogpal %8".utf16(), lplogpal as! UInt64)
 	return null
 }
@@ -3754,7 +3754,7 @@ fun setPixel(hdc HDc, x Int32, y Int32, color COLORREF) COLORREF {
 	tofitaDebugLog("SetPixel called with hdc %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	tofitaDebugLog("> color %u".utf16(), color as! UInt64)
-	// TODO: Set pixel color
+	// TODO Set pixel color
 	return 0
 }
 
