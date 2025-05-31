@@ -3711,6 +3711,19 @@ fun setBrushOrgEx(hdc HDc, x Int32, y Int32, lppt Point?) Bool32 {
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	tofitaDebugLog("> lppt %8".utf16(), lppt as! UInt64)
 	// TODO Set brush origin, store old in lppt
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return Bool32.False
+	}
+
+	if let lppt = lppt {
+		lppt.x = dc.brushOrgX
+		lppt.y = dc.brushOrgY
+	}
+
+	dc.brushOrgX = x
+	dc.brushOrgY = y
 	return Bool32.True
 }
 
