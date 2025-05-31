@@ -4092,19 +4092,58 @@ fun selectObject(
 		return null
 	}
 
-	// Assume h is a bitmap (sample code only uses bitmaps)
-	let bitmap = h as! Bitmap
-	if bitmap == null {
-		tofitaDebugLog("> Invalid bitmap".utf16())
+	let handleTypeHolder = h as! HandleTypeHolder
+	// TODO check for `INVALID_HANDLE` constants too
+	if handleTypeHolder == null {
+		tofitaDebugLog("> Invalid handle".utf16())
 		return null
 	}
 
-	// Store the current bitmap and select the new one
-	let previousBitmap = dc.hBitmap
-	dc.hBitmap = bitmap as! HBitmap
+	switch handleTypeHolder.handleType {
+		case HBitmap:
+			let prev = dc.hBitmap
+			dc.hBitmap = h as! HBitmap
+			tofitaDebugLog("> Selected bitmap %8, previous %8".utf16(), h as! UInt64, prev as! UInt64)
+			return prev as! Handle
 
-	tofitaDebugLog("> Selected bitmap %8, previous %8".utf16(), bitmap as! UInt64, previousBitmap as! UInt64)
-	return previousBitmap as! Handle
+		case HPen:
+			let prev = dc.hPen
+			dc.hPen = h as! HPen
+			tofitaDebugLog("> Selected pen %8, previous %8".utf16(), h as! UInt64, prev as! UInt64)
+			return prev as! Handle
+
+		case HBrush:
+			let prev = dc.hBrush
+			dc.hBrush = h as! HBrush
+			tofitaDebugLog("> Selected brush %8, previous %8".utf16(), h as! UInt64, prev as! UInt64)
+			return prev as! Handle
+
+		case HFont:
+			let prev = dc.hFont
+			dc.hFont = h as! HFont
+			tofitaDebugLog("> Selected font %8, previous %8".utf16(), h as! UInt64, prev as! UInt64)
+			return prev as! Handle
+
+		case HRgn:
+			let prev = dc.hRgn
+			dc.hRgn = h as! HRgn
+			tofitaDebugLog("> Selected region %8, previous %8".utf16(), h as! UInt64, prev as! UInt64)
+			return prev as! Handle
+
+		case HPalette:
+			let prev = dc.hPalette
+			dc.hPalette = h as! HPalette
+			tofitaDebugLog("> Selected palette %8, previous %8".utf16(), h as! UInt64, prev as! UInt64)
+			return prev as! Handle
+
+		case _:
+			tofitaDebugLog("> Invalid handle type".utf16())
+			return null
+	}
+
+	// Store the current bitmap and select the new one
+
+	return null
 }
 
 @dllExport('CreateFontIndirectW')
