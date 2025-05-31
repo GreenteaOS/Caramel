@@ -3356,7 +3356,23 @@ fun createPenIndirect(stub SizeOfPointer) SizeOfPointer {
 fun createPatternBrush(hbmp HBitmap) HBrush {
 	// TODO Create brush from bitmap pattern
 	tofitaDebugLog("CreatePatternBrush called with hbmp %8".utf16(), hbmp as! UInt64)
-	return null
+
+	let bitmap = hbmp as! Bitmap
+	if bitmap == null {
+		tofitaDebugLog("> Invalid bitmap".utf16())
+		return null
+	}
+
+	// Validate bitmap for pattern (8x8 monochrome typical for checkered)
+	if bitmap.bitsPerPixel != 1i16 {
+		tofitaDebugLog("> Only monochrome bitmaps supported".utf16())
+		return null
+	}
+
+	let brush = @heap new Brush()
+	brush.pattern = hbmp
+	tofitaDebugLog("> Created brush %8".utf16(), brush as! UInt64)
+	return brush as! HBrush
 }
 
 @dllExport('CreateRectRgn')
