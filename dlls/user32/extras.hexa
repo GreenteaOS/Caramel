@@ -3727,6 +3727,21 @@ fun setBrushOrgEx(hdc HDc, x Int32, y Int32, lppt Point?) Bool32 {
 	return Bool32.True
 }
 
+@dllExport('SetTextColor')
+fun setTextColor(hdc HDc, color COLORREF) COLORREF {
+	tofitaDebugLog("SetTextColor called with hdc %8 color %u".utf16(), hdc as! UInt64, color as! UInt64)
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return 0
+	}
+
+	let prevColor = dc.textColor
+	dc.textColor = color
+	return prevColor
+}
+
 @dllExport('GetDCOrgEx')
 fun getDCOrgEx(stub SizeOfPointer) SizeOfPointer {
 	// TODO
