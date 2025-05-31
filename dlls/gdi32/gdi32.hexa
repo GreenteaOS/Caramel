@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Oleh Petrenko
+// Copyright (C) 2022-2025 Oleh Petrenko
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,18 +15,21 @@
 @dllExport('GetStockObject')
 fun getStockObject(stub SizeOfPointer) SizeOfPointer {
 	// TODO
+	tofitaDebugLog("getStockObject called".utf16())
 	return 0
 }
 
 @dllExport('GetTextExtentPoint32W')
 fun getTextExtentPoint32W(stub SizeOfPointer) SizeOfPointer {
 	// TODO
+	tofitaDebugLog("getTextExtentPoint32W called".utf16())
 	return 0
 }
 
 @dllExport('SetBkMode')
 fun setBkMode(stub SizeOfPointer) SizeOfPointer {
 	// TODO
+	tofitaDebugLog("setBkMode called".utf16())
 	return 0
 }
 
