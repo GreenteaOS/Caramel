@@ -4334,13 +4334,203 @@ fun charLowerW(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
 	return null
 }
 
-@dllExport('SetPixel')
-fun setPixel(hdc HDc, x Int32, y Int32, color COLORREF) COLORREF {
+fun xsetPixel(hdc HDc, x Int32, y Int32, color COLORREF) COLORREF {
 	tofitaDebugLog("SetPixel called with hdc %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	tofitaDebugLog("> color %u".utf16(), color as! UInt64)
 	// TODO Set pixel color
+
+	let dc = hdc as! DC
+	if dc == null {
+		return 0
+	}
+
+	var bits ArrayPointer<UInt8> = null
+	var width = 0i32
+	var height = 0i32
+	var bytesPerRow = 0i32
+	var isTopDown = true
+
+	if let bmp = dc.hBitmap as! Bitmap {
+		bits = bmp.bits
+		width = bmp.width
+		height = bmp.height
+		bytesPerRow = bmp.bytesPerRow
+		isTopDown = bmp.isTopDown
+	} else {
+		let fb = dc.fb.ref
+		if fb == null {
+			return 0
+		}
+
+		bits = fb.pixels as! ArrayPointer<UInt8>
+		width = fb.width as! Int32
+		height = fb.height as! Int32
+		bytesPerRow = fb.width * 4i32
+		isTopDown = true
+	}
+
+	if x >= 0 and x < width and y >= 0 and y < height {
+		let row = isTopDown ? y : (height - 1 - y)
+		let offset = row * bytesPerRow + x * 4
+		let pixel = (bits as! ArrayPointer<ByValue<Pixel32>>).offsetItemsBack(offset)
+		// `let prevColor = pixel.ref.color` TODO interesting idea to access first element or nonsense?
+		// TODO let prevColor = pixel[0].ref.color
+		// TODO pixel[0].ref.color = color.color
+		// TODO return prevColor as! COLORREF
+	}
+
 	return 0
+}
+
+@dllExport('SetPixel')
+fun setPixel(hdc HDc, x Int32, y Int32, color COLORREF) COLORREF {
+	// tofitaDebugLog("SetPixel called with hdc %8".utf16(), hdc as! UInt64)
+	// tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+	// tofitaDebugLog("> color %u".utf16(), color as! UInt64)
+
+	let dc = hdc as! DC
+	if dc == null {
+		// tofitaDebugLog("> Invalid DC".utf16())
+		return 0xFFFFFFFFu32 as! COLORREF
+	}
+
+	var bits ArrayPointer<UInt8> = null
+	var width = 0i32
+	var height = 0i32
+	var bytesPerRow = 0i32
+	var bitsPerPixel = 32i16
+	var isTopDown = true
+	var colorTable ArrayPointer<ByValue<RGBQUAD>> = null
+	var colorTableSize = 0u32
+
+	if let bmp = dc.hBitmap as! Bitmap {
+		// tofitaDebugLog("> Using bitmap".utf16())
+		bits = bmp.bits
+		width = bmp.width
+		height = bmp.height
+		bytesPerRow = bmp.bytesPerRow
+		bitsPerPixel = bmp.bitsPerPixel
+		isTopDown = bmp.isTopDown
+		colorTable = bmp.colorTable
+		colorTableSize = bmp.colorTableSize
+	} else {
+		// tofitaDebugLog("> Using framebuffer".utf16())
+		// let fb = dc.fb.ref
+		let fb = dc.fb // Copy
+		let fb = fb.ref
+		if fb.pixels == 0 {
+			tofitaDebugLog("> Invalid framebuffer pixels".utf16())
+			return 0xFFFFFFFFu32 as! COLORREF
+		}
+		bits = fb.pixels as! ArrayPointer<UInt8>
+		width = fb.width as! Int32
+		height = fb.height as! Int32
+		bytesPerRow = fb.width * 4i32
+		bitsPerPixel = 32i16
+		isTopDown = true
+
+		// tofitaDebugLog("> fb.pixels: %8".utf16(), fb.pixels as! UInt64)
+		// tofitaDebugLog("> fb.width: %d".utf16(), fb.width as! UInt64)
+		// tofitaDebugLog("> fb.height: %d".utf16(), fb.height as! UInt64)
+		// tofitaDebugLog("> calculated bytesPerRow: %d".utf16(), bytesPerRow as! UInt64)
+	}
+
+	if bits == null or x < 0 or x >= width or y < 0 or y >= height {
+		// tofitaDebugLog("> Invalid coordinates or bits".utf16())
+		return 0xFFFFFFFFu32 as! COLORREF
+	}
+
+	let row = isTopDown ? y : (height - 1 - y)
+
+	if bitsPerPixel == 1i16 {
+		// Monochrome bitmap: 1 bit per pixel, 8 pixels per byte
+		tofitaDebugLog("> bitsPerPixel == 1i16".utf16())
+		let byteOffset = row * bytesPerRow + (x / 8)
+		let bitPosition = 7 - (x % 8) // Bits are MSB to LSB
+		let bytePtr = bits.offsetItemsBack(byteOffset)
+		let currentByte = bytePtr[0]
+
+		// Map color to 0 or 1 based on textColor and bkColor
+		let isTextColor = (color == dc.textColor)
+		let newBit = isTextColor ? 1u8 : 0u8
+		let prevBit = (currentByte >> bitPosition) & 1u8
+
+		// Set the bit
+		let mask = 1u8 << bitPosition
+		bytePtr[0] = (currentByte & ~mask) | (newBit << bitPosition)
+
+		// Return previous color (textColor for 1, bkColor for 0)
+		return (prevBit == 1u8 ? dc.textColor : dc.bkColor) as! COLORREF
+	} else if bitsPerPixel == 8i16 {
+		tofitaDebugLog("> bitsPerPixel == 8i16".utf16())
+		// Indexed bitmap: 1 byte per pixel
+		if colorTable == null or colorTableSize == 0 {
+			tofitaDebugLog("> Missing color table for 8-bit bitmap".utf16())
+			return 0xFFFFFFFFu32 as! COLORREF
+		}
+
+		let offset = row * bytesPerRow + x
+		let bytePtr = bits.offsetItemsBack(offset)
+		let prevIndex = bytePtr[0]
+
+		// Find closest color in color table (simplified: match RGB)
+		var newIndex = 0u8
+		for i in 0u32 ... colorTableSize - 1 {
+			let entry = colorTable[i].ref
+			// TODO if entry.rgbRed == color.ref.rgba.ref.r and entry.rgbGreen == color.ref.rgba.ref.g and entry.rgbBlue == color.ref.rgba.ref.b {
+			// TODO 	newIndex = i as! UInt8
+			// TODO 	break
+			// TODO }
+		}
+		bytePtr[0] = newIndex
+
+		// Return previous color from color table
+		if (prevIndex as! UInt32) < colorTableSize {
+			return colorTable[prevIndex as! Int].ref as! COLORREF
+		}
+		return 0xFFFFFFFFu32 as! COLORREF
+	} else if bitsPerPixel == 32i16 {
+		// tofitaDebugLog("> bitsPerPixel == 32i16".utf16())
+		// 32-bit RGBA bitmap
+
+		let offset = row * bytesPerRow + x * 4
+		// TODO Hexa: `Pixel32_* pixelPtr_ = (Pixel32_*)((((bits_2075_) + (offset_2093_))));`
+		// `let pixelPtr = (bits.offsetItemsBack(offset)) as! ArrayPointer<ByValue<Pixel32>>`
+		let pixelPtr = (bits.offsetItemsBack(offset)) as! ArrayPointer<ByValue<Pixel32>>
+		// tofitaDebugLog("> pixelPtr: %8".utf16(), pixelPtr as! UInt64)
+		// let pixelPtr = (((bits as! UInt64) + (offset as! UInt64))) as! ArrayPointer<ByValue<Pixel32>>
+		// tofitaDebugLog("> pixelPtr: %8".utf16(), pixelPtr as! UInt64)
+
+		// TODO Always use `%p` for pointers. Remove `%8`.
+		// tofitaDebugLog("> bits pointer: %8".utf16(), bits as! UInt64)
+		// tofitaDebugLog("> row: %d, bytesPerRow: %d".utf16(), row as! UInt64, bytesPerRow as! UInt64)
+		// tofitaDebugLog("> calculated offset: %d".utf16(), offset as! UInt64)
+		// tofitaDebugLog("> final address: %8".utf16(), (bits as! UInt64) + (offset as! UInt64))
+
+		let totalBitmapSize = height * bytesPerRow
+		if offset + 4 > totalBitmapSize {
+			// tofitaDebugLog("> Offset exceeds bitmap bounds".utf16())
+			return 0xFFFFFFFFu32 as! COLORREF
+		}
+
+		// Also validate the final memory address
+		let finalAddress = (bits as! UInt64) + (offset as! UInt64)
+		if finalAddress < 0x1000 or finalAddress > 0x7FFFFFFF { // Adjust bounds for your system
+			// tofitaDebugLog("> Invalid memory address: %p".utf16(), finalAddress)
+			return 0xFFFFFFFFu32 as! COLORREF
+		}
+
+		// let pixel = pixelPtr[0]
+		// pixel.ref.color = color.color
+
+		let prevColor = pixelPtr[0].ref.color
+		pixelPtr[0].ref.color = color
+		return prevColor as! COLORREF
+	} else {
+		tofitaDebugLog("> Unsupported bit depth %d".utf16(), bitsPerPixel as! UInt64)
+		return 0xFFFFFFFFu32 as! COLORREF
+	}
 }
 
 @dllExport('wcsrchr')
