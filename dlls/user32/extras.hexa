@@ -1455,8 +1455,13 @@ fun createDIBSection(
 fun createPen(iStyle Int32, cWidth Int32, color COLORREF) HPen {
 	// TODO Create pen with style, width, color
 	tofitaDebugLog("CreatePen called with iStyle %d".utf16(), iStyle as! UInt64)
-	tofitaDebugLog("cWidth %d color %u".utf16(), cWidth as! UInt64, color as! UInt64)
-	return null
+	tofitaDebugLog("> cWidth %d color %u".utf16(), cWidth as! UInt64, color as! UInt64)
+
+	let pen = @heap new Pen()
+	pen.style = iStyle
+	pen.width = cWidth
+	pen.color = color
+	return pen as! HPen
 }
 
 @dllExport('CreateSolidBrush')
