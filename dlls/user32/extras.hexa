@@ -1700,7 +1700,16 @@ fun roundRect(stub SizeOfPointer) SizeOfPointer {
 fun setBkColor(hdc HDc, color COLORREF) COLORREF {
 	// TODO Set background color, return previous
 	tofitaDebugLog("SetBkColor called with hdc %8 color %u".utf16(), hdc as! UInt64, color as! UInt64)
-	return 0
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return 0
+	}
+
+	let prevColor = dc.bkColor
+	dc.bkColor = color
+	return prevColor
 }
 
 @dllExport('SetROP2')
