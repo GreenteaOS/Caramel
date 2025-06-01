@@ -308,6 +308,7 @@ fun getOEMCP(stub SizeOfPointer) UInt32 {
 	return oemCodePage
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-getcpinfo
 @dllExport('GetCPInfo')
 fun getCPInfo(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -315,6 +316,7 @@ fun getCPInfo(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinea
 @dllExport('GetCommandLineA')
 fun getCommandLineA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -322,6 +324,7 @@ fun getCommandLineA(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinew
 @dllExport('GetCommandLineW')
 fun getCommandLineW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -329,6 +332,7 @@ fun getCommandLineW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getenvironmentstringsw
 @dllExport('GetEnvironmentStringsW')
 fun getEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -336,6 +340,7 @@ fun getEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-freeenvironmentstringsw
 @dllExport('FreeEnvironmentStringsW')
 fun freeEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -343,6 +348,7 @@ fun freeEnvironmentStringsW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-setenvironmentvariablew
 @dllExport('SetEnvironmentVariableW')
 fun setEnvironmentVariableW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -350,6 +356,7 @@ fun setEnvironmentVariableW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/console/setstdhandle
 @dllExport('SetStdHandle')
 fun setStdHandle(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -357,6 +364,7 @@ fun setStdHandle(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfiletype
 @dllExport('GetFileType')
 fun getFileType(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -364,6 +372,7 @@ fun getFileType(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-getstringtypew
 @dllExport('GetStringTypeW')
 fun getStringTypeW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -532,11 +541,28 @@ fun redrawWindow(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Purpose: Determines if a point is inside a rectangle
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-ptinrect
 @dllExport('PtInRect')
-fun ptInRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("PtInRect called".utf16())
-	return 0
+// TODO Hexa: `lprc Readonly<Rect>` or something
+fun ptInRect(lprc Rect, pt ByValue<Point>) Bool32 {
+	tofitaDebugLog("PtInRect called with lprc %8".utf16(), lprc as! UInt64)
+	tofitaDebugLog("> pt.x %d, pt.y %d".utf16(), pt.ref.x as! UInt64, pt.ref.y as! UInt64)
+
+	if lprc == null {
+		tofitaDebugLog("> Invalid rectangle pointer".utf16())
+		return Bool32.False
+	}
+
+	// TODO Hexa: propose to use .ref.name Class `ByValue` has no field `.x`
+	let result = pt.ref.x >= lprc.left and pt.ref.x < lprc.right and
+	pt.ref.y >= lprc.top and pt.ref.y < lprc.bottom
+
+	// TODO Hexa: cover `else {} as!` nad `if {} as!` with tests to ensure parsing to not break or change this logic
+	// cause its confusing (move to the typer)
+	tofitaDebugLog("> Point %s in rect".utf16(), if result { "is".utf16() } else { "is not".utf16() } as! UInt64)
+	return Bool32.fromBool(result)
+}
 }
 
 @dllExport('LoadIconW')
