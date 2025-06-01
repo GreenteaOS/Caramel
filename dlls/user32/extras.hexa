@@ -3802,11 +3802,21 @@ fun getRgnBox(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-gettextalign
 @dllExport('GetTextAlign')
-fun getTextAlign(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetTextAlign called".utf16())
-	return 0
+fun getTextAlign(hdc HDc) UInt32 {
+	tofitaDebugLog("GetTextAlign called with hdc %8".utf16(), hdc as! UInt64)
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return 0 // GDI_ERROR
+	}
+
+	// Assume default alignment: TA_LEFT | TA_TOP | TA_NOUPDATECP
+	let alignment = 0u32 // TA_LEFT = 0, TA_TOP = 0, TA_NOUPDATECP = 0
+	tofitaDebugLog("> Returning alignment %u".utf16(), alignment as! UInt64)
+	return alignment
 }
 
 @dllExport('GetTextColor')
