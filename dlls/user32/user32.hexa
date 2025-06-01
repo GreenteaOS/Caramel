@@ -194,7 +194,7 @@ fun createWindowExW(
 		// TODO notify both of being added?
 		parent.children.push(window)
 		// TODO Hexa: clearer that it's a copy?
-		window.dc.ref.fb = parent.dc.ref.fb
+		window.dc.fb = parent.dc.fb
 	}
 
 	window.windowId = windowId
@@ -221,7 +221,7 @@ fun createWindowExW(
 		window.clipWidth = window.width
 		window.clipHeight = window.height
 
-		window.dc.ref.fb.ref.ownerWindowId = windowId
+		window.dc.fb.ref.ownerWindowId = windowId
 	}
 
 	// TODO Hexa: make @struct `new` allocate on stack instead of heap so no need for this
@@ -494,7 +494,7 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 		return null
 	}
 
-	let dc = window.dc.ref
+	let dc = window.dc
 	let fb = dc.fb.ref
 	if fb == null {
 		tofitaDebugLog("> window == null, cancelling".utf16())
@@ -613,7 +613,7 @@ fun endPaint(hWnd HWnd, ps PaintStruct) Bool32 {
 	if window == null {
 		return Bool32.False
 	}
-	let dc = window.dc.ref
+	let dc = window.dc
 	let fb = dc.fb.ref
 	njraaSwapWindowFramebuffer(fb)
 	// TODO ^ could be there multiple End Paint event? Probably swap after primary WM_PAINT

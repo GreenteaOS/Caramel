@@ -645,9 +645,12 @@ fun getDC(hWnd HWnd?) HDc {
 	tofitaDebugLog("GetDC called with hWnd %8".utf16(), hWnd as! UInt64)
 	let window = handleToWindow(hWnd)
 	if window == null {
+		tofitaDebugLog("GetDC returned defaultDC %8".utf16(), defaultDC as! UInt64)
 		return defaultDC as! HDc
 	}
-	return window.dc.ref as! HDc
+
+	tofitaDebugLog("GetDC returned window.dc.ref %8".utf16(), window.dc as! UInt64)
+	return window.dc as! HDc
 }
 
 @dllExport('AdjustWindowRect')
