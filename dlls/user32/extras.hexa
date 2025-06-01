@@ -1484,8 +1484,21 @@ fun createPen(iStyle Int32, cWidth Int32, color COLORREF) HPen {
 @dllExport('CreateSolidBrush')
 fun createSolidBrush(color COLORREF) HBrush {
 	// TODO Create solid brush with color
-	tofitaDebugLog("CreateSolidBrush called with color %u".utf16(), color as! UInt64)
-	return null
+	tofitaDebugLog("CreateSolidBrush called with color %8".utf16(), color as! UInt64)
+
+	// Allocate a new Brush struct
+	let brush = @heap new Brush()
+	if brush == null {
+		tofitaDebugLog("> Failed to allocate brush".utf16())
+		return null
+	}
+
+	// Initialize brush properties
+	brush.color = color
+	brush.pattern = null
+
+	tofitaDebugLog("> Created brush %8".utf16(), brush as! UInt64)
+	return brush as! HBrush
 }
 
 @dllExport('Ellipse')
