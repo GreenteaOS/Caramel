@@ -1591,6 +1591,12 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 	let endX = x
 	let endY = y
 
+	// Get the selected pen and its data
+	let pen = dc.hPen as! Pen
+	let color = if pen != null { pen.color } else { 0x000000FF as! COLORREF } // Default to black with full alpha
+	let width = if pen != null { pen.width } else { 1 } // Default width
+	let style = if pen != null { pen.style } else { 0 } // Default `PS_SOLID`
+
 	// Simple line drawing algorithm (DDA-like, not Bresenham's for simplicity)
 	let dx = endX - startX
 	let dy = endY - startY
@@ -1600,12 +1606,18 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 		return Bool32.True // No movement
 	}
 
+	// TODO DC's clip region
 	let xInc = dx as! Float / steps as! Float
 	let yInc = dy as! Float / steps as! Float
 	var currentX = startX as! Float
 	var currentY = startY as! Float
 
-	// Black color (RGBA: 0, 0, 0, 255)
+	// Extract color components (COLORREF is 0xAARRGGBB)
+	let blue = (color & 0x000000FF) as! UInt8
+	let green = ((color >> 8) & 0x000000FF) as! UInt8
+	let red = ((color >> 16) & 0x000000FF) as! UInt8
+	let alpha = ((color >> 24) & 0x000000FF) as! UInt8
+
 	// TODO Hexa: Range start and end must be of the same type, but got `Int...Int32`
 	// ^ also infer 0/123 to be u32 or i64 from the other part of the range
 	for i in 0i32 ... steps {
@@ -1613,10 +1625,10 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 		let pixelY = currentY as! Int32
 		if pixelX >= 0 and pixelX < bitmap.width and pixelY >= 0 and pixelY < bitmap.height {
 			let offset = (pixelY * bitmap.bytesPerRow + pixelX * 4) as! Int
-			bitmap.bits[offset] = 0 // Blue
-			bitmap.bits[offset + 1] = 0 // Green
-			bitmap.bits[offset + 2] = 0 // Red
-			bitmap.bits[offset + 3] = 255 // Alpha
+			bitmap.bits[offset] = blue
+			bitmap.bits[offset + 1] = green
+			bitmap.bits[offset + 2] = red
+			bitmap.bits[offset + 3] = alpha
 		}
 		currentX += xInc
 		currentY += yInc
