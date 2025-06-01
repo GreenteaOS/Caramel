@@ -1987,6 +1987,8 @@ fun roundRect(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Purpose: Sets the background color for a device context
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-setbkcolor
 @dllExport('SetBkColor')
 fun setBkColor(hdc HDc, color COLORREF) COLORREF {
 	// TODO Set background color, return previous
@@ -2115,11 +2117,24 @@ fun messageBoxW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Purpose: Moves a rectangle by specified offsets
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-offsetrect
 @dllExport('OffsetRect')
-fun offsetRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("OffsetRect called".utf16())
-	return 0
+fun offsetRect(lprc Rect, dx Int32, dy Int32) Bool32 {
+	tofitaDebugLog("OffsetRect called with lprc %8".utf16(), lprc as! UInt64)
+	tofitaDebugLog("> dx %d dy %d".utf16(), dx as! UInt64, dy as! UInt64)
+
+	if lprc == null {
+		tofitaDebugLog("> Invalid rectangle pointer".utf16())
+		return Bool32.False
+	}
+
+	lprc.left += dx
+	lprc.top += dy
+	lprc.right += dx
+	lprc.bottom += dy
+
+	return Bool32.True
 }
 
 @dllExport('RemoveMenu')
