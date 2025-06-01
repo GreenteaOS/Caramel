@@ -1729,6 +1729,7 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 
 	// Get the selected pen and its data
 	let pen = dc.hPen as! Pen
+	// TODO Hexa: `if let pen {}` for ternary
 	let color = if pen != null { pen.color } else { 0x000000FF as! COLORREF } // Default to black with full alpha
 	let width = if pen != null { pen.width } else { 1 } // Default width
 	let style = if pen != null { pen.style } else { 0 } // Default `PS_SOLID`
@@ -1786,6 +1787,28 @@ fun maskBlt(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Purpose: Retrieves the current position in a device context
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getcurrentpositionex
+@dllExport('GetCurrentPositionEx')
+fun getCurrentPositionEx(hdc HDc, lppt Point) Bool32 {
+    tofitaDebugLog("GetCurrentPositionEx called with hdc %8, lppt %8".utf16(),
+        hdc as! UInt64, lppt as! UInt64)
+
+    let dc = hdc as! DC
+    if dc == null or lppt == null {
+        tofitaDebugLog("> Invalid DC or point pointer".utf16())
+        return Bool32.False
+    }
+    
+    lppt.x = dc.penPosX
+    lppt.y = dc.penPosY
+    tofitaDebugLog("> Current position: x %d, y %d".utf16(),
+        dc.penPosX as! UInt64, dc.penPosY as! UInt64)
+    return Bool32.True
+}
+
+// Purpose: Updates the current position in a device context
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-movetoex
 @dllExport('MoveToEx')
 fun moveToEx(hdc HDc, x Int32, y Int32, lpptPoint Point?) Bool32 {
 	// TODO Implement updating the current pen position stored within the DC structure.
