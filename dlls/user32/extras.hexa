@@ -3466,10 +3466,17 @@ fun createEllipticRgn(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('CreatePenIndirect')
-fun createPenIndirect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CreatePenIndirect called".utf16())
-	return 0
+fun createPenIndirect(lplgpn LogPen) HPen {
+	tofitaDebugLog("CreatePenIndirect called with lopnStyle %u=".utf16(), lplgpn.lopnStyle as! UInt64)
+	tofitaDebugLog("> width %d, color %u".utf16(), lplgpn.lopnWidth.ref.x as! UInt64, lplgpn.lopnColor as! UInt64)
+
+	let pen = @heap new Pen()
+	pen.style = lplgpn.lopnStyle as! Int32
+	pen.width = lplgpn.lopnWidth.ref.x
+	pen.color = lplgpn.lopnColor
+
+	tofitaDebugLog("> Created pen %8".utf16(), pen as! UInt64)
+	return pen as! HPen
 }
 
 @dllExport('CreatePatternBrush')
