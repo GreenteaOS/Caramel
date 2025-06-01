@@ -1280,6 +1280,35 @@ fun lstrcmpiW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Purpose: Compares two null-terminated Unicode strings
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lstrcmpw
+@dllExport('lstrcmpW')
+fun lstrcmpW(lpString1 ConstArrayPointer<ClangWideChar>, lpString2 ConstArrayPointer<ClangWideChar>) Int32 {
+    tofitaDebugLog("lstrcmpW called with lpString1 %8, lpString2 %8".utf16(),
+        lpString1 as! UInt64, lpString2 as! UInt64)
+
+    if lpString1 == null or lpString2 == null {
+        tofitaDebugLog("> Null string pointer".utf16())
+        return if lpString1 == null and lpString2 == null { 0 } else {if lpString1 == null { -1 } else { 1 }}
+    }
+
+    var i = 0
+	// TODO Hexa: `ClangWideChar.nullTerminator`
+    while lpString1[i] != 0 as! ClangWideChar or lpString2[i] != 0 as! ClangWideChar {
+        if (lpString1[i] as! UInt16) < (lpString2[i] as! UInt16) {
+            tofitaDebugLog("> lpString1 < lpString2".utf16())
+            return -1
+        } else if (lpString1[i] as! UInt16) > (lpString2[i] as! UInt16) {
+            tofitaDebugLog("> lpString1 > lpString2".utf16())
+            return 1
+        }
+        i += 1
+    }
+
+    tofitaDebugLog("> Strings equal".utf16())
+    return 0
+}
+
 // TODO reported as unresolved (could be x32 underscore problem) (try @linkName + @rename)
 @dllExport('__argc')
 fun __argc(stub SizeOfPointer) SizeOfPointer {
