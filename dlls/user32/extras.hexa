@@ -4366,11 +4366,23 @@ fun getVersion(stub SizeOfPointer) SizeOfPointer {
 	// return 0x80000000u32 // Windows 98
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lstrlena
 @dllExport('lstrlenA')
-fun lstrlenA(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("lstrlenA called".utf16())
-	return 0
+fun lstrlenA(lpString ConstArrayPointer<ClangChar>) Int32 {
+	tofitaDebugLog("lstrlenA called with lpString %8".utf16(), lpString as! UInt64)
+
+	if lpString == null {
+		tofitaDebugLog("> Null string pointer".utf16())
+		return 0
+	}
+
+	var length = 0
+	while lpString[length] != 0 as! ClangChar {
+		length += 1
+	}
+
+	tofitaDebugLog("> String length %d".utf16(), length as! UInt64)
+	return length
 }
 
 @dllExport('ReleaseMutex')
