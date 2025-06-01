@@ -89,11 +89,15 @@ fun getConsoleMode(hConsoleHandle SizeOfPointer, lpMode ArrayPointer<UInt32>) Bo
 	return Bool32.True
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/console/getconsoleoutputcp
 @dllExport('GetConsoleOutputCP')
-fun getConsoleOutputCP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
+fun getConsoleOutputCP(stub SizeOfPointer) UInt32 {
 	tofitaDebugLog("GetConsoleOutputCP called".utf16())
-	return 0
+
+	// Return default code page (e.g., CP_UTF8 = 65001 or OEM code page like 437)
+	let codePage = 65001u32 // UTF-8
+	tofitaDebugLog("> Returning code page %u".utf16(), codePage as! UInt64)
+	return codePage
 }
 
 @dllExport('FlushFileBuffers')
