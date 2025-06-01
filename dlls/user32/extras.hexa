@@ -286,11 +286,15 @@ fun isValidCodePage(codePage UInt32) Bool32 {
 	return Bool32.False
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-getacp
 @dllExport('GetACP')
-fun getACP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
+fun getACP(stub SizeOfPointer) UInt32 {
 	tofitaDebugLog("GetACP called".utf16())
-	return 0
+
+	// Return default ANSI code page (e.g., 1252 for Western Europe)
+	let ansiCodePage = 1252u32
+	tofitaDebugLog("> Returning ANSI code page %u".utf16(), ansiCodePage as! UInt64)
+	return ansiCodePage
 }
 
 @dllExport('GetOEMCP')
