@@ -878,10 +878,24 @@ fun bitBlt(
 }
 
 @dllExport('DeleteDC')
-fun deleteDC(stub SizeOfPointer) SizeOfPointer {
+fun deleteDC(hdc HDc) Bool32 {
 	// TODO
-	tofitaDebugLog("DeleteDC called".utf16())
-	return 0
+	tofitaDebugLog("DeleteDC called with hdc %8".utf16(), hdc as! UInt64)
+	let dc = hdc as! DC
+	if dc == null or dc == defaultDC {
+		return Bool32.False
+	}
+
+	if dc.hBitmap != null {
+		deleteObject(dc.hBitmap as! Handle)
+	}
+
+	if dc.hPen != null {
+		deleteObject(dc.hPen as! Handle)
+	}
+
+	// free(dc as! RuntimeAllocated)
+	return Bool32.True
 }
 
 @dllExport('CreateCompatibleDC')
