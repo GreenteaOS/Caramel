@@ -830,6 +830,8 @@ fun getClipboardData(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Purpose: Returns the length of a null-terminated Unicode string
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lstrlenw
 @dllExport('lstrlenW')
 @inline fun lstrlenW(str ConstArrayPointer<ClangWideChar>) Int {
 	// const WCHAR *s = str;

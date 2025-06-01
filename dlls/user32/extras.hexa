@@ -68,11 +68,25 @@ fun getFileSizeEx(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/console/getconsolemode
 @dllExport('GetConsoleMode')
-fun getConsoleMode(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("GetConsoleMode called".utf16())
-	return 0
+// TODO Hexa: need a non-array pointer tpe here, like `SinglePointer` or `OutPointer` (check the spec `_Out_ LPDWORD lpMode`)
+fun getConsoleMode(hConsoleHandle SizeOfPointer, lpMode ArrayPointer<UInt32>) Bool32 {
+	tofitaDebugLog("GetConsoleMode called with hConsoleHandle %8".utf16(), hConsoleHandle as! UInt64)
+
+	// Validate parameters
+	if lpMode == null {
+		tofitaDebugLog("> Invalid lpMode pointer".utf16())
+		return Bool32.False
+	}
+
+	// TODO In a real implementation, check if hConsoleHandle is valid (STD_INPUT_HANDLE, etc.)
+	// For simplicity, assume it's a valid console handle and set a default mode
+	// Common console modes: ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT | ENABLE_PROCESSED_INPUT
+	lpMode[0] = 0x0004 | 0x0002 | 0x0001 // ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT | ENABLE_PROCESSED_INPUT
+
+	tofitaDebugLog("> Set console mode to %u".utf16(), lpMode[0] as! UInt64)
+	return Bool32.True
 }
 
 @dllExport('GetConsoleOutputCP')
