@@ -1284,15 +1284,15 @@ fun lstrcmpiW(stub SizeOfPointer) SizeOfPointer {
 // Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lstrcmpw
 @dllExport('lstrcmpW')
 fun lstrcmpW(lpString1 ConstArrayPointer<ClangWideChar>, lpString2 ConstArrayPointer<ClangWideChar>) Int32 {
-    tofitaDebugLog("lstrcmpW called with lpString1 %8, lpString2 %8".utf16(),
-        lpString1 as! UInt64, lpString2 as! UInt64)
+	tofitaDebugLog("lstrcmpW called with lpString1 %8, lpString2 %8".utf16(),
+		lpString1 as! UInt64, lpString2 as! UInt64)
 
-    if lpString1 == null or lpString2 == null {
-        tofitaDebugLog("> Null string pointer".utf16())
-        return if lpString1 == null and lpString2 == null { 0 } else {if lpString1 == null { -1 } else { 1 }}
-    }
+	if lpString1 == null or lpString2 == null {
+		tofitaDebugLog("> Null string pointer".utf16())
+		return if lpString1 == null and lpString2 == null { 0 } else { if lpString1 == null { -1 } else { 1 } }
+	}
 
-    var i = 0
+	var i = 0
 	// TODO Hexa: `ClangWideChar.nullTerminator`
     while lpString1[i] != 0 as! ClangWideChar or lpString2[i] != 0 as! ClangWideChar {
         if (lpString1[i] as! UInt16) < (lpString2[i] as! UInt16) {
@@ -1305,8 +1305,8 @@ fun lstrcmpW(lpString1 ConstArrayPointer<ClangWideChar>, lpString2 ConstArrayPoi
         i += 1
     }
 
-    tofitaDebugLog("> Strings equal".utf16())
-    return 0
+	tofitaDebugLog("> Strings equal".utf16())
+	return 0
 }
 
 // TODO reported as unresolved (could be x32 underscore problem) (try @linkName + @rename)
@@ -1791,20 +1791,20 @@ fun maskBlt(stub SizeOfPointer) SizeOfPointer {
 // Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getcurrentpositionex
 @dllExport('GetCurrentPositionEx')
 fun getCurrentPositionEx(hdc HDc, lppt Point) Bool32 {
-    tofitaDebugLog("GetCurrentPositionEx called with hdc %8, lppt %8".utf16(),
-        hdc as! UInt64, lppt as! UInt64)
+	tofitaDebugLog("GetCurrentPositionEx called with hdc %8, lppt %8".utf16(),
+		hdc as! UInt64, lppt as! UInt64)
 
-    let dc = hdc as! DC
-    if dc == null or lppt == null {
-        tofitaDebugLog("> Invalid DC or point pointer".utf16())
-        return Bool32.False
-    }
-    
-    lppt.x = dc.penPosX
-    lppt.y = dc.penPosY
-    tofitaDebugLog("> Current position: x %d, y %d".utf16(),
-        dc.penPosX as! UInt64, dc.penPosY as! UInt64)
-    return Bool32.True
+	let dc = hdc as! DC
+	if dc == null or lppt == null {
+		tofitaDebugLog("> Invalid DC or point pointer".utf16())
+		return Bool32.False
+	}
+
+	lppt.x = dc.penPosX
+	lppt.y = dc.penPosY
+	tofitaDebugLog("> Current position: x %d, y %d".utf16(),
+		dc.penPosX as! UInt64, dc.penPosY as! UInt64)
+	return Bool32.True
 }
 
 // Purpose: Updates the current position in a device context
@@ -4056,6 +4056,8 @@ fun setBrushOrgEx(hdc HDc, x Int32, y Int32, lppt Point?) Bool32 {
 	return Bool32.True
 }
 
+// Purpose: Sets the text color for a device context
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-settextcolor
 @dllExport('SetTextColor')
 fun setTextColor(hdc HDc, color COLORREF) COLORREF {
 	tofitaDebugLog("SetTextColor called with hdc %8 color %u".utf16(), hdc as! UInt64, color as! UInt64)
@@ -4247,11 +4249,26 @@ fun initCommonControlsEx(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-copyrect
 @dllExport('CopyRect')
-fun copyRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("CopyRect called".utf16())
-	return 0
+fun copyRect(lprcDst Rect, lprcSrc Rect) Bool32 {
+	tofitaDebugLog("CopyRect called with lprcDst %8 lprcSrc %8".utf16(), lprcDst as! UInt64, lprcSrc as! UInt64)
+
+	if lprcDst == null or lprcSrc == null {
+		tofitaDebugLog("> Invalid rectangle pointer".utf16())
+		return Bool32.False
+	}
+
+	lprcDst.left = lprcSrc.left
+	lprcDst.top = lprcSrc.top
+	lprcDst.right = lprcSrc.right
+	lprcDst.bottom = lprcSrc.bottom
+
+	tofitaDebugLog("> Copied rect: left %d, top %d".utf16(),
+		lprcDst.left as! UInt64, lprcDst.top as! UInt64)
+	tofitaDebugLog("> right %d, bottom %d".utf16(),
+		lprcDst.right as! UInt64, lprcDst.bottom as! UInt64)
+	return Bool32.True
 }
 
 @dllExport('SetWindowLongPtrA')
