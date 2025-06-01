@@ -1033,10 +1033,33 @@ fun memcmp(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/strcmp-wcscmp-mbscmp?view=msvc-170
 @dllExport('strcmp')
-fun strcmp(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("strcmp called".utf16())
+fun strcmp(str1 ConstArrayPointer<ClangChar>, str2 ConstArrayPointer<ClangChar>) Int32 {
+	tofitaDebugLog("strcmp called with str1 %8 str2 %8".utf16(), str1 as! UInt64, str2 as! UInt64)
+
+	if str1 == null or str2 == null {
+		tofitaDebugLog("> Null string pointer".utf16())
+		// TODO Hexa: think about `else if`: Ternary `else` should have a `{ block }` as a body
+		// `return if str1 == null and str2 == null { 0 } else if str1 == null { -1 } else { 1 }``
+		return if str1 == null and str2 == null { 0 } else { if str1 == null { -1 } else { 1 } }
+	}
+
+	var i = 0
+	while str1[i] != 0 as! ClangChar or str2[i] != 0 as! ClangChar {
+		// TODO Hexa: `<` parsed as `UInt8<T>`
+		// `if str1[i] as! UInt8 < str2[i] as! UInt8 { `
+		if (str1[i] as! UInt8) < str2[i] as! UInt8 {
+			tofitaDebugLog("> str1 < str2".utf16())
+			return - 1
+		} else if str1[i] as! UInt8 > str2[i] as! UInt8 {
+			tofitaDebugLog("> str1 > str2".utf16())
+			return 1
+		}
+		i += 1
+	}
+
+	tofitaDebugLog("> Strings equal".utf16())
 	return 0
 }
 
