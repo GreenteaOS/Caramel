@@ -563,6 +563,27 @@ fun ptInRect(lprc Rect, pt ByValue<Point>) Bool32 {
 	tofitaDebugLog("> Point %s in rect".utf16(), if result { "is".utf16() } else { "is not".utf16() } as! UInt64)
 	return Bool32.fromBool(result)
 }
+
+// Purpose: Determines if two rectangles are equal
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-equalrect
+@dllExport('EqualRect')
+fun equalRect(lprc1 Rect, lprc2 Rect) Bool32 {
+	tofitaDebugLog("EqualRect called with lprc1 %8, lprc2 %8".utf16(),
+		lprc1 as! UInt64, lprc2 as! UInt64)
+
+	if lprc1 == null or lprc2 == null {
+		tofitaDebugLog("> Invalid rectangle pointer".utf16())
+		return Bool32.False
+	}
+
+	let equal = lprc1.left == lprc2.left and
+	lprc1.top == lprc2.top and
+	lprc1.right == lprc2.right and
+	lprc1.bottom == lprc2.bottom
+
+	// TODO oh yeah use `.address` instead lol
+	tofitaDebugLog("> Rectangles %s".utf16(), if equal { "are equal".utf16() as! UInt64 } else { "are not equal".utf16() as! UInt64 })
+	return Bool32.fromBool(equal)
 }
 
 @dllExport('LoadIconW')
