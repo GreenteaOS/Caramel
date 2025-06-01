@@ -268,11 +268,22 @@ fun findNextFileW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-isvalidcodepage
 @dllExport('IsValidCodePage')
-fun isValidCodePage(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IsValidCodePage called".utf16())
-	return 0
+fun isValidCodePage(codePage UInt32) Bool32 {
+	tofitaDebugLog("IsValidCodePage called with codePage %u".utf16(), codePage as! UInt64)
+
+	// Common valid code pages: 1252 (ANSI Latin 1), 65001 (UTF-8), 437 (OEM US)
+	let validCodePages = [1252u32, 65001u32, 437u32, 850u32, 1200u32]
+	for cp in validCodePages {
+		if codePage == cp {
+			tofitaDebugLog("> Code page is valid".utf16())
+			return Bool32.True
+		}
+	}
+
+	tofitaDebugLog("> Code page is invalid".utf16())
+	return Bool32.False
 }
 
 @dllExport('GetACP')
