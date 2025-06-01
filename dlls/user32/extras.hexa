@@ -297,11 +297,15 @@ fun getACP(stub SizeOfPointer) UInt32 {
 	return ansiCodePage
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-getoemcp
 @dllExport('GetOEMCP')
-fun getOEMCP(stub SizeOfPointer) SizeOfPointer {
-	// TODO
+fun getOEMCP(stub SizeOfPointer) UInt32 {
 	tofitaDebugLog("GetOEMCP called".utf16())
-	return 0
+
+	// Return default OEM code page (e.g., 437 for US)
+	let oemCodePage = 437u32
+	tofitaDebugLog("> Returning OEM code page %u".utf16(), oemCodePage as! UInt64)
+	return oemCodePage
 }
 
 @dllExport('GetCPInfo')
