@@ -708,10 +708,41 @@ fun loadAcceleratorsW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('IntersectRect')
-fun intersectRect(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("IntersectRect called".utf16())
-	return 0
+fun intersectRect(lprcDst Rect, lprcSrc1 Rect, lprcSrc2 Rect) Bool32 {
+	tofitaDebugLog("IntersectRect called with lprcDst %8".utf16(), lprcDst as! UInt64)
+
+	if lprcDst == null or lprcSrc1 == null or lprcSrc2 == null {
+		tofitaDebugLog("> Invalid rectangle pointer".utf16())
+		return Bool32.False
+	}
+
+	// Calculate intersection
+	let left = max(lprcSrc1.left, lprcSrc2.left)
+	let top = max(lprcSrc1.top, lprcSrc2.top)
+	let right = min(lprcSrc1.right, lprcSrc2.right)
+	let bottom = min(lprcSrc1.bottom, lprcSrc2.bottom)
+
+	// Check if there’s an intersection
+	if left < right and top < bottom {
+		lprcDst.left = left
+		lprcDst.top = top
+		lprcDst.right = right
+		lprcDst.bottom = bottom
+		tofitaDebugLog("> Intersection: left %d, top %d, ...".utf16(),
+			left as! UInt64, top as! UInt64)
+		return Bool32.True
+	}
+
+	tofitaDebugLog("> No intersection".utf16())
+	return Bool32.False
+}
+
+fun max(a Int32, b Int32) Int32 {
+	return a > b ? a : b
+}
+
+fun min(a Int32, b Int32) Int32 {
+	return a < b ? a : b
 }
 
 @dllExport('GetSysColorBrush')
