@@ -193,8 +193,9 @@ fun createWindowExW(
 		tofitaDebugLog("> window added as a child to {%8}".utf16(), parent as! UInt64)
 		// TODO notify both of being added?
 		parent.children.push(window)
-		// TODO Hexa: clearer that it's a copy?
+		// TODO Hexa: clearer that it's a copy? With `@copy` or `@mayCopy` to keep it generic compared to explicit `.copy`
 		window.dc.fb = parent.dc.fb
+		window.parent = parent
 	}
 
 	window.windowId = windowId
@@ -880,6 +881,11 @@ fun getParent(
 ) HWnd // HWND -> HWnd (return type indicating the handle to the parent window)
 {
 	tofitaDebugLog("GetParent called".utf16())
+
+	if let window = handleToWindow(hWnd) {
+		return window.parent as! HWnd
+	}
+
 	return null
 }
 

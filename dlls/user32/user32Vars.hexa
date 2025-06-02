@@ -49,6 +49,7 @@ class Window {
 	var width Int32
 	var height Int32
 	var title String
+	var parent Window? = null
 
 	// Clipping for painting
 	var clipX Int32 = 0
