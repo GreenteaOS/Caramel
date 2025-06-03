@@ -556,6 +556,24 @@ fun setCapture(stub SizeOfPointer) SizeOfPointer {
 fun releaseDC(hWnd HWnd, hdc HDc) Int32 {
 	// TODO Release device context
 	tofitaDebugLog("ReleaseDC called with hWnd %8 hdc %8".utf16(), hWnd as! UInt64, hdc as! UInt64)
+
+	var window = handleToWindow(hWnd)
+	if window == null {
+		return 0
+	}
+
+	while window.parent != null {
+		window = window.parent
+	}
+
+	// Force refresh
+	// TODO probably detect if someone was drawing on the DC
+	let dc = window.dc
+	let fb = dc.fb.ref
+	// TODO Let syscall payload be different type, not `fb`'s user-space type
+	njraaSwapWindowFramebuffer(fb)
+
+	return 1
 }
 
 @dllExport('ReleaseCapture')
