@@ -490,6 +490,44 @@ fun wsprintfW(stub SizeOfPointer) SizeOfPointer {
 fun updateWindow(hWnd HWnd) Bool32 {
 	// TODO Send WM_PAINT if update region exists
 	tofitaDebugLog("UpdateWindow called with hWnd %8".utf16(), hWnd as! UInt64)
+
+	// Check if the window handle is valid
+	let window = handleToWindow(hWnd)
+	if window == null {
+		tofitaDebugLog("UpdateWindow: invalid window handle %8".utf16(), hWnd as! UInt64)
+		return Bool32.False
+	}
+
+	// Check if the update region is non-empty
+	// TODO: Implement update region tracking in Window structure
+	// For now, assume update region exists (or proceed to send WM_PAINT unconditionally)
+	// if window.updateRegion == null {
+	// tofitaDebugLog("UpdateWindow: no update region for hWnd %8".utf16(), hWnd as? UInt64 ?: 0u64)
+	// return Bool32.True
+	// }
+
+	// Create a WM_PAINT message for the window
+	// let msg = Msg()
+	let msg = ByValue<Msg>()
+	let msg = msg.ref
+	msg.hwnd = hWnd
+	msg.message = Message.WM_PAINT
+	msg.wParam = 0 as! WParam
+	msg.lParam = 0 as! LParam
+
+	// Call the render function to process WM_PAINT
+	tofitaDebugLog("UpdateWindow: sending WM_PAINT to hWnd %8".utf16(), hWnd as! UInt64)
+	let result = render(window, msg)
+	// let result = sendMessageW(hWnd, Message.WM_PAINT, null, null)
+
+	// Check if rendering was successful
+	if result == null {
+		tofitaDebugLog("UpdateWindow: render failed for hWnd %8".utf16(), hWnd as! UInt64)
+		return Bool32.False
+	}
+
+	tofitaDebugLog("UpdateWindow: completed for hWnd %8".utf16(), hWnd as! UInt64)
+	return Bool32.True
 }
 
 @dllExport('TranslateAcceleratorW')
