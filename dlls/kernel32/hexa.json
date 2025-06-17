@@ -6,7 +6,7 @@
 	"license": "LGPL-3.0-only",
 	"global": [
 		"../../../Tofita/dlls/types",
-		"../../../Tofita/engine/formats/exe/executive",
+		"../../types/executable",
 		"../../../Tofita/engine/syscalls/syscalls",
 		"../../../Tofita/dlls/tofita32/tofita32.header",
 		"../ntdll/ntdll.header",
