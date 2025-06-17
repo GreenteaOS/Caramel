@@ -188,8 +188,16 @@ fun findDllByName(dllName ConstArrayPointer<ClangWideChar>) HModule {
 	// Get the PEB from the TEB (Thread Environment Block)
 	// TODO 32-bit
 	tofitaDebugLog("findDllByName(%S)".utf16(), dllName as! UInt64)
-	let teb = ntCurrentTeb() as! TIB64
-	let peb = teb.peb as! PEB64
+
+	#if bit32
+		let teb = ntCurrentTeb() as! TIB32
+		let peb = teb.peb as! PEB32
+	#end
+
+	#if bit64
+		let teb = ntCurrentTeb() as! TIB64
+		let peb = teb.peb as! PEB64
+	#end
 
 	tofitaDebugLog("> teb %8".utf16(), teb as! UInt64)
 	tofitaDebugLog("> peb %8".utf16(), peb as! UInt64)
@@ -237,8 +245,16 @@ fun getModuleHandleW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule {
 	// Does not increase the DLL's reference count
 	tofitaDebugLog("getModuleHandleW(%S)".utf16(), lpLibFileName as! UInt64)
 	if lpLibFileName == null {
-		let teb = ntCurrentTeb() as! TIB64
-		let peb = teb.peb as! PEB64
+		#if bit32
+			let teb = ntCurrentTeb() as! TIB32
+			let peb = teb.peb as! PEB32
+		#end
+
+		#if bit64
+			let teb = ntCurrentTeb() as! TIB64
+			let peb = teb.peb as! PEB64
+		#end
+
 		let base = peb.imageBaseAddress
 		tofitaDebugLog("getModuleHandleW(NULL) is %8 with header %s".utf16(), base as! UInt64, base as! UInt64)
 		return base as! HModule
