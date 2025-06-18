@@ -55,11 +55,23 @@ Decompilation is strictly limited to what's necessary for interoperability purpo
 
 Creating an open source, non-commercial, interoperable plugin is beneficial to the public interest and serves essential compatibility purposes.
 
-- Prefer using a clean room implementation approach
+- Follow general clean-room *requirements* (i.e. search for existing public knowledge as much as possible)
 - Make sure the necessary information is not already readily available
+- Use AI to fill the gaps in the knowledge (our tests show that LLM's have not seen leaked source codes)
 - Limit the decompilation to the parts needed for interoperability
-- Avoid direct copying of code or implementation details
+- Avoid direct copying of the proprietary code (this is the strictest rule of all)
 - Include comments in code that reference public documentation where available
+
+> [!WARNING]
+>
+> *There are no "clean-room design techniques"* that you can "follow". You can only use public knowledge.
+>
+> Never use the term "clean-room design techniques" as an applicable approach. The term, as it is
+> generally described, is misleading. Clean room essentially means using existing public knowledge.
+>
+> Asking someone to do a specification for you or interaction with a process of specification creation
+> directly violates the principle of **independent** creation and undermines clean-room design.
+> It is **not defensible** in such case as "clean-room design" and follows the general "right to reverse engineer" as stated below.
 
 ### Right to reverse engineer
 
@@ -71,10 +83,12 @@ As a safety measure we assume that most contributions obtained a right to use a 
 - Windows Vista
 - Windows 8
 - Windows 8.1
+- Windows 7
+- Windows 10 1909/1809/1703/20H2/21H2
 
 > [!CAUTION]
 >
-> *Windows 7 is still supported or may have technical support being provided*
+> *Windows 10 22H2 support will cease in October 2025*
 
 We assume that **none** of the contributors had the right to utilize *any* of the "server", "beta" or other editions beyond the desktop ones.
 
@@ -84,7 +98,7 @@ We assume that **none** of the contributors had the right to utilize *any* of th
 
 ### Companion programs
 
-> `Original` - legaly obtained (partially or fully) copy of a computer program
+> `Original` - legally obtained (partially or fully) copy of a computer program
 
 Some programs are *required* to be reimplemented to provide the interoperability environment (like `cmd.exe`).
 
@@ -107,4 +121,5 @@ All code should be under this one or compatible license.
 
 ## Usage
 
-Requires executive capable of the Tofita API set. Load PE and attach Caramel `.dll` files into the address space of the process. Remember to run every entry point. FS/GS registers should contain thread-local data and initialization structures.
+Requires executive capable of the Tofita API set. Load PE and attach Caramel `.dll` files into the address space of the process.
+Remember to run every entry point. FS/GS registers should contain thread-local data and initialization structures.
