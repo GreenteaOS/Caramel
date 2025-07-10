@@ -157,24 +157,24 @@ fun initializeCriticalSectionAndSpinCount(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('TlsAlloc')
-fun tlsAlloc(stub SizeOfPointer) SizeOfPointer {
+fun tlsAlloc() UInt32 {
 	// TODO
 	tofitaDebugLog("TlsAlloc called".utf16())
-	return 0
+	return 1
 }
 
 @dllExport('TlsSetValue')
-fun tlsSetValue(stub SizeOfPointer) SizeOfPointer {
+fun tlsSetValue(dwTlsIndex UInt32, lpTlsValue SizeOfPointer) Bool32 {
 	// TODO
 	tofitaDebugLog("TlsSetValue called".utf16())
-	return 0
+	return Bool32.True
 }
 
 @dllExport('TlsFree')
-fun tlsFree(stub SizeOfPointer) SizeOfPointer {
+fun tlsFree(dwTlsIndex UInt32) Bool32 {
 	// TODO
 	tofitaDebugLog("TlsFree called".utf16())
-	return 0
+	return Bool32.True
 }
 
 @dllExport('LoadLibraryExW')
@@ -486,7 +486,6 @@ fun wsprintfW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('UpdateWindow')
-	return 0
 fun updateWindow(hWnd HWnd) Bool32 {
 	// TODO Send WM_PAINT if update region exists
 	tofitaDebugLog("UpdateWindow called with hWnd %8".utf16(), hWnd as! UInt64)
@@ -537,13 +536,6 @@ fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('SetTimer')
-fun setTimer(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("SetTimer called".utf16())
-	return 0
-}
-
 @dllExport('SetCapture')
 fun setCapture(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -552,7 +544,6 @@ fun setCapture(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('ReleaseDC')
-	return 0
 fun releaseDC(hWnd HWnd, hdc HDc) Int32 {
 	// TODO Release device context
 	tofitaDebugLog("ReleaseDC called with hWnd %8 hdc %8".utf16(), hWnd as! UInt64, hdc as! UInt64)
