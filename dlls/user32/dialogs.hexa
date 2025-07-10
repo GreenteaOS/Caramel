@@ -59,6 +59,7 @@ class RadioGroup {
 // TODO docs
 fun dialog_GetControl32(p ConstArrayPointer<UInt16>, info DlgControlInfo, dialogEx Bool32) ConstArrayPointer<UInt16> {
 	tofitaDebugLog("dialog_GetControl32 called p = %8".utf16(), p as! UInt64)
+	tofitaDebugLog("dialog_GetControl32 called info = %8".utf16(), info as! UInt64)
 
 	var p = p
 	if dialogEx == Bool32.True {

@@ -84,7 +84,7 @@ fun registerClassW(wc WindowClass) Atom {
 	}
 
 	// TODO sizeOf struct by value(!)
-	// TODO `new ClassesLinkedList()`
+	// TODO `new ClassesLinkedList()` but on the heap
 	// TODO just use Hexa Map here
 	// TODO use SEH for string pointer validation? At least check it is not null ptr
 	let className = isAtom(wc.utf16zClassName as! UInt64) ? '#' + (wc.utf16zClassName as! UInt64) : String.fromUTF16zUpTo(wc.utf16zClassName as! ConstArrayPointer<UInt16>, classNameLimit)
@@ -92,6 +92,8 @@ fun registerClassW(wc WindowClass) Atom {
 	let list = ClassesLinkedList(named: className)
 	list.next = null
 
+	// TODO on heap `list.wc = @heap WindowClass()` and `list.wc = @malloc/@calloc WindowClass()`
+	// ^ `@heap` is more flexible cause offers RC for native libraries memory management
 	list.wc = WindowClass()
 	// TODO `new T() { ...wc }` to make a copy
 	memcpy(list.wc as! ArrayPointer<UInt8>, wc as! ConstArrayPointer<UInt8>, sizeOf<WindowClass>() as! Int)
@@ -139,7 +141,7 @@ fun createWindowExW(
 		list = list.next
 
 		if list.name == className {
-			tofitaDebugLog("CreateWindowExW found class {%S}\n".utf16(), className.utf16() as! UInt64)
+			tofitaDebugLog("> CreateWindowExW found class \"%S\"".utf16(), className.utf16() as! UInt64)
 			found = true
 			wc = list.wc
 			break
@@ -172,6 +174,7 @@ fun createWindowExW(
 	payload.x = x
 	payload.y = y
 	// TODO test zero-width
+	// TODO Hexa: encode as `enum WindowSize { CW_USE_DEFAULT = 123 Custom = .../_ } case Custom(value):`
 	// TODO respect CW_USE_DEFAULT etc for pos and size
 	payload.nWidth = nWidth <= 0? 316 : nWidth
 	payload.nHeight = nHeight <= 0? 163 : nHeight
@@ -205,6 +208,7 @@ fun createWindowExW(
 	window.proc = wc.lpfnWndProc
 	tofitaDebugLog("> window.proc = {%8}".utf16(), window.proc as! UInt64)
 
+	// TODO `payload.x` must be updated in the syscall instead
 	window.x = x
 	window.y = y
 	window.width = payload.nWidth
@@ -430,6 +434,18 @@ fun render(window Window, msg Msg) LResult? {
 		child.clipHeight = child.height
 
 		render(child, msg)
+		// TODO Hexa: `render(child, {...msg, hwnd: child as! HWnd})` + ensure its on stack
+		// let childMsg = Msg() // TODO ensure allocated on stack
+
+		/*
+		TODO Probably adding local message queue for speed makes sense (for messages produced within the app like this one)
+
+		Correct Behavior (Win32 Standard):
+		Children don’t inherit the parent’s WM_PAINT message. Instead, when a child’s region is invalidated (e.g., via InvalidateRect(child_hwnd, ...)), the system posts a separate WM_PAINT message to the child’s HWND, which DispatchMessage routes to the child’s proc.
+		You’d see separate log entries like:
+			dispatchMessageW called (parent WM_PAINT, hwnd=parent_hwnd)
+			dispatchMessageW called (child WM_PAINT, hwnd=child_hwnd)
+		*/
 	}
 
 	return result
@@ -455,12 +471,14 @@ fun dispatchMessageW(msg Msg) LResult? {
 		} else {
 			tofitaDebugLog("> not_WM_PAINT".utf16())
 			result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
+			tofitaDebugLog(">> msg.message = %8".utf16(), msg.message as! UInt64)
+
 		}
 		// TODO result = ERROR_SUCCESS
 	} else {
 		// TODO
 	}
-	tofitaDebugLog("DispatchMessageW done".utf16())
+	tofitaDebugLog("> DispatchMessageW done".utf16())
 	return result
 }
 
@@ -843,7 +861,7 @@ fun getClipboardData(stub SizeOfPointer) SizeOfPointer {
 		i++
 	}
 
-	tofitaDebugLog("lstrlenW %S %d".utf16(), str as! UInt64, i as! UInt64)
+	tofitaDebugLog("lstrlenW '%S' %d".utf16(), str as! UInt64, i as! UInt64)
 	return i
 }
 
@@ -1180,6 +1198,7 @@ fun getClientRect(
 	lpRect Rect
 ) Bool32 {
 	tofitaDebugLog("GetClientRect called with hWnd %8 lpRect %8".utf16(), hWnd as! UInt64, lpRect as! UInt64)
+	// TODO verify that window.x and window.y are relative to the parent window’s client area (which they should be for child windows).
 	if let window = handleToWindow(hWnd) {
 		lpRect.left = window.x
 		lpRect.top = window.y
@@ -1187,6 +1206,7 @@ fun getClientRect(
 		lpRect.bottom = window.height
 		return Bool32.True
 	}
+
 	return Bool32.False
 }
 

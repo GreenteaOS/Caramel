@@ -369,6 +369,13 @@ fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRe
 				case _:
 					// Includes BS_PUSH_BUTTON and BS_DEF_PUSH_BUTTON
 
+					// TODO
+					// Draw push button
+					// - black frame
+					// - shadow etc.
+					// - title string
+					// - rectangle with dash line it means focus
+					// (and strong black frame for default button)
 					let r = ByValue<Rect>()
 					getClientRect(hWnd, r.ref)
 					let fmt DrawTextFormat = DrawTextFormat.DT_CENTER // TODO | DrawTextFormat.DT_VCENTER
@@ -384,6 +391,11 @@ fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRe
 							drawTextW(hdc, title, -1, r.ref, fmt)
 						}
 					}
+
+				// TODO
+				// if focus
+				// - drawEdge(hdc, &r, BDR_RAISEDINNER, BF_MIDDLE | BF_RECT);
+				// - drawFocusRect(hdc, &r);
 			}
 
 			// TODO restore font and bkg

@@ -121,9 +121,11 @@ fun _initterm(first ConstArrayPointer<PVFV>, last ConstArrayPointer<PVFV>) Void 
 		if callback == null { continue }
 
 		callback()
-		tofitaDebugLog("_initterm done call (%8)\n".utf16(), callback as! UInt64)
 		tofitaDebugLog("_initterm calls (%8)".utf16(), callback as! UInt64)
+		tofitaDebugLog("_initterm done call (%8)".utf16(), callback as! UInt64)
 	}
+
+	tofitaDebugLog("_initterm all done".utf16())
 }
 
 @dllExport('_iob')
@@ -310,6 +312,7 @@ fun malloc(size SizeOfPointer) SizeOfPointer {
 	}
 
 	var stub = Malloc()
+	// TODO use HeapAlloc
 	tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
 	return stub as! SizeOfPointer
 }

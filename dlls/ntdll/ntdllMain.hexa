@@ -217,6 +217,7 @@
     STUB(OpenClipboard)
     STUB(PeekConsoleInputA)
     STUB(PostMessageW)
+	// TODO delete
     STUB(ReadConsoleA)
     STUB(RegCloseKey)
     STUB(RegCreateKeyExW)
@@ -285,7 +286,6 @@
     STUB(lstrcatW)
     STUB(lstrcpynA)
     STUB(lstrcpyW)
-    STUB(lstrlenW)
     STUB(MapVirtualKeyExW)
 
     STUB(wcschr)

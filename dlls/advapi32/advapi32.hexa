@@ -24,6 +24,7 @@ fun regCreateKeyExW(key SizeOfPointer, lpSubKey ConstArrayPointer<ClangWideChar>
 	// TODO
 	tofitaDebugLog("regCreateKeyExW(%S)\n".utf16(), lpSubKey as! UInt64)
 	return 0
+
 }
 
 @dllExport('RegOpenKeyExW')
@@ -31,6 +32,7 @@ fun regOpenKeyExW(key SizeOfPointer, lpSubKey ConstArrayPointer<ClangWideChar>) 
 	// TODO
 	tofitaDebugLog("regOpenKeyExW(%S)\n".utf16(), lpSubKey as! UInt64)
 	return 0
+
 }
 
 @dllExport('RegQueryValueExW')
@@ -38,6 +40,7 @@ fun regQueryValueExW(key SizeOfPointer, lpValueName ConstArrayPointer<ClangWideC
 	// TODO
 	tofitaDebugLog("regQueryValueExW(%S)\n".utf16(), lpValueName as! UInt64)
 	return 0
+
 }
 
 @dllExport('RegSetValueExW')
@@ -45,6 +48,16 @@ fun regSetValueExW(key SizeOfPointer, lpValueName ConstArrayPointer<ClangWideCha
 	// TODO
 	tofitaDebugLog("regSetValueExW(%S)\n".utf16(), lpValueName as! UInt64)
 	return 0
+
+
+
+
+
+
+
+
+
+
 }
 
 @linkName('_DllMainCRTStartup_TODO')
@@ -53,10 +66,10 @@ fun regSetValueExW(key SizeOfPointer, lpValueName ConstArrayPointer<ClangWideCha
 #else
 	@fastcall
 #end
-fun _DllMainCRTStartup(
-	unusedX Any,
-	unusedY Any,
-	unusedZ Any
+fun _DllMainCRTStartupTODO(
+	hinstDLL SizeOfPointer,
+	fdwReason UInt32,
+	lpvReserved SizeOfPointer
 ) Void {
-	// TODO
+	// TODO unused
 }

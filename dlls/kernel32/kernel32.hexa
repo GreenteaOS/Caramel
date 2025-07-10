@@ -24,6 +24,7 @@ fun exitProcess(@hide exitCode UInt32) {
 fun localAlloc(flags UInt32, bytes SizeOfPointer) HLocal {
 	// TODO better way to take pointer to array element `&buffer[bufferOffset]`
 	let result = (buffer as! UInt64) + bufferOffset
+
 	bufferOffset += bytes as! UInt64 // TODO .toInt()
 
 	// Align to 8 bytes
