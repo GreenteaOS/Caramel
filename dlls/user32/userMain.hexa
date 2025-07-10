@@ -14,7 +14,6 @@
 
 // Entry point of the project
 @customHeader('
-    #define HEXA_NEW(z) HeapAlloc(0,0,z)
     void *tmemcpy(void *dest, const void *src, uint64_t count) {
         uint8_t *dst8 = (uint8_t *)dest;
         const uint8_t *src8 = (const uint8_t *)src;
@@ -25,12 +24,13 @@
 
         return dest;
     }
-    // TODO
-    #define memcpy(z,u,x) tmemcpy(z,u,x)
-
 	// Clang workaround
 	void __chkstk(void) asm("__chkstk");
 	void __chkstk(void) {
+	#define HEXA_NEW(z) HeapAlloc(0,0,z)
+	// TODO
+	#define memcpy(z,u,x) tmemcpy(z,u,x)
+
 		// tofitaDebugLog_(L"__chkstk called", 0, 0);
 	}
 
@@ -43,19 +43,6 @@
     } // TODO TODO TODO
     #endif
 
-    void startup() {
-        HEXA_MAIN(0, nullptr);
-    }
-
-    #ifdef bit64 // TODO rename to x64 x32
-    // TODO why separate fun? same arguments?
-    __attribute__((fastcall)) void _DllMainCRTStartup() {
-        startup();
-    }
-    #else
-    __attribute__((stdcall)) void _DllMainCRTStartup(void *, void *, void *) {
-        startup();
-    }
 	#define wprintf(z,...) {}
 	#define HEAP_ZERO_MEMORY 0
 	#define fflush(z) {}
@@ -296,6 +283,19 @@
 		return remainder;
 	}
 
+	void startup() {
+		HEXA_MAIN(0, nullptr);
+	}
+
+	#ifdef bit64 // TODO rename to x64 x32
+	// TODO why separate fun? same arguments?
+	__attribute__((fastcall)) void _DllMainCRTStartup() {
+		startup();
+	}
+	#else
+	__attribute__((stdcall)) void _DllMainCRTStartup(void *, void *, void *) {
+		startup();
+	}
 	#endif
 ')
 declare fun entry() Void
@@ -396,6 +396,7 @@ fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRe
 	return defWindowProcW(hWnd, uMsg, wParam, lParam)
 }
 
+// TODO calling convention? for x32, same for other proc's + Hexa check for it on assign at `wc.proc = proc`
 fun emptyWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResult? {
 	// tofitaDebugLog("emptyWindowProcW called".utf16())
 

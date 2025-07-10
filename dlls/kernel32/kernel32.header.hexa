@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+// TODO move all headers into Dance + make there a project for type check
 @linkName('LocalAlloc')
 declare
 fun localAlloc(flags UInt32, bytes SizeOfPointer) HLocal

@@ -100,6 +100,7 @@ fun gdiGetCharDimensions(
 	return 0
 }
 
+// TODO move out of header
 // Purpose: Sets the coordinates of a rectangle
 // Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setrect
 @dllExport('SetRect')
@@ -121,6 +122,7 @@ fun setRect(
 		rc.bottom = yBottom
 		return Bool32.True
 	}
+
 	return Bool32.False
 }
 
@@ -406,12 +408,13 @@ class ExeResourceLoader<SIZE, HEADER> {
 		}
 		return blobSectionStart
 	}*/
+	// TODO rename
 	fun getIcon(asset HModule, lpType UInt16, lpName UInt16) HRsrc? {
 		let ptr = asset as! ArrayPointer<UInt8>
 		// TODO 32 bit 0x3C
-		var peHeader = ((ptr as! UInt64) + ptr[0x3C] + ptr[0x3C + 1] * 256) as! PeHeader
+		let peHeader = ((ptr as! UInt64) + ptr[0x3C] + ptr[0x3C + 1] * 256) as! PeHeader
 		// serialPrintf("[ExeResourceLoader] PE header signature 'PE' == '%s'\n", peHeader)
-		var peOptionalHeader = ((peHeader as! UInt64) + sizeOf<PeHeader>()) as! HEADER
+		let peOptionalHeader = ((peHeader as! UInt64) + sizeOf<PeHeader>()) as! HEADER
 		// serialPrintf("[ExeResourceLoader] PE32(+) optional header signature 0x020B == %d == %d\n", peOptionalHeader.magic,
 		// 0x020B)
 		// TODO require all .dlls ARCH be the same or show loader error
@@ -421,7 +424,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 		// let physical = PhysicalAllocator.allocatePages(pages)
 
 		// Copy sections
-		var imageSectionHeader =
+		let imageSectionHeader =
 			((peOptionalHeader as! UInt64) + peHeader.sizeOfOptionalHeader) as! ArrayPointer<ByValue<ImageSectionHeader>>
 
 		// TODO copy PE headers?
@@ -446,12 +449,12 @@ class ExeResourceLoader<SIZE, HEADER> {
 				imageSectionHeader[i].ref.name[4] == 99 // TODO and zero terminator?
 
 			if isRSRC {
-				tofitaDebugLog("[ExeResourceLoader] Parsing .rsrc...\n".utf16())
 				// serialPrintf("[ExeResourceLoader] Parsing .rsrc...\n")
+				tofitaDebugLog("[ExeResourceLoader] Parsing .rsrc...".utf16())
 				let section = imageSectionHeader[i].ref
 				let dir = ((ptr as! UInt64) + section.virtualAddress) as! IMAGE_RESOURCE_DIRECTORY
 				// TODO Named
-				tofitaDebugLog("[ExeResourceLoader] ID Entries: %d at %8\n".utf16(), dir.numberOfIdEntries, dir as! UInt64)
+				tofitaDebugLog("[ExeResourceLoader] ID Entries: %d at %8".utf16(), dir.numberOfIdEntries, dir as! UInt64)
 
 				// Find the payload
 				for id in dir.numberOfIdEntries {
@@ -461,7 +464,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 						// serialPrintf("[ExeResourceLoader] Found RT_ICON at %d offset %8\n", id as! Int, entry.unionOffset.ref.offsetToData as! UInt64)
 						tofitaDebugLog("[ExeResourceLoader] Found by type %8...\n".utf16(), lpType)
 					} else {
-						tofitaDebugLog("[ExeResourceLoader] Ignoring by type %8...\n".utf16(), entry.unionName.ref.id)
+						tofitaDebugLog("[ExeResourceLoader] Ignoring by type %8...".utf16(), entry.unionName.ref.id)
 						continue
 					}
 
@@ -490,7 +493,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 							// serialPrintf("[ExeResourceLoader] Best is %d current is %d\n", bestIcon as! UInt32, id as! UInt32)
 							if lpName == byNameEntry.unionName.ref.id {
 								// serialPrintf("[ExeResourceLoader] Found icon %d\n", bestIcon)
-								tofitaDebugLog("[ExeResourceLoader] Found by name %8...\n".utf16(), lpName)
+								tofitaDebugLog("[ExeResourceLoader] Found by name %8...".utf16(), lpName)
 								let icon = offset
 								// TODO Hexa: `let bmp = return whatever`
 								tofitaDebugLog("findResourceExW found resource %S at %8".utf16(), icon as! UInt64, icon as! UInt64)
@@ -526,7 +529,7 @@ fun findResourceExW(hModule HModule, lpType ConstArrayPointer<ClangWideChar>, lp
 	}
 
 	if not is_int_resource(lpName as! UInt64) {
-		tofitaDebugLog("findResourceExW lpName %S".utf16(), lpName as! UInt64)
+		tofitaDebugLog("findResourceExW lpName %8 %S".utf16(), lpName as! UInt64, lpName as! UInt64)
 		simpleResource = false
 	}
 
@@ -534,6 +537,7 @@ fun findResourceExW(hModule HModule, lpType ConstArrayPointer<ClangWideChar>, lp
 
 	if not simpleResource {
 		// TODO by string
+		tofitaDebugLog("findResourceExW not simpleResource".utf16())
 		return null
 	}
 

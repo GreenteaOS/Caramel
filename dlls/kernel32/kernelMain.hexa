@@ -65,7 +65,7 @@ void _memset() {
 	// TODO
 	tofitaDebugLog_(L"startup _memset", (uint64_t)((int32_t)0), (uint64_t)((int32_t)0));
 
-} // TODO TODO TODO
+} // TODO
 #endif
 
 uint64_t bufferOffset_;

@@ -15,6 +15,7 @@
 // TODO Hexa: `let convention = #if bits32 'stdcall' #else 'fastcall' #end`
 // TODO `@link('asIs')` `@link('TitleCase')`
 /*private*/ let convention = 'stdcall'
+// TODO Hexa: `private` module-level fields to not conflict with others exported?
 
 // @convention(convention) // TODO
 @dllExport('__dllonexit')
@@ -108,20 +109,20 @@ declare PVFV = () => Void
 @dllExport('_initterm')
 fun _initterm(first ConstArrayPointer<PVFV>, last ConstArrayPointer<PVFV>) Void {
 	// TODO
-	tofitaDebugLog("_initterm(%8, %8)\n".utf16(), first as! UInt64, last as! UInt64)
+	tofitaDebugLog("_initterm(%8, %8)".utf16(), first as! UInt64, last as! UInt64)
 
 	var current = first
 
 	while current.address != last.address {
 		let callback = current[0]
-		tofitaDebugLog("_initterm checks (%8) at %8\n".utf16(), callback as! UInt64, current as! UInt64)
+		tofitaDebugLog("_initterm checks (%8) at %8".utf16(), callback as! UInt64, current as! UInt64)
 		current = current.offsetItems(1)
 
 		if callback == null { continue }
 
-		tofitaDebugLog("_initterm calls (%8)\n".utf16(), callback as! UInt64)
 		callback()
 		tofitaDebugLog("_initterm done call (%8)\n".utf16(), callback as! UInt64)
+		tofitaDebugLog("_initterm calls (%8)".utf16(), callback as! UInt64)
 	}
 }
 
@@ -149,8 +150,8 @@ fun _lock(stub SizeOfPointer) SizeOfPointer {
 @dllExport('_onexit')
 fun _onexit(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("_onexit()\n".utf16())
 	return 0
+	tofitaDebugLog("_onexit called".utf16())
 }
 
 @dllExport('_strdup')
@@ -184,10 +185,6 @@ var _wcmdln ArrayByValue<UInt16, 4> = [
 	101u16,
 	0u16
 ]
-// fun _wcmdln(stub SizeOfPointer) SizeOfPointer {
-// // TODO
-// return 0
-// }
 
 @dllExport('_wcsicmp')
 fun _wcsicmp(stub SizeOfPointer) SizeOfPointer {
@@ -305,7 +302,7 @@ class Malloc {
 @dllExport('malloc')
 fun malloc(size SizeOfPointer) SizeOfPointer {
 	// TODO 16 bytes min + HeapAlloc?
-	tofitaDebugLog("[msvcrt] malloc called %u".utf16(), size as! UInt32)
+	tofitaDebugLog("[msvcrt] malloc called with size %u".utf16(), size as! UInt32)
 
 	// TODO Hexa: if size > 2048 {
 	if (size as! UInt32) > 2048u32 {
@@ -313,7 +310,7 @@ fun malloc(size SizeOfPointer) SizeOfPointer {
 	}
 
 	var stub = Malloc()
-	tofitaDebugLog("[msvcrt] malloc done allocation".utf16())
+	tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
 	return stub as! SizeOfPointer
 }
 

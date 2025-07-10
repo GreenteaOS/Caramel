@@ -30,6 +30,7 @@ fun dialog_get_info(hwnd HWnd, create Bool32) DIALOGINFO {
 
 	if dlgInfo == null and create == Bool32.True {
 		if (dlgInfo = heapAlloc(getProcessHeap(), 0, sizeOf<UInt32>() as! UInt32) as! DIALOGINFO) == null {
+			tofitaDebugLog("dialog_get_info allocation failed".utf16())
 			return null
 		}
 
@@ -41,6 +42,7 @@ fun dialog_get_info(hwnd HWnd, create Bool32) DIALOGINFO {
 		dlgInfo.idResult = 1
 		dlgInfo.flags = 0
 		ntUserSetDialogInfo(hwnd, dlgInfo as! ArrayPointer<Void>)
+		tofitaDebugLog("dialog_get_info created".utf16())
 	}
 
 	return dlgInfo

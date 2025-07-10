@@ -23,8 +23,9 @@ fun exitProcess(@hide exitCode UInt32) {
 @dllExport('LocalAlloc')
 fun localAlloc(flags UInt32, bytes SizeOfPointer) HLocal {
 	// TODO better way to take pointer to array element `&buffer[bufferOffset]`
-	var result = (buffer as! UInt64) + bufferOffset
+	let result = (buffer as! UInt64) + bufferOffset
 	bufferOffset += bytes as! UInt64 // TODO .toInt()
+
 	// Align to 8 bytes
 	// Because handle has some bits reserved for tags
 	// TODO how many bits exactly?
@@ -143,6 +144,7 @@ fun getModuleHandleA(lpLibFileName ConstArrayPointer<ClangChar>) HModule {
 		return getModuleHandleW(null)
 	}
 	var utf16z ArrayByValue<ClangWideChar, 4096> = [0]
+
 	simpleAtoW(lpLibFileName, utf16z.ref)
 	return getModuleHandleW(utf16z.ref)
 }
@@ -226,6 +228,7 @@ fun findDllByName(dllName ConstArrayPointer<ClangWideChar>) HModule {
 					module.baseDllName.ref.buffer as! ConstArrayPointer<ClangWideChar>,
 					dllName
 				) == 0 {
+				// TODO FORMAT
 				// Match found, return the base address
 				return module.dllBase as! HModule
 			}
@@ -268,7 +271,7 @@ fun getModuleHandleW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule {
 @dllExport('GetProcAddress')
 fun getProcAddress(module HModule, lpProcName ConstArrayPointer<ClangChar>) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("getProcAddress(%s) for %8\n".utf16(), lpProcName as! UInt64, module as! UInt64)
+	tofitaDebugLog("getProcAddress(%s) for %8".utf16(), lpProcName as! UInt64, module as! UInt64)
 	return 0
 }
 
@@ -447,6 +450,7 @@ fun getProcessHeap() Handle {
 	return null // TODO
 }
 
+// NOTE Testing: Test with cases like MulDiv(100, 3, 2) (expect 150), MulDiv(0x7FFFFFFF, 2, 1) (overflow, expect -1), and MulDiv(10, 1, 0) (expect -1) to ensure Windows-like behavior.
 @dllExport('MulDiv')
 fun mulDiv(
 	nNumber Int,
