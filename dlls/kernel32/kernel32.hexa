@@ -105,15 +105,15 @@ fun getCurrentProcess(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetCurrentProcessId')
-	// TODO
 fun getCurrentProcessId() UInt32 {
+	// TODO
 	tofitaDebugLog("GetCurrentProcessId called".utf16())
 	return 0 as! UInt32
 }
 
 @dllExport('GetCurrentThreadId')
-	// TODO
 fun getCurrentThreadId() UInt32 {
+	// TODO
 	tofitaDebugLog("GetCurrentThreadId called".utf16())
 	return 0 as! UInt32
 }
@@ -142,13 +142,16 @@ fun getModuleHandleA(lpLibFileName ConstArrayPointer<ClangChar>) HModule {
 	// TODO
 	// Does not increase the DLL's reference count
 	tofitaDebugLog("getModuleHandleA(%s)".utf16(), lpLibFileName as! UInt64)
+
 	if lpLibFileName == null {
 		return getModuleHandleW(null)
 	}
-	var utf16z ArrayByValue<ClangWideChar, 4096> = [0]
 
+	// TODO setting 4096 crashes (smashes stack) on 32-bit (supposedly due to wrong calling convention of stack cheker function)
+	var utf16z ArrayByValue<ClangWideChar, 16> = [0] // TODO ~256 (MAX_PATH)
 	simpleAtoW(lpLibFileName, utf16z.ref)
-	return getModuleHandleW(utf16z.ref)
+	let result = getModuleHandleW(utf16z.ref)
+	return result as! HModule
 }
 
 // Custom towlower function to convert a wide character to lowercase
@@ -311,8 +314,8 @@ fun getSystemTimeAsFileTime(lpSystemTimeAsFileTime FILETIME) Void {
 }
 
 @dllExport('GetTickCount')
-	// TODO
 fun getTickCount() UInt32 {
+	// TODO
 	tofitaDebugLog("GetTickCount called".utf16())
 	return 0 as! UInt32
 }
@@ -360,10 +363,10 @@ fun loadLibraryW(lpLibFileName ConstArrayPointer<ClangWideChar>) HModule {
 }
 
 @dllExport('QueryPerformanceCounter')
-fun queryPerformanceCounter(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("queryPerformanceCounter()".utf16())
-	return 0
+fun queryPerformanceCounter(lpPerformanceCount LARGE_INTEGER) Bool32 {
+	tofitaDebugLog("QueryPerformanceCounter called".utf16())
+	lpPerformanceCount.quadPart = 0
+	return Bool32.True
 }
 
 // TODO PEB/atomic
@@ -389,6 +392,13 @@ fun setUnhandledExceptionFilter(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+@dllExport('CreateSemaphoreA')
+fun createSemaphoreA(lpSemaphoreAttributes SizeOfPointer, lInitialCount Int32, lMaximumCount Int32, lpName ConstArrayPointer<ClangChar>) Handle {
+	// TODO
+	tofitaDebugLog("createSemaphoreA()".utf16())
+	return 0
+}
+
 @dllExport('Sleep')
 fun sleep(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -404,7 +414,7 @@ fun terminateProcess(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('TlsGetValue')
-fun tlsGetValue(stub SizeOfPointer) SizeOfPointer {
+fun tlsGetValue(dwTlsIndex UInt32) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("tlsGetValue()".utf16())
 	return 0
