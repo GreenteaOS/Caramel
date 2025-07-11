@@ -57,10 +57,20 @@ fun __setusermatherr(stub SizeOfPointer) Void {
 	tofitaDebugLog("__setusermatherr(%8)\n".utf16(), stub as! UInt64)
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('__wgetmainargs')
-fun __wgetmainargs(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("__wgetmainargs()\n".utf16())
+fun __wgetmainargs(
+	argc SizeOfPointer, // Pointer to int for argument count
+	argv SizeOfPointer, // Pointer to char** for argument vector
+	envp SizeOfPointer, // Pointer to char** for environment variables
+	doWildcards Int32, // Flag for wildcard expansion
+	startupInfo SizeOfPointer // Pointer to startup info structure
+) Int32 {
+	tofitaDebugLog("__wgetmainargs called with argc %8 argv %8".utf16(),
+		argc as! UInt64, argv as! UInt64)
 	return 0
 }
 
@@ -117,6 +127,9 @@ fun _fpreset(stub SizeOfPointer) SizeOfPointer {
 declare PVFV = () => Void
 
 // TODO __cdecl
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('_initterm')
 fun _initterm(first ConstArrayPointer<PVFV>, last ConstArrayPointer<PVFV>) Void {
 	// TODO
@@ -162,11 +175,14 @@ fun _lock(stub Int32) Void {
 	tofitaDebugLog("_lock()\n".utf16())
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('_onexit')
-fun _onexit(stub SizeOfPointer) SizeOfPointer {
+fun _onexit(callback PVFV) PVFV {
 	// TODO
-	return 0
 	tofitaDebugLog("_onexit called".utf16())
+	return callback
 }
 
 @dllExport('_strdup')
@@ -183,11 +199,13 @@ fun _strupr(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('_unlock')
-fun _unlock(stub SizeOfPointer) SizeOfPointer {
+fun _unlock(stub Int32) Void {
 	// TODO
 	tofitaDebugLog("_unlock()\n".utf16())
-	return 0
 }
 
 // TODO _acmdln
@@ -257,11 +275,13 @@ fun cosh(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('exit')
-fun exit(stub SizeOfPointer) SizeOfPointer {
+fun exit(status Int32) Void {
 	// TODO
-	tofitaDebugLog("exit()\n".utf16())
-	return 0
+	tofitaDebugLog("exit(%d)\n".utf16(), status as! UInt64)
 }
 
 @dllExport('exp')
@@ -331,10 +351,10 @@ fun malloc(size SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('memmove')
-fun memmove(stub SizeOfPointer) SizeOfPointer {
+fun memmove(dest ConstArrayPointer<UInt8>, src ConstArrayPointer<UInt8>, count SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("memmove()\n".utf16())
-	return 0
+	return memcpy(dest, src, count)
 }
 
 @dllExport('memcpy')

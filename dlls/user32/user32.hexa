@@ -915,9 +915,9 @@ fun getSubMenu(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetSystemMetrics')
-fun getSystemMetrics(stub SizeOfPointer) SizeOfPointer {
+fun getSystemMetrics(nIndex Int32) Int32 {
 	// TODO
-	tofitaDebugLog("GetSystemMetrics called".utf16())
+	tofitaDebugLog("GetSystemMetrics called %u".utf16(), nIndex as! UInt64)
 	return 0
 }
 
@@ -930,7 +930,7 @@ fun getWindowLongW(hWnd HWnd, nIndex Int) Int {
 
 // TODO #if x64
 @dllExport('GetWindowLongPtrW')
-fun getWindowLongPtrW(stub SizeOfPointer) SizeOfPointer {
+fun getWindowLongPtrW(hWnd HWnd, nIndex Int) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetWindowLongPtrW called".utf16())
 	return 0
@@ -962,11 +962,11 @@ fun getWindowTextW(
 }
 
 @dllExport('InvalidateRect')
-	return 0
 fun invalidateRect(hWnd HWnd?, lprc ConstArrayPointer<ClangWideChar>?, bErase Bool32) Bool32 {
 	// TODO Mark rectangle for repainting
 	tofitaDebugLog("InvalidateRect called with hWnd %8".utf16(), hWnd as! UInt64)
 	tofitaDebugLog("> lprc %8 bErase %u".utf16(), lprc as! UInt64, bErase as! UInt64)
+	return Bool32.True
 }
 
 @dllExport('IsClipboardFormatAvailable')
