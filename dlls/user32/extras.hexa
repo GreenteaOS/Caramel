@@ -4818,7 +4818,8 @@ fun charLowerW(lpsz ArrayPointer<ClangWideChar>) ArrayPointer<ClangWideChar> {
 	return null
 }
 
-fun xsetPixel(hdc HDc, x Int32, y Int32, color COLORREF) COLORREF {
+@dllExport('SetPixel_TODO')
+fun setPixel_TODO(hdc HDc, x Int32, y Int32, color COLORREF) COLORREF {
 	tofitaDebugLog("SetPixel called with hdc %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	tofitaDebugLog("> color %u".utf16(), color as! UInt64)
@@ -5107,6 +5108,33 @@ fun _xcptFilter(exceptionCode Int32, exceptionInfo SizeOfPointer) Int32 {
 	return 0
 }
 
+// TODO Hexa: code gen bug produces `_fmode_ = int32_t$new_();`
+// `let _fmode ByValue<Int32> = ByValue<Int32>()`
+// TODO Hexa: code gen optimizer bug `return (size_t)((int32_t)0->ref_);`
+// `let _fmode ByValue<Int32> = 0`
+var _fmode ByValue<Int32> = 0
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('__p__fmode')
+fun __p__fmode() SizeOfPointer {
+	tofitaDebugLog("__p__fmode called".utf16())
+	return _fmode.ref as! SizeOfPointer
+}
+
+// TODO `let _commode ByValue<Int32> = ByValue<Int32>()`
+var _commode ByValue<Int32> = 0
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('__p__commode')
+fun __p__commode() SizeOfPointer {
+	tofitaDebugLog("__p__commode called".utf16())
+	return _commode.ref as! SizeOfPointer
+}
+
 #if bit32
 	@convention('cdecl')
 #end
@@ -5153,33 +5181,6 @@ fun __getmainargs(
 	tofitaDebugLog("__getmainargs called with argc %8 argv %8".utf16(),
 		argc as! UInt64, argv as! UInt64)
 	return 0
-}
-
-// TODO Hexa: code gen bug produces `_fmode_ = int32_t$new_();`
-// `let _fmode ByValue<Int32> = ByValue<Int32>()`
-// TODO Hexa: code gen optimizer bug `return (size_t)((int32_t)0->ref_);`
-// `let _fmode ByValue<Int32> = 0`
-var _fmode ByValue<Int32> = 0
-
-#if bit32
-	@convention('cdecl')
-#end
-@dllExport('__p__fmode')
-fun __p__fmode() SizeOfPointer {
-	tofitaDebugLog("__p__fmode called".utf16())
-	return _fmode.ref as! SizeOfPointer
-}
-
-// TODO `let _commode ByValue<Int32> = ByValue<Int32>()`
-var _commode ByValue<Int32> = 0
-
-#if bit32
-	@convention('cdecl')
-#end
-@dllExport('__p__commode')
-fun __p__commode() SizeOfPointer {
-	tofitaDebugLog("__p__commode called".utf16())
-	return _commode.ref as! SizeOfPointer
 }
 
 #if bit32
