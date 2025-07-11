@@ -1534,6 +1534,146 @@ fun createBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, 
 	tofitaDebugLog("lpBits %8".utf16(), lpBits as! UInt64)
 	// TODO: Create bitmap with specified parameters
 	return null
+// TODO this is a draft
+@dllExport('zCreateBitmap')
+fun zcreateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
+	tofitaDebugLog("CreateBitmap called with nWidth %d nHeight %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
+	tofitaDebugLog("> nPlanes %u nBitCount %u".utf16(), nPlanes as! UInt64, nBitCount as! UInt64)
+	tofitaDebugLog("> lpBits %p".utf16(), lpBits as! UInt64) // Use %p for pointers
+
+	// Validate inputs
+	if nWidth <= 0 or nHeight <= 0 {
+		tofitaDebugLog("CreateBitmap: invalid dimensions (width: %d, height: %d)".utf16(), nWidth as! UInt64, nHeight as! UInt64)
+		// SetLastError(ERROR_INVALID_PARAMETER) // Optional: Set error code for more accurate Win32 behavior
+		return null
+	}
+	// According to MSDN, nPlanes must be 1 for CreateBitmap.
+	if nPlanes != 1 {
+		tofitaDebugLog("CreateBitmap: nPlanes must be 1, got %u".utf16(), nPlanes as! UInt64)
+		// SetLastError(ERROR_INVALID_PARAMETER)
+		return null
+	}
+	// Supported bit counts by this implementation (can be expanded)
+	if nBitCount != 1 and nBitCount != 4 and nBitCount != 8 and nBitCount != 16 and nBitCount != 24 and nBitCount != 32 {
+		tofitaDebugLog("CreateBitmap: unsupported bit depth %u".utf16(), nBitCount as! UInt64)
+		// SetLastError(ERROR_INVALID_PARAMETER)
+		return null
+	}
+
+	// Create a new bitmap structure
+	let bitmap = @heap new Bitmap()
+	bitmap.width = nWidth
+	bitmap.height = nHeight // For DDBs (Device Dependent Bitmaps), height is positive.
+	bitmap.bitsPerPixel = nBitCount as! Int16
+	bitmap.isTopDown = true // DDBs created by CreateBitmap are generally treated as top-down
+	// when lpBits is provided, or their orientation is device-dependent.
+	// For internal consistency in emulation, we'll manage it as top-down.
+
+	// Calculate bytes per row for the internal bitmap storage (DWORD-aligned)
+	// This is the 'stride' or 'pitch' of the destination bitmap we are creating.
+	let destBytesPerRow = ((nWidth * (nBitCount as! Int32) + 31) / 32) * 4
+	bitmap.bytesPerRow = destBytesPerRow
+	let totalDestSize = destBytesPerRow * nHeight
+
+	// Allocate memory for pixel data for our internal bitmap representation
+	bitmap.bits = malloc(totalDestSize as! UInt64) as! ArrayPointer<UInt8>
+	if bitmap.bits == null {
+		tofitaDebugLog("CreateBitmap: failed to allocate memory for bitmap.bits (%d bytes)".utf16(), totalDestSize as! UInt64)
+		free(bitmap as! RuntimeAllocated) // Clean up the allocated Bitmap structure
+		// SetLastError(ERROR_NOT_ENOUGH_MEMORY)
+		return null
+	}
+
+	tofitaDebugLog("> Allocated %d bytes for internal bitmap.bits at %p".utf16(), totalDestSize as! UInt64, bitmap.bits as! UInt64)
+
+	// Initialize color table for indexed bitmaps (1, 4, or 8 bits per pixel)
+	// For DDBs created with CreateBitmap, the actual colors used for these indices
+	// are device-dependent or relate to the DC's current palette/colors.
+	// Here, we'll create a default table. For 1-bit, it's often black & white.
+	if nBitCount <= 8 {
+		let numColors = 1u32 << nBitCount
+		bitmap.colorTableSize = numColors
+		bitmap.colorTable = malloc(numColors * sizeOf<RGBQUAD>() as! UInt64) as! ArrayPointer<ByValue<RGBQUAD>>
+		if bitmap.colorTable == null {
+			tofitaDebugLog("CreateBitmap: failed to allocate memory for color table".utf16())
+			free(bitmap.bits as! RuntimeAllocated) // Clean up previously allocated bits
+			free(bitmap as! RuntimeAllocated) // Clean up the Bitmap structure
+			// SetLastError(ERROR_NOT_ENOUGH_MEMORY)
+			return null
+		}
+
+		// Initialize a default color table.
+		if nBitCount == 1 {
+			// For monochrome, index 0 is typically mapped to background, index 1 to foreground.
+			// The actual colors are from the DC (SetBkColor, SetTextColor) when drawing.
+			// The table itself can just define canonical black and white.
+			bitmap.colorTable[0].ref.rgbBlue = 0u8
+			bitmap.colorTable[0].ref.rgbGreen = 0u8
+			bitmap.colorTable[0].ref.rgbRed = 0u8
+			bitmap.colorTable[0].ref.rgbReserved = 0u8 // Black
+			bitmap.colorTable[1].ref.rgbBlue = 255u8
+			bitmap.colorTable[1].ref.rgbGreen = 255u8
+			bitmap.colorTable[1].ref.rgbRed = 255u8
+			bitmap.colorTable[1].ref.rgbReserved = 0u8 // White
+		} else { // For 4-bit or 8-bit, a default grayscale palette is common.
+			for i in 0u32 ... numColors - 1 {
+				let value = (i * 255 / (numColors - 1)) as! UInt8 // Simple grayscale ramp
+				bitmap.colorTable[i].ref.rgbRed = value
+				bitmap.colorTable[i].ref.rgbGreen = value
+				bitmap.colorTable[i].ref.rgbBlue = value
+				bitmap.colorTable[i].ref.rgbReserved = 0u8
+			}
+		}
+		tofitaDebugLog("> Initialized color table for %u-bit bitmap with %u entries.".utf16(), nBitCount as! UInt64, numColors as! UInt64)
+	} else {
+		// For non-indexed color depths (16, 24, 32 bpp), no color table is needed.
+		bitmap.colorTable = null
+		bitmap.colorTableSize = 0u32
+	}
+
+	// Initialize pixel data for the internal bitmap
+	// if lpBits != null {
+	if let lpBits = lpBits {
+		tofitaDebugLog("> lpBits is provided (%p), copying data.".utf16(), lpBits as! UInt64)
+		// The format of lpBits: scanlines are WORD-aligned (2-byte boundary).
+		// Calculate the number of actual data bytes per source scanline (excluding padding).
+		let srcBytesPerScanlineActualData = (nWidth * (nBitCount as! Int32) + 7) / 8
+		// Calculate the stride of a source scanline in lpBits (WORD-aligned).
+		let srcScanlineStride = ((nWidth * (nBitCount as! Int32) + 15) / 16) * 2
+
+		tofitaDebugLog("> srcBytesPerScanlineActualData: %d, srcScanlineStride (WORD-aligned): %d".utf16(), srcBytesPerScanlineActualData as! UInt64, srcScanlineStride as! UInt64)
+		tofitaDebugLog("> destBytesPerRow (DWORD-aligned for internal bitmap): %d".utf16(), destBytesPerRow as! UInt64)
+
+		// Initialize our internal bitmap.bits to a known state (e.g., white) first.
+		// This ensures that any padding bytes in the destination rows are correctly initialized if
+		// srcBytesPerScanlineActualData is less than destBytesPerRow.
+		memset(bitmap.bits, 0xFF, totalDestSize as! SizeOfPointer) // Initialize to white
+
+		// Copy data row by row from lpBits to bitmap.bits.
+		// CreateBitmap treats lpBits as top-down.
+		for y in 0 ... nHeight - 1 {
+			let destRowStartPtr = bitmap.bits.offsetItemsBack(y * destBytesPerRow)
+			let srcRowStartPtr = lpBits.offsetItemsBack(y * srcScanlineStride)
+
+			// Copy only the actual pixel data bytes from the source scanline.
+			// Do not copy any padding bytes that might be in the source scanline.
+			memcpy(destRowStartPtr, srcRowStartPtr, srcBytesPerScanlineActualData as! Int)
+		}
+
+		tofitaDebugLog("> Copied data from lpBits to internal bitmap.bits row by row.".utf16())
+
+	} else {
+		// If lpBits is null, the bitmap content is uninitialized by default by GDI.
+		// For consistent behavior in emulation, we'll initialize it to white.
+		// (0xFF for all bytes works for 1-bit (all 1s), 8-bit (index 255), 24/32-bit (white)).
+		tofitaDebugLog("> lpBits is null, initializing internal bitmap.bits to white.".utf16())
+		memset(bitmap.bits, 0xFF, totalDestSize as! SizeOfPointer)
+	}
+
+	tofitaDebugLog("CreateBitmap: successfully created bitmap %p".utf16(), bitmap as! UInt64)
+	return bitmap as! HBitmap
+}
+
 }
 
 @dllExport('CreateBrushIndirect')
