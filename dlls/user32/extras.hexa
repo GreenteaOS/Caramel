@@ -5008,3 +5008,52 @@ fun lstrcpynW(lpString1 ArrayPointer<ClangWideChar>, lpString2 ConstArrayPointer
 	tofitaDebugLog("lstrcpynW called".utf16())
 	return null
 }
+@dllExport('SetLayout')
+fun setLayout(hdc HDc, dwLayout UInt32) UInt32 {
+	tofitaDebugLog("SetLayout called with hdc %8 dwLayout %u".utf16(), hdc as! UInt64, dwLayout as! UInt64)
+	if hdc == null { return 0u32 }
+	// { hdc as! DC }.layout = dwLayout
+	return 0u32 // Previous layout TODO
+}
+
+@dllExport('GetPrivateProfileIntW')
+fun getPrivateProfileIntW(
+	lpAppName ConstArrayPointer<ClangWideChar>,
+	lpKeyName ConstArrayPointer<ClangWideChar>,
+	nDefault Int32,
+	lpFileName ConstArrayPointer<ClangWideChar>
+) UInt32 {
+	tofitaDebugLog("GetPrivateProfileIntW called with lpAppName %S lpKeyName %S".utf16(), lpAppName as! UInt64, lpKeyName as! UInt64)
+	return nDefault as! UInt32
+}
+
+@dllExport('OutputDebugStringA')
+fun outputDebugStringA(lpOutputString ConstArrayPointer<ClangChar>) Void {
+	tofitaDebugLog("OutputDebugStringA called with %s".utf16(), lpOutputString as! UInt64)
+}
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('__setusermatherr')
+fun __setusermatherr(pf SizeOfPointer) Void {
+	tofitaDebugLog("__setusermatherr called with pf %8".utf16(), pf as! UInt64)
+}
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('_except_handler3')
+fun _except_handler3(stub SizeOfPointer) SizeOfPointer {
+	tofitaDebugLog("_except_handler3 called".utf16())
+	return 0
+}
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('_c_exit')
+fun _c_exit() Void {
+	tofitaDebugLog("_c_exit()".utf16())
+}
+
