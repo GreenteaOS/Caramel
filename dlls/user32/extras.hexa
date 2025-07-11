@@ -5016,6 +5016,25 @@ fun setLayout(hdc HDc, dwLayout UInt32) UInt32 {
 	return 0u32 // Previous layout TODO
 }
 
+@dllExport('SetDIBitsToDevice')
+fun setDIBitsToDevice(
+	hdc HDc,
+	xDest Int32,
+	yDest Int32,
+	dwWidth UInt32,
+	dwHeight UInt32,
+	xSrc Int32,
+	ySrc Int32,
+	nStartScan UInt32,
+	nNumScans UInt32,
+	lpBits ConstArrayPointer<UInt8>,
+	lpbmi ConstArrayPointer<BITMAPINFO>,
+	fuColorUse UInt32
+) Int32 {
+	tofitaDebugLog("SetDIBitsToDevice called with hdc %8".utf16(), hdc as! UInt64)
+	return 0
+}
+
 @dllExport('GetPrivateProfileIntW')
 fun getPrivateProfileIntW(
 	lpAppName ConstArrayPointer<ClangWideChar>,
@@ -5027,9 +5046,32 @@ fun getPrivateProfileIntW(
 	return nDefault as! UInt32
 }
 
+@dllExport('GetPrivateProfileStringW')
+fun getPrivateProfileStringW(
+	lpAppName ConstArrayPointer<ClangWideChar>,
+	lpKeyName ConstArrayPointer<ClangWideChar>,
+	lpDefault ConstArrayPointer<ClangWideChar>,
+	lpReturnedString ArrayPointer<ClangWideChar>,
+	nSize UInt32,
+	lpFileName ConstArrayPointer<ClangWideChar>
+) Int32 {
+	tofitaDebugLog("GetPrivateProfileStringW called with lpAppName %S lpKeyName %S".utf16(), lpAppName as! UInt64, lpKeyName as! UInt64)
+	lpReturnedString[0] = 0
+	return 0
+}
+
 @dllExport('OutputDebugStringA')
 fun outputDebugStringA(lpOutputString ConstArrayPointer<ClangChar>) Void {
 	tofitaDebugLog("OutputDebugStringA called with %s".utf16(), lpOutputString as! UInt64)
+}
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('_XcptFilter')
+fun _xcptFilter(exceptionCode Int32, exceptionInfo SizeOfPointer) Int32 {
+	tofitaDebugLog("_XcptFilter called with exceptionCode %d".utf16(), exceptionCode as! UInt64)
+	return 0
 }
 
 #if bit32
@@ -5043,9 +5085,40 @@ fun __setusermatherr(pf SizeOfPointer) Void {
 #if bit32
 	@convention('cdecl')
 #end
+@dllExport('_controlfp')
+fun _controlfp(newControl Int32, mask Int32) UInt32 {
+	tofitaDebugLog("_controlfp called with newControl %d mask %d".utf16(), newControl as! UInt64, mask as! UInt64)
+	return 0u32
+}
+
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('_except_handler3')
 fun _except_handler3(stub SizeOfPointer) SizeOfPointer {
 	tofitaDebugLog("_except_handler3 called".utf16())
+	return 0
+}
+
+// TODO Hexa: codegen lacks link name for global vars
+// TODO Hexa: rename lacks for global vars
+@rename('_adjust_fdiv')
+@dllExport('_adjust_fdiv')
+var _adjust_fdiv Int32 = 0
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('__getmainargs')
+fun __getmainargs(
+	argc SizeOfPointer, // Pointer to int for argument count
+	argv SizeOfPointer, // Pointer to char** for argument vector
+	envp SizeOfPointer, // Pointer to char** for environment variables
+	doWildcards Int32, // Flag for wildcard expansion
+	startupInfo SizeOfPointer // Pointer to startup info structure
+) Int32 {
+	tofitaDebugLog("__getmainargs called with argc %8 argv %8".utf16(),
+		argc as! UInt64, argv as! UInt64)
 	return 0
 }
 
@@ -5057,3 +5130,20 @@ fun _c_exit() Void {
 	tofitaDebugLog("_c_exit()".utf16())
 }
 
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('_exit')
+fun _exit(status Int32) Void {
+	tofitaDebugLog("_exit(%d)".utf16(), status as! UInt64)
+}
+
+@dllExport('PlaySoundW')
+fun playSoundW(
+	pszSound ConstArrayPointer<ClangWideChar>,
+	hmod Handle,
+	fdwSound UInt32
+) Bool32 {
+	tofitaDebugLog("PlaySoundW called with pszSound %S fdwSound %u".utf16(), pszSound as! UInt64, fdwSound as! UInt64)
+	return Bool32.True
+}
