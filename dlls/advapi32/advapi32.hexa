@@ -12,52 +12,265 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+// TODO into enum
+declare LSTATUS = Int32
+
 @dllExport('RegCloseKey')
-fun regCloseKey(key SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("regCloseKey(%8)\n".utf16(), key as! UInt64)
-	return 0
+fun regCloseKey(hKey HKey) LSTATUS {
+	// TODO seems like functions with 1/0 arguments get corrupted stack, because tofitaDebugLog receives 64 bit integers
+	// tofitaDebugLog("RegCloseKey callerAddress (%8) callerFrame (%8)".utf16(), callerAddress, callerFrame)
+	// tofitaDebugLog("RegCloseKey called with hKey %8".utf16(), hKey as! UInt64)
+	return 0 // ERROR_SUCCESS
 }
 
 @dllExport('RegCreateKeyExW')
-fun regCreateKeyExW(key SizeOfPointer, lpSubKey ConstArrayPointer<ClangWideChar>) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("regCreateKeyExW(%S)\n".utf16(), lpSubKey as! UInt64)
-	return 0
+fun regCreateKeyExW(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangWideChar>,
+	reserved UInt32,
+	lpClass ConstArrayPointer<ClangWideChar>,
+	dwOptions UInt32,
+	samDesired UInt32,
+	lpSecurityAttributes SizeOfPointer,
+	phkResult ArrayPointer<HKey>,
+	lpdwDisposition ArrayPointer<UInt32> // TODO optional
+) LSTATUS {
+	tofitaDebugLog("RegCreateKeyExW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	phkResult[0] = 0x777 as! HKey
+	return 0 // ERROR_SUCCESS
+}
 
+@dllExport('RegCreateKeyExA')
+fun regCreateKeyExA(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangChar>,
+	reserved UInt32,
+	lpClass ConstArrayPointer<ClangChar>,
+	dwOptions UInt32,
+	samDesired UInt32,
+	lpSecurityAttributes SizeOfPointer,
+	phkResult ArrayPointer<HKey>,
+	lpdwDisposition ArrayPointer<UInt32>
+) LSTATUS {
+	tofitaDebugLog("RegCreateKeyExA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpSubKey, utf16zSubKey.ref)
+	var utf16zClass ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpClass, utf16zClass.ref)
+	return regCreateKeyExW(hKey, utf16zSubKey.ref, reserved, utf16zClass.ref, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition)
 }
 
 @dllExport('RegOpenKeyExW')
-fun regOpenKeyExW(key SizeOfPointer, lpSubKey ConstArrayPointer<ClangWideChar>) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("regOpenKeyExW(%S)\n".utf16(), lpSubKey as! UInt64)
-	return 0
+fun regOpenKeyExW(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangWideChar>,
+	ulOptions UInt32,
+	samDesired UInt32,
+	phkResult ArrayPointer<HKey>
+) LSTATUS {
+	tofitaDebugLog("RegOpenKeyExW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	return 0 // ERROR_SUCCESS
+}
 
+@dllExport('RegOpenKeyExA')
+fun regOpenKeyExA(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangChar>,
+	ulOptions UInt32,
+	samDesired UInt32,
+	phkResult ArrayPointer<HKey>
+) LSTATUS {
+	tofitaDebugLog("RegOpenKeyExA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpSubKey, utf16zSubKey.ref)
+	return regOpenKeyExW(hKey, utf16zSubKey.ref, ulOptions, samDesired, phkResult)
 }
 
 @dllExport('RegQueryValueExW')
-fun regQueryValueExW(key SizeOfPointer, lpValueName ConstArrayPointer<ClangWideChar>) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("regQueryValueExW(%S)\n".utf16(), lpValueName as! UInt64)
-	return 0
+fun regQueryValueExW(
+	hKey HKey,
+	lpValueName ConstArrayPointer<ClangWideChar>,
+	lpReserved ArrayPointer<UInt32>,
+	lpType ArrayPointer<UInt32>,
+	lpData ArrayPointer<UInt8>,
+	lpcbData ArrayPointer<UInt32>
+) LSTATUS {
+	tofitaDebugLog("RegQueryValueExW called with hKey %8 lpValueName %S".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	if lpData != null and lpcbData != null {
+		lpData[0] = 1
+		// memset(lpData, 1, lpcbData[0]) // Stub
+		// memset(lpData, 0, lpcbData[0]) // Zero-fill buffer
+	}
+	return 0 // stub
+	return 2 // ERROR_FILE_NOT_FOUND
+}
 
+@dllExport('RegQueryValueExA')
+fun regQueryValueExA(
+	hKey HKey,
+	lpValueName ConstArrayPointer<ClangChar>,
+	lpReserved ArrayPointer<UInt32>,
+	lpType ArrayPointer<UInt32>,
+	lpData ArrayPointer<UInt8>,
+	lpcbData ArrayPointer<UInt32>
+) LSTATUS {
+	tofitaDebugLog("RegQueryValueExA called with hKey %8 lpValueName %s".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpValueName, utf16zValueName.ref)
+	return regQueryValueExW(hKey, utf16zValueName.ref, lpReserved, lpType, lpData, lpcbData)
 }
 
 @dllExport('RegSetValueExW')
-fun regSetValueExW(key SizeOfPointer, lpValueName ConstArrayPointer<ClangWideChar>) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("regSetValueExW(%S)\n".utf16(), lpValueName as! UInt64)
-	return 0
+fun regSetValueExW(
+	hKey HKey,
+	lpValueName ConstArrayPointer<ClangWideChar>,
+	reserved UInt32,
+	dwType UInt32,
+	lpData ConstArrayPointer<UInt8>,
+	cbData UInt32
+) LSTATUS {
+	tofitaDebugLog("RegSetValueExW called with hKey %8 lpValueName %S".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	return 0 // ERROR_SUCCESS
+}
 
+@dllExport('RegSetValueExA')
+fun regSetValueExA(
+	hKey HKey,
+	lpValueName ConstArrayPointer<ClangChar>,
+	reserved UInt32,
+	dwType UInt32,
+	lpData ConstArrayPointer<UInt8>,
+	cbData UInt32
+) LSTATUS {
+	tofitaDebugLog("RegSetValueExA called with hKey %8 lpValueName %s".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpValueName, utf16zValueName.ref)
+	return regSetValueExW(hKey, utf16zValueName.ref, reserved, dwType, lpData, cbData)
+}
 
+@dllExport('RegDeleteKeyW')
+fun regDeleteKeyW(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangWideChar>
+) LSTATUS {
+	tofitaDebugLog("RegDeleteKeyW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	return 0 // ERROR_SUCCESS
+}
 
+@dllExport('RegDeleteKeyA')
+fun regDeleteKeyA(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangChar>
+) LSTATUS {
+	tofitaDebugLog("RegDeleteKeyA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpSubKey, utf16zSubKey.ref)
+	return regDeleteKeyW(hKey, utf16zSubKey.ref)
+}
 
+@dllExport('RegEnumKeyExW')
+fun regEnumKeyExW(
+	hKey HKey,
+	dwIndex UInt32,
+	lpName ArrayPointer<ClangWideChar>,
+	lpcchName ArrayPointer<UInt32>,
+	lpReserved ArrayPointer<UInt32>,
+	lpClass ArrayPointer<ClangWideChar>,
+	lpcchClass ArrayPointer<UInt32>,
+	lpftLastWriteTime ArrayPointer<FILETIME>
+) LSTATUS {
+	tofitaDebugLog("RegEnumKeyExW called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	return 259 // ERROR_NO_MORE_ITEMS
+}
 
+@dllExport('RegEnumKeyExA')
+fun regEnumKeyExA(
+	hKey HKey,
+	dwIndex UInt32,
+	lpName ArrayPointer<ClangChar>,
+	lpcchName ArrayPointer<UInt32>,
+	lpReserved ArrayPointer<UInt32>,
+	lpClass ArrayPointer<ClangChar>,
+	lpcchClass ArrayPointer<UInt32>,
+	lpftLastWriteTime ArrayPointer<FILETIME>
+) LSTATUS {
+	tofitaDebugLog("RegEnumKeyExA called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	var utf16zName ArrayByValue<ClangWideChar, 256> = [0]
+	var utf16zClass ArrayByValue<ClangWideChar, 256> = [0]
+	let result = regEnumKeyExW(hKey, dwIndex, utf16zName.ref, lpcchName, lpReserved, utf16zClass.ref, lpcchClass, lpftLastWriteTime)
+	// TODO: Convert utf16zName and utf16zClass to ANSI and copy to lpName, lpClass
+	return result
+}
 
+@dllExport('RegEnumValueW')
+fun regEnumValueW(
+	hKey HKey,
+	dwIndex UInt32,
+	lpValueName ArrayPointer<ClangWideChar>,
+	lpcchValueName ArrayPointer<UInt32>,
+	lpReserved ArrayPointer<UInt32>,
+	lpType ArrayPointer<UInt32>,
+	lpData ArrayPointer<UInt8>,
+	lpcbData ArrayPointer<UInt32>
+) LSTATUS {
+	tofitaDebugLog("RegEnumValueW called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	return 259 // ERROR_NO_MORE_ITEMS
+}
 
+@dllExport('RegEnumValueA')
+fun regEnumValueA(
+	hKey HKey,
+	dwIndex UInt32,
+	lpValueName ArrayPointer<ClangChar>,
+	lpcchValueName ArrayPointer<UInt32>,
+	lpReserved ArrayPointer<UInt32>,
+	lpType ArrayPointer<UInt32>,
+	lpData ArrayPointer<UInt8>,
+	lpcbData ArrayPointer<UInt32>
+) LSTATUS {
+	tofitaDebugLog("RegEnumValueA called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
+	let result = regEnumValueW(hKey, dwIndex, utf16zValueName.ref, lpcchValueName, lpReserved, lpType, lpData, lpcbData)
+	// TODO: Convert utf16zValueName to ANSI and copy to lpValueName
+	return result
+}
 
+@dllExport('RegFlushKey')
+fun regFlushKey(hKey HKey) LSTATUS {
+	tofitaDebugLog("RegFlushKey called with hKey %8".utf16(), hKey as! UInt64)
+	return 0 // ERROR_SUCCESS
+}
 
+@dllExport('RegGetValueW')
+fun regGetValueW(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangWideChar>,
+	lpValueName ConstArrayPointer<ClangWideChar>,
+	dwFlags UInt32,
+	lpdwType ArrayPointer<UInt32>,
+	pvData ArrayPointer<UInt8>,
+	lpcbData ArrayPointer<UInt32>
+) LSTATUS {
+	tofitaDebugLog("RegGetValueW called with lpSubKey %S lpValueName %S".utf16(), lpSubKey as! UInt64, lpValueName as! UInt64)
+	return 0 // ERROR_SUCCESS
+}
 
+@dllExport('RegGetValueA')
+fun regGetValueA(
+	hKey HKey,
+	lpSubKey ConstArrayPointer<ClangChar>,
+	lpValueName ConstArrayPointer<ClangChar>,
+	dwFlags UInt32,
+	lpdwType ArrayPointer<UInt32>,
+	pvData ArrayPointer<UInt8>,
+	lpcbData ArrayPointer<UInt32>
+) LSTATUS {
+	tofitaDebugLog("RegGetValueA called with lpSubKey %s lpValueName %s".utf16(), lpSubKey as! UInt64, lpValueName as! UInt64)
+	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpSubKey, utf16zSubKey.ref)
+	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
+	simpleAtoW(lpValueName, utf16zValueName.ref)
+	return regGetValueW(hKey, utf16zSubKey.ref, utf16zValueName.ref, dwFlags, lpdwType, pvData, lpcbData)
 }
 
 @linkName('_DllMainCRTStartup_TODO')
