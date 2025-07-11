@@ -1527,13 +1527,97 @@ fun pathStripPathW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('CreateBitmap')
-fun createBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
+// TODO this is a draft
+@dllExport('xCreateBitmap')
+fun xcreateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
 	tofitaDebugLog("CreateBitmap called with nWidth %d nHeight %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
-	tofitaDebugLog("nPlanes %u nBitCount %u".utf16(), nPlanes as! UInt64, nBitCount as! UInt64)
-	tofitaDebugLog("lpBits %8".utf16(), lpBits as! UInt64)
-	// TODO: Create bitmap with specified parameters
-	return null
+	tofitaDebugLog("> nPlanes %u nBitCount %u".utf16(), nPlanes as! UInt64, nBitCount as! UInt64)
+	tofitaDebugLog("> lpBits %8".utf16(), lpBits as! UInt64)
+
+	// Validate inputs
+	if nWidth <= 0 or nHeight <= 0 {
+		tofitaDebugLog("CreateBitmap: invalid dimensions".utf16())
+		return null
+	}
+	if nPlanes != 1 {
+		tofitaDebugLog("CreateBitmap: only 1 plane supported".utf16())
+		return null
+	}
+	if nBitCount != 1 and nBitCount != 8 and nBitCount != 24 and nBitCount != 32 {
+		tofitaDebugLog("CreateBitmap: unsupported bit depth %u".utf16(), nBitCount as! UInt64)
+		return null
+	}
+
+	// Create a new bitmap structure
+	let bitmap = @heap new Bitmap()
+	bitmap.width = nWidth
+	bitmap.height = nHeight
+	bitmap.bitsPerPixel = nBitCount as! Int16
+	bitmap.isTopDown = true // DDBs are typically top-down in modern Windows
+
+	// Calculate bytes per row (aligned to 4-byte boundary)
+	let bytesPerPixel = nBitCount / 8
+	bitmap.bytesPerRow = ((nWidth * nBitCount + 31) / 32) * 4i32
+	let totalSize = bitmap.bytesPerRow * nHeight
+
+	// Allocate memory for pixel data
+	bitmap.bits = malloc(totalSize as! UInt64) as! ArrayPointer<UInt8>
+	if bitmap.bits == null {
+		tofitaDebugLog("CreateBitmap: failed to allocate bitmap bits".utf16())
+		free(bitmap as! RuntimeAllocated)
+		return null
+	}
+
+	// Initialize color table for indexed bitmaps (1 or 8 bits)
+	if nBitCount <= 8 {
+		let numColors = 1u32 << nBitCount
+		bitmap.colorTableSize = numColors
+		bitmap.colorTable = malloc(numColors * sizeOf<RGBQUAD>() as! UInt64) as! ArrayPointer<ByValue<RGBQUAD>>
+		if bitmap.colorTable == null {
+			tofitaDebugLog("CreateBitmap: failed to allocate color table".utf16())
+			free(bitmap.bits as! RuntimeAllocated)
+			free(bitmap as! RuntimeAllocated)
+			return null
+		}
+
+		// Initialize color table (e.g., grayscale for 1-bit or 8-bit)
+		for i in 0u32 ... numColors - 1 {
+			let value = if nBitCount == 1 {
+				i == 0 ? 0u8 : 255u8 // Black and white for monochrome
+			} else {
+				(i * 255 / (numColors - 1)) as! UInt8 // Grayscale for 8-bit
+			}
+			bitmap.colorTable[i].ref.rgbRed = value
+			bitmap.colorTable[i].ref.rgbGreen = value
+			bitmap.colorTable[i].ref.rgbBlue = value
+			bitmap.colorTable[i].ref.rgbReserved = 0u8
+		}
+	} else {
+		bitmap.colorTable = null
+		bitmap.colorTableSize = 0u32
+	}
+
+	// Initialize pixel data
+	if lpBits != null {
+		// Copy provided pixel data
+		memcpy(bitmap.bits, lpBits, totalSize as! Int)
+	} else {
+		// Initialize to white (0xFFFFFFFF for 32-bit, 0xFF for 8-bit, 1 for 1-bit)
+		if nBitCount == 32 {
+			memset(bitmap.bits, 0xFF, totalSize as! SizeOfPointer)
+		} else if nBitCount == 24 {
+			memset(bitmap.bits, 0xFF, totalSize as! SizeOfPointer)
+		} else if nBitCount == 8 {
+			memset(bitmap.bits, 0xFF, totalSize as! SizeOfPointer) // White index
+		} else if nBitCount == 1 {
+			memset(bitmap.bits, 0xFF, totalSize as! SizeOfPointer) // White pixels
+		}
+	}
+
+	tofitaDebugLog("CreateBitmap: created bitmap %8".utf16(), bitmap as! UInt64)
+	return bitmap as! HBitmap
+}
+
 // TODO this is a draft
 @dllExport('zCreateBitmap')
 fun zcreateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
