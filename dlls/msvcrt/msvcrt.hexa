@@ -358,6 +358,9 @@ class Malloc {
 	new () { }
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('malloc')
 fun malloc(size SizeOfPointer) SizeOfPointer {
 	// TODO 16 bytes min + HeapAlloc?
@@ -382,10 +385,17 @@ fun memmove(dest ConstArrayPointer<UInt8>, src ConstArrayPointer<UInt8>, count S
 }
 
 @dllExport('memcpy')
-fun memcpy(stub SizeOfPointer) SizeOfPointer {
+fun memcpy(dest ConstArrayPointer<UInt8>, src ConstArrayPointer<UInt8>, count SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("memcpy()\n".utf16())
 	return 0
+	return dest as! SizeOfPointer
+}
+
+@dllExport('memset')
+fun memset(dest ConstArrayPointer<UInt8>, value Int, count SizeOfPointer) SizeOfPointer {
+	// TODO
+	return dest as! SizeOfPointer
 }
 
 @dllExport('modf')
