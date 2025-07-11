@@ -208,9 +208,20 @@ fun _unlock(stub Int32) Void {
 	tofitaDebugLog("_unlock()\n".utf16())
 }
 
-// TODO _acmdln
+@dllExport('_acmdln')
+var _acmdln SizeOfPointer = _acmdln_stub.ref as! SizeOfPointer // TODO `.address`
+var _acmdln_stub ArrayByValue<UInt8, 4> = [
+	// TODO
+	// Just "exe\0"
+	101u8,
+	120u8,
+	101u8,
+	0u8
+]
+
 @dllExport('_wcmdln')
-var _wcmdln ArrayByValue<UInt16, 4> = [
+var _wcmdln SizeOfPointer = _wcmdln_stub.ref as! SizeOfPointer // TODO `.address`
+var _wcmdln_stub ArrayByValue<UInt16, 4> = [
 	// TODO
 	// Just "exe\0"
 	101u16,
