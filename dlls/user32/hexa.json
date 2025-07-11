@@ -29,7 +29,9 @@
 			"name": "i386",
 			"generator": "c",
 			"output": "user32.32.c",
-			"options": []
+			"options": [
+				"extraUnderscore"
+			]
 		}
 	],
 	"entry": "userMain"
