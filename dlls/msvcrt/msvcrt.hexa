@@ -61,7 +61,6 @@ fun __setusermatherr(stub SizeOfPointer) Void {
 	@convention('cdecl')
 #end
 @dllExport('__wgetmainargs')
-	// TODO
 fun __wgetmainargs(
 	argc SizeOfPointer, // Pointer to int for argument count
 	argv SizeOfPointer, // Pointer to char** for argument vector
@@ -69,6 +68,7 @@ fun __wgetmainargs(
 	doWildcards Int32, // Flag for wildcard expansion
 	startupInfo SizeOfPointer // Pointer to startup info structure
 ) Int32 {
+	// TODO
 	tofitaDebugLog("__wgetmainargs called with argc %8 argv %8".utf16(),
 		argc as! UInt64, argv as! UInt64)
 	return 0
@@ -123,10 +123,17 @@ fun _fpreset(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-// TODO __cdecl
+// TODO Hexa: __cdecl on function types
 declare PVFV = () => Void
 
-// TODO __cdecl
+@customHeader('
+	typedef void (__cdecl *_PVFV)(void);
+	void __cdecl callbackCaller_(void* callback) {
+		((_PVFV)callback)();
+	};
+')
+declare fun callbackCaller(callback PVFV) Void
+
 #if bit32
 	@convention('cdecl')
 #end
@@ -144,8 +151,14 @@ fun _initterm(first ConstArrayPointer<PVFV>, last ConstArrayPointer<PVFV>) Void 
 
 		if callback == null { continue }
 
-		callback()
 		tofitaDebugLog("_initterm calls (%8)".utf16(), callback as! UInt64)
+		#if bit64
+			callback()
+		#end
+
+		#if bit32
+			callbackCaller(callback)
+		#end
 		tofitaDebugLog("_initterm done call (%8)".utf16(), callback as! UInt64)
 	}
 
