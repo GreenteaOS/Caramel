@@ -616,6 +616,108 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 			// TODO ^ this can be unsafe write, cause within bounds
 
 			// TODO this is for demo purposes and to check frame buffer size
+@dllExport('FillRect')
+fun fillRect(hdc HDc, lprc Rect, brush HBrush) Int32 {
+	// Validate device context
+	if hdc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return 0
+	}
+
+	let dc = hdc as! DC
+	let fb = dc.fb // Copy
+	let fb = fb.ref
+
+	// Determine destination surface (framebuffer or bitmap)
+	var destBits = null
+	var destWidth = fb.width as! Int32
+	var destHeight = fb.height as! Int32
+	var destBytesPerRow = fb.width * 4u32 as! Int32
+
+	let bitmap = dc.hBitmap as! Bitmap
+	if bitmap != null {
+		tofitaDebugLog("> Using bitmap".utf16())
+		destBits = bitmap.bits as! ArrayPointer<UInt8>
+		destWidth = bitmap.width
+		destHeight = bitmap.height
+		destBytesPerRow = bitmap.bytesPerRow
+
+		if bitmap.bitsPerPixel != 32 {
+			tofitaDebugLog("> Invalid bits per pixel".utf16())
+			return 0
+		}
+
+		fb.pixels = destBits as! UInt64
+		fb.width = destWidth as! UInt32
+		fb.height = destHeight as! UInt32
+	} else {
+		destBits = fb.pixels as! ArrayPointer<UInt8>
+	}
+
+	// Validate rectangle bounds
+	if lprc.left < 0 or lprc.top < 0 or lprc.right <= lprc.left or lprc.bottom <= lprc.top
+		or lprc.right > destWidth or lprc.bottom > destHeight {
+		tofitaDebugLog("> Invalid rectangle dimensions".utf16())
+		return 0
+	}
+
+	// Get brush properties
+	let brushObj = brush as! Brush
+	if brushObj == null {
+		tofitaDebugLog("> Invalid brush".utf16())
+		return 0
+	}
+
+	let defaultBrush = (brushObj as! UInt64) < 4096
+
+	let color = ByValue<Pixel32>()
+	color.ref.color = 0xFFE1E1E1u32
+	if not defaultBrush {
+		color.ref.color = brushObj.color
+	}
+
+	let noPattern = defaultBrush or (brushObj.pattern == null)
+
+	if noPattern {
+		// Solid brush: use brush color
+		tofitaDebugLog("> Solid brush color %08x".utf16(), color.ref.color as! UInt32)
+		for y in lprc.top ... lprc.bottom {
+			for x in lprc.left ... lprc.right {
+				setFramebufferPixel(fb, x, y, color)
+			}
+		}
+	} else {
+		// Pattern brush: use pattern bitmap with dc.textColor and dc.bkColor
+		let pattern = brushObj.pattern as! Bitmap
+		if pattern == null or pattern.width != 8 or pattern.height != 8 or pattern.bitsPerPixel != 1i16 {
+			tofitaDebugLog("> Invalid pattern bitmap".utf16())
+			return 0
+		}
+		let patternBits = pattern.bits as! ArrayPointer<UInt8>
+		let patternBytesPerRow = pattern.bytesPerRow // Typically 4 for 8x8 monochrome
+		let fgColor = ByValue<Pixel32>()
+		fgColor.ref.color = dc.textColor // Foreground for bit 1
+		let bgColor = ByValue<Pixel32>()
+		bgColor.ref.color = dc.bkColor // Background for bit 0
+		let brushOrgX = dc.brushOrgX
+		let brushOrgY = dc.brushOrgY
+
+		/*tofitaDebugLog("> Pattern brush: fgColor %08x bgColor %08x brushOrgX %d brushOrgY %d".utf16(),
+			fgColor.ref.color as! UInt32, bgColor.ref.color as! UInt32,
+			brushOrgX as! Int32, brushOrgY as! Int32)*/
+		for y in lprc.top ... lprc.bottom {
+			let destY = y as! Int32
+			let patternY = ((destY - brushOrgY) % 8 + 8) % 8
+			for x in lprc.left ... lprc.right {
+				let destX = x as! Int32
+				let patternX = ((destX - brushOrgX) % 8 + 8) % 8
+				let byteIndex = patternY * patternBytesPerRow + (patternX / 8)
+				let bitPosition = 7 - (patternX % 8) // MSB is leftmost
+				let bitMask = 0x80u8 >> bitPosition
+				let pixelValue = (patternBits[byteIndex] & bitMask) != 0
+				let pixelColor = pixelValue ? fgColor : bgColor
+				setFramebufferPixel(fb, x, y, pixelColor)
+			}
 		}
 	}
 
