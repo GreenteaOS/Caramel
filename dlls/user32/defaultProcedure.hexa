@@ -29,7 +29,9 @@ fun dialog_get_info(hwnd HWnd, create Bool32) DIALOGINFO {
 	dlgInfo = ntUserGetDialogInfo(hwnd) as! DIALOGINFO
 
 	if dlgInfo == null and create == Bool32.True {
-		if (dlgInfo = heapAlloc(getProcessHeap(), 0, sizeOf<UInt32>() as! UInt32) as! DIALOGINFO) == null {
+		// TODO Hexa: yeah assignment-as-expression is confusing, does Go allow it?
+		// TODO Hexa: `sizeof(*dlgInfo)` converted into `sizeof(*dlgInfo)` instead of `sizeOf<DIALOGINFO>()`
+		if (dlgInfo = heapAlloc(getProcessHeap(), 0, sizeOf<DIALOGINFO>() as! UInt32) as! DIALOGINFO) == null {
 			tofitaDebugLog("dialog_get_info allocation failed".utf16())
 			return null
 		}
@@ -37,9 +39,9 @@ fun dialog_get_info(hwnd HWnd, create Bool32) DIALOGINFO {
 		dlgInfo.hwndFocus = null
 		dlgInfo.hUserFont = null
 		dlgInfo.hMenu = null
-		dlgInfo.xBaseUnit = 0
-		dlgInfo.yBaseUnit = 0
-		dlgInfo.idResult = 1
+		dlgInfo.xBaseUnit = 4 // TODO should be `0`
+		dlgInfo.yBaseUnit = 8 // TODO should be `0`
+		dlgInfo.idResult = 1 // TODO `IDOK`
 		dlgInfo.flags = 0
 		ntUserSetDialogInfo(hwnd, dlgInfo as! ArrayPointer<Void>)
 		tofitaDebugLog("dialog_get_info created".utf16())

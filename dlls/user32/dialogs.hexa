@@ -1432,7 +1432,7 @@ fun checkRadioButton(
 
 fun ntUserGetDialogBaseUnits() UInt32 {
 	tofitaDebugLog("ntUserGetDialogBaseUnits called".utf16())
-	return 0 // TODO
+	return 0x00080004u32 // A common default: X=4, Y=8 // TODO
 }
 
 fun getDialogBaseUnits() UInt32 {

@@ -429,8 +429,8 @@ class ExeResourceLoader<SIZE, HEADER> {
 
 		// TODO copy PE headers?
 		for i in peHeader.numberOfSections {
-			tofitaDebugLog("[ExeResourceLoader] Found section [%d] named '%s'\n".utf16(), i, imageSectionHeader[i].ref.name.ref as! UInt64)
-			tofitaDebugLog("[ExeResourceLoader] Found section size %d at offset %8'\n".utf16(), imageSectionHeader[i].ref.sizeOfRawData as! UInt64, imageSectionHeader[i].ref.virtualAddress)
+			tofitaDebugLog("[ExeResourceLoader] Found section [%d] named '%s'".utf16(), i, imageSectionHeader[i].ref.name.ref as! UInt64)
+			tofitaDebugLog("[ExeResourceLoader] Found section size %d at offset %8'".utf16(), imageSectionHeader[i].ref.sizeOfRawData as! UInt64, imageSectionHeader[i].ref.virtualAddress)
 			// serialPrintf("[ExeResourceLoader] Found section [%d] named '%s' of size %d at %u\n", i,
 			// imageSectionHeader[i].ref.name.ref,
 			// imageSectionHeader[i].ref.sizeOfRawData,

@@ -88,6 +88,7 @@ fun greenteaosIsTheBest(startup ProcessStartupInformation) {
 	}
 
 	// TODO unmap entries/ProcessStartupInformation if required
+	// ^ probably map it right after where NTDLL is mapped
 	tofitaDebugLog("Done %u DLLs".utf16(), count)
 
 	if entry != null {
@@ -102,6 +103,7 @@ fun greenteaosIsTheBest(startup ProcessStartupInformation) {
 	// TODO non-null stubs here, like HInstance etc
 	tofitaExitProcess(entry(null, null, null, 0))
 	while true { }
+	// TODO detect SUBSYSTEM:CONSOLE
 }
 
 // TODO get this structure from FS/GS

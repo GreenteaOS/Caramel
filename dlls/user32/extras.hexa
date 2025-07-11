@@ -1305,7 +1305,7 @@ fun globalFree(stub SizeOfPointer) SizeOfPointer {
 @dllExport('LoadLibraryA')
 fun loadLibraryA(lpLibFileName ConstArrayPointer<ClangChar>) HModule {
 	// TODO
-	tofitaDebugLog("LoadLibraryA(%s)\n".utf16(), lpLibFileName as! UInt64)
+	tofitaDebugLog("LoadLibraryA(%s)".utf16(), lpLibFileName as! UInt64)
 	return getModuleHandleA(lpLibFileName)
 	// NOTE Hexa: `return 123ptr` and `return 123uptr`? wait for what purpose
 	// just give SizeOfPointer.from(123u64)
