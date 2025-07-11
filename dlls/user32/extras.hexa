@@ -2578,10 +2578,9 @@ fun _assert(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetStartupInfoA')
-fun getStartupInfoA(stub SizeOfPointer) SizeOfPointer {
+fun getStartupInfoA(lpstartupinfo SizeOfPointer) Void {
 	// TODO
 	tofitaDebugLog("GetStartupInfoA called".utf16())
-	return 0
 }
 
 @dllExport('ReadProcessMemory')
@@ -4343,10 +4342,12 @@ fun assocQueryStringW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('InitCommonControlsEx')
-fun initCommonControlsEx(stub SizeOfPointer) SizeOfPointer {
+fun initCommonControlsEx(
+	stub SizeOfPointer // TODO `LPINITCOMMONCONTROLSEX`
+) Bool32 {
 	// TODO
 	tofitaDebugLog("InitCommonControlsEx called".utf16())
-	return 0
+	return Bool32.True
 }
 
 // Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-copyrect
@@ -5008,6 +5009,13 @@ fun lstrcpynW(lpString1 ArrayPointer<ClangWideChar>, lpString2 ConstArrayPointer
 	tofitaDebugLog("lstrcpynW called".utf16())
 	return null
 }
+
+@dllExport('GetLayout')
+fun getLayout(hdc HDc) UInt32 {
+	tofitaDebugLog("GetLayout called with hdc %8".utf16(), hdc as! UInt64)
+	return 0u32 // LTR layout
+}
+
 @dllExport('SetLayout')
 fun setLayout(hdc HDc, dwLayout UInt32) UInt32 {
 	tofitaDebugLog("SetLayout called with hdc %8 dwLayout %u".utf16(), hdc as! UInt64, dwLayout as! UInt64)
@@ -5120,6 +5128,33 @@ fun __getmainargs(
 	tofitaDebugLog("__getmainargs called with argc %8 argv %8".utf16(),
 		argc as! UInt64, argv as! UInt64)
 	return 0
+}
+
+// TODO Hexa: code gen bug produces `_fmode_ = int32_t$new_();`
+// `let _fmode ByValue<Int32> = ByValue<Int32>()`
+// TODO Hexa: code gen optimizer bug `return (size_t)((int32_t)0->ref_);`
+// `let _fmode ByValue<Int32> = 0`
+var _fmode ByValue<Int32> = 0
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('__p__fmode')
+fun __p__fmode() SizeOfPointer {
+	tofitaDebugLog("__p__fmode called".utf16())
+	return _fmode.ref as! SizeOfPointer
+}
+
+// TODO `let _commode ByValue<Int32> = ByValue<Int32>()`
+var _commode ByValue<Int32> = 0
+
+#if bit32
+	@convention('cdecl')
+#end
+@dllExport('__p__commode')
+fun __p__commode() SizeOfPointer {
+	tofitaDebugLog("__p__commode called".utf16())
+	return _commode.ref as! SizeOfPointer
 }
 
 #if bit32
