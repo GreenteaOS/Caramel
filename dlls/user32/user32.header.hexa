@@ -461,7 +461,6 @@ class ExeResourceLoader<SIZE, HEADER> {
 					let entry = dir.directoryEntries[id].ref
 
 					if entry.unionName.ref.id == lpType {
-						// serialPrintf("[ExeResourceLoader] Found RT_ICON at %d offset %8\n", id as! Int, entry.unionOffset.ref.offsetToData as! UInt64)
 						tofitaDebugLog("[ExeResourceLoader] Found by type %8...".utf16(), lpType)
 					} else {
 						tofitaDebugLog("[ExeResourceLoader] Ignoring by type %8...".utf16(), entry.unionName.ref.id)
@@ -474,7 +473,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 
 					for id in byName.numberOfIdEntries {
 						let byNameEntry = byName.directoryEntries[id].ref
-						tofitaDebugLog("[ExeResourceLoader] Scanning by name %8...\n".utf16(), byNameEntry.unionName.ref.id)
+						// tofitaDebugLog("[ExeResourceLoader] Scanning by name %8...".utf16(), byNameEntry.unionName.ref.id)
 
 						let byLanguage =
 							((ptr as! UInt64) + section.virtualAddress + (byNameEntry.unionOffset.ref.offsetToData & 0x7fffffffu64))
@@ -482,7 +481,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 
 						for id in byLanguage.numberOfIdEntries {
 							let byLanguageEntry = byLanguage.directoryEntries[id].ref
-							tofitaDebugLog("[ExeResourceLoader] Scanning by language %8...\n".utf16(), byLanguageEntry.unionName.ref.id)
+							// tofitaDebugLog("[ExeResourceLoader] Scanning by language %8...".utf16(), byLanguageEntry.unionName.ref.id)
 							let dataEntry =
 								((ptr as! UInt64) + section.virtualAddress + (byLanguageEntry.unionOffset.ref.offsetToData & 0x7fffffffu64))
 								as! IMAGE_RESOURCE_DATA_ENTRY
@@ -500,7 +499,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 								lastSizeOfResource = dataEntry.size
 								return icon as! HRsrc
 							} else {
-								tofitaDebugLog("[ExeResourceLoader] Ignoring by name %8...\n".utf16(), byNameEntry.unionName.ref.id)
+								// tofitaDebugLog("[ExeResourceLoader] Ignoring by name %8...".utf16(), byNameEntry.unionName.ref.id)
 							}
 						}
 					}

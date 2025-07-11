@@ -5191,12 +5191,12 @@ fun getActiveWindow() HWnd {
 fun setWindowLongA(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
 	// TODO
 	tofitaDebugLog("SetWindowLongA called".utf16())
-	return 0
+	return setWindowLongPtrA(hWnd, nIndex, dwNewLong as! SizeOfPointer) as! Int
 }
 
 @dllExport('GetDeviceCaps')
 fun getDeviceCaps(
-	hdc Handle, // HDC -> Handle
+	hdc Handle, // TODO HDC
 	index Int // int -> Int
 ) Int // Return type int -> Int
 {

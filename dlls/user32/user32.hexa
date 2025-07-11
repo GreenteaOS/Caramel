@@ -925,7 +925,7 @@ fun getSystemMetrics(nIndex Int32) Int32 {
 fun getWindowLongW(hWnd HWnd, nIndex Int) Int {
 	// TODO
 	tofitaDebugLog("GetWindowLongW called".utf16())
-	return 0
+	return getWindowLongPtrA(hWnd, nIndex) as! Int
 }
 
 // TODO #if x64
@@ -933,7 +933,7 @@ fun getWindowLongW(hWnd HWnd, nIndex Int) Int {
 fun getWindowLongPtrW(hWnd HWnd, nIndex Int) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetWindowLongPtrW called".utf16())
-	return 0
+	return getWindowLongPtrA(hWnd, nIndex) as! SizeOfPointer
 }
 
 @dllExport('GetWindowRect')
@@ -1310,7 +1310,7 @@ fun getWindowLongA(
 	nIndex Int32
 ) Int32 {
 	tofitaDebugLog("GetWindowLongA called".utf16())
-	return 0 // TODO
+	return getWindowLongPtrA(hWnd, nIndex) as! Int32 // TODO
 }
 
 @dllExport('SetClipboardData')
@@ -1338,7 +1338,7 @@ fun setMenu(stub SizeOfPointer) SizeOfPointer {
 fun setWindowLongW(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
 	// TODO
 	tofitaDebugLog("SetWindowLongW called".utf16())
-	return 0
+	return setWindowLongPtrA(hWnd, nIndex, dwNewLong as! SizeOfPointer) as! Int
 }
 
 @dllExport('SetWindowLongPtrW')
