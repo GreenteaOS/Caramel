@@ -451,6 +451,38 @@ fun render(window Window, msg Msg) LResult? {
 	return result
 }
 
+fun miceTarget(window Window, x Int32, y Int32) Window? {
+	tofitaDebugLog(">> miceTarget: checking at x=%d, y=%d".utf16(), x as! UInt64, y as! UInt64)
+	tofitaDebugLog(">> miceTarget: window %8".utf16(), window as! UInt64)
+
+	// Check if the coordinates are within the current window's bounds
+	if x >= window.x and x < (window.x + window.width) and y >= window.y and y < (window.y + window.height) {
+		tofitaDebugLog(">>> miceTarget: window %8 recursively checking the children".utf16(), window as! UInt64)
+		tofitaDebugLog(">>> miceTarget: window children count %8".utf16(), window.children.length as! UInt64)
+
+		// Recursively check children
+		for child in window.children {
+			let target = miceTarget(child, x, y)
+			if target != null {
+				tofitaDebugLog(">>> miceTarget: found child window %8".utf16(), target as! UInt64)
+				return target
+			}
+		}
+
+		// No child window found, return the current window
+		tofitaDebugLog(">> miceTarget: no child hit, returning window %8".utf16(), window as! UInt64)
+		return window
+	}
+
+	// Coordinates not within this window
+	tofitaDebugLog(">> miceTarget: window bounds x=%d, y=%d".utf16(), window.x as! UInt64, window.y as! UInt64)
+	tofitaDebugLog(">> width=%d, height=%d".utf16(), window.width as! UInt64, window.height as! UInt64)
+	tofitaDebugLog(">> miceTarget: window children count %d".utf16(), window.children.length as! UInt64)
+
+	tofitaDebugLog(">> miceTarget: coordinates outside window %8".utf16(), window as! UInt64)
+	return null
+}
+
 @dllExport('DispatchMessageW')
 fun dispatchMessageW(msg Msg) LResult? {
 	tofitaDebugLog("dispatchMessageW called".utf16())
