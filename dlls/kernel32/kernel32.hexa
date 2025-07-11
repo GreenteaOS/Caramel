@@ -476,8 +476,32 @@ fun mulDiv(
 	nNumerator Int,
 	nDenominator Int
 ) Int {
-	tofitaDebugLog("mulDiv()".utf16())
-	return nNumber // TODO
+	tofitaDebugLog("MulDiv called with nNumber=%d nNumerator=%d".utf16(), nNumber as! UInt64, nNumerator as! UInt64)
+	tofitaDebugLog("nDenominator=%d".utf16(), nDenominator as! UInt64)
+	// return nNumber // TODO
+
+	// Guard against division by zero
+	if nDenominator == 0 {
+		tofitaDebugLog("MulDiv error: division by zero".utf16())
+		return - 1 // Windows returns -1 on error
+	}
+
+	// Perform multiplication and division with rounding
+	// Windows MulDiv uses: `(nNumber * nNumerator + nDenominator/2) / nDenominator`
+	// Use 64-bit intermediate to avoid overflow
+	let product Int64 = (nNumber as! Int64) * (nNumerator as! Int64)
+	let halfDenominator Int64 = (nDenominator as! Int64) / 2i64
+	let result Int64 = (product + halfDenominator) / (nDenominator as! Int64)
+
+	// Check for overflow or underflow
+	if result > 0x7FFFFFFF or result < -0x80000000i64 {
+		tofitaDebugLog("MulDiv error: result out of 32-bit range".utf16())
+		// TODO FORMAT `- 1`
+		return - 1 // Windows returns -1 on overflow
+	}
+
+	tofitaDebugLog("MulDiv result=%d".utf16(), result as! UInt64)
+	return result as! Int
 }
 
 // TODO @linkName('_DllMainCRTStartup')

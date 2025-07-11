@@ -18,32 +18,43 @@
 // TODO Hexa: `private` module-level fields to not conflict with others exported?
 
 // @convention(convention) // TODO
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('__dllonexit')
-fun __dllonexit(stub SizeOfPointer) SizeOfPointer {
+fun __dllonexit(stub SizeOfPointer, stub1 SizeOfPointer, stub2 SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("__dllonexit()\n".utf16())
 	return 0
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('__lconv_init')
-fun __lconv_init(stub SizeOfPointer) SizeOfPointer {
+fun __lconv_init() Int32 {
 	// TODO
 	tofitaDebugLog("__lconv_init()\n".utf16())
 	return 0
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('__set_app_type')
-fun __set_app_type(stub SizeOfPointer) SizeOfPointer {
+fun __set_app_type(appType Int32) Void {
 	// TODO
-	tofitaDebugLog("__set_app_type()\n".utf16())
-	return 0
+	tofitaDebugLog("__set_app_type(%d)\n".utf16(), appType as! UInt64)
 }
 
+// TODO duplicated in extras
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('__setusermatherr')
-fun __setusermatherr(stub SizeOfPointer) SizeOfPointer {
+fun __setusermatherr(stub SizeOfPointer) Void {
 	// TODO
-	tofitaDebugLog("__setusermatherr()\n".utf16())
-	return 0
+	tofitaDebugLog("__setusermatherr(%8)\n".utf16(), stub as! UInt64)
 }
 
 @dllExport('__wgetmainargs')
@@ -142,11 +153,13 @@ fun _isnan(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('_lock')
-fun _lock(stub SizeOfPointer) SizeOfPointer {
+fun _lock(stub Int32) Void {
 	// TODO
 	tofitaDebugLog("_lock()\n".utf16())
-	return 0
 }
 
 @dllExport('_onexit')
