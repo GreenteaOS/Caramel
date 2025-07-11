@@ -2434,6 +2434,115 @@ fun createBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, 
 	return bitmap as! HBitmap
 }
 
+@dllExport('PatBlt')
+fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation) Bool32 {
+	tofitaDebugLog("PatBlt called on DC %8, ROP %u".utf16(), hdc as! UInt64, dwRop as! UInt64)
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return Bool32.False
+	}
+
+	if dwRop != RasterOperation.PatCopy {
+		tofitaDebugLog("> Only PATCOPY supported".utf16())
+		return Bool32.False
+	}
+
+	let brush = dc.hBrush as! Brush
+	if brush == null or brush.pattern == null {
+		tofitaDebugLog("> No valid pattern brush selected".utf16())
+		return Bool32.False
+	}
+
+	let pattern = brush.pattern as! Bitmap
+	if pattern == null or pattern.bits == null {
+		tofitaDebugLog("> Invalid pattern bitmap".utf16())
+		return Bool32.False
+	}
+
+	if pattern.width != 8 or pattern.height != 8 or pattern.bitsPerPixel != 1i16 {
+		tofitaDebugLog("> Pattern must be 8x8 monochrome".utf16())
+		return Bool32.False
+	}
+
+	var destBits ArrayPointer<UInt8> = null
+	var destWidth Int32 = 0
+	var destHeight Int32 = 0
+	var destBytesPerRow Int32 = 0
+	var isDestTopDown = true
+
+	if let bmp = dc.hBitmap as! Bitmap {
+		destBits = bmp.bits
+		destWidth = bmp.width
+		destHeight = bmp.height
+		destBytesPerRow = bmp.bytesPerRow
+		isDestTopDown = bmp.isTopDown
+	} else {
+		let fb = dc.fb.ref
+		if fb.pixels == 0 {
+			tofitaDebugLog("> No valid destination surface".utf16())
+			return Bool32.False
+		}
+		destBits = fb.pixels as! ArrayPointer<UInt8>
+		destWidth = fb.width as! Int32
+		destHeight = fb.height as! Int32
+		destBytesPerRow = fb.width * 4i32
+	}
+
+	if x < 0 or y < 0 or cx <= 0 or cy <= 0 or x + cx > destWidth or y + cy > destHeight {
+		tofitaDebugLog("> Invalid coordinates or dimensions".utf16())
+		return Bool32.False
+	}
+
+	let patternWidth = pattern.width
+	let patternHeight = pattern.height
+	let patternBits = pattern.bits
+	let patternBytesPerRow = (patternWidth + 7) / 8 // 1 byte per row for 8 pixels at 1 bpp
+
+	let fgColor = dc.textColor
+	let bgColor = dc.bkColor
+	let brushOrgX = dc.brushOrgX
+	let brushOrgY = dc.brushOrgY
+
+	tofitaDebugLog("> brushOrgX %d brushOrgY %d".utf16(), brushOrgX as! UInt64, brushOrgY as! UInt64)
+	tofitaDebugLog("> fgColor %8 bgColor %8".utf16(), fgColor as! UInt64, bgColor as! UInt64)
+
+	for row in 0 ... cy - 1 {
+		let destY = y + row
+		// Calculate pattern Y coordinate relative to brush origin
+		let patternY = (destY - brushOrgY) % patternHeight
+		let patternY = if patternY < 0 { patternY + patternHeight } else { patternY }
+
+		let destRowOffset = (isDestTopDown ? destY : (destHeight - 1 - destY)) * destBytesPerRow
+
+		for col in 0 ... cx - 1 {
+			let destX = x + col
+			// Calculate pattern X coordinate relative to brush origin
+			let patternX = (destX - brushOrgX) % patternWidth
+			let patternX = if patternX < 0 { patternX + patternWidth } else { patternX }
+
+			// Get the byte containing this pixel in the pattern
+			let byteIndex = patternY * patternBytesPerRow + (patternX / 8)
+			// Calculate bit position within the byte (MSB is leftmost pixel)
+			let bitPosition = 7 - (patternX % 8)
+			let bitMask = 0x01u8 << bitPosition
+			let pixelValue = (patternBits[byteIndex] & bitMask) != 0
+			let color = if pixelValue { fgColor } else { bgColor }
+
+			let destOffset = destRowOffset + destX * 4
+			// TODO renaming to `offsetByElements` may be less error prone
+			let pixel = (destBits as! ArrayPointer<ByValue<Pixel32>>).offsetItemsBack(destOffset)
+			let pixel = (destBits as! ArrayPointer<UInt8>).offsetItemsBack(destOffset)
+			let pixel = pixel as! ArrayPointer<ByValue<Pixel32>>
+			pixel[0].ref.color = color
+		}
+	}
+
+	tofitaDebugLog("> PatBlt completed".utf16())
+	return Bool32.True
+}
+
 @dllExport('PolyBezier')
 fun polyBezier(stub SizeOfPointer) SizeOfPointer {
 	// TODO
