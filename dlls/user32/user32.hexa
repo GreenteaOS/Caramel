@@ -351,7 +351,14 @@ fun showWindow(hWnd HWnd, nCmdShow CmdShow) Bool32 {
 		// TODO Cannot switch over `Int32` type
 		switch nCmdShow {
 			case SW_HIDE: {
-					tofitaShowWindow(window.windowId, nCmdShow)
+					let payload = ShowWindowPayload()
+					payload.windowId = window.windowId
+					payload.nCmdShow = nCmdShow
+					payload.x = -1
+					payload.y = -1
+					payload.width = -1
+					payload.height = -1
+					tofitaShowWindow(payload)
 					result = Bool32.True
 				}
 				// NOTE rename them to SW_SHOW_NORMAL
@@ -359,7 +366,14 @@ fun showWindow(hWnd HWnd, nCmdShow CmdShow) Bool32 {
 			case SW_SHOW:
 			case SW_SHOWNORMAL:
 			case SW_SHOWDEFAULT: {
-					tofitaShowWindow(window.windowId, nCmdShow)
+					let payload = ShowWindowPayload()
+					payload.windowId = window.windowId
+					payload.nCmdShow = nCmdShow
+					payload.x = -1
+					payload.y = -1
+					payload.width = -1
+					payload.height = -1
+					tofitaShowWindow(payload)
 					result = Bool32.True
 				}
 			case _: {
