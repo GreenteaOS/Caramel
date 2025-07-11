@@ -14,9 +14,6 @@
 
 // Entry point of the project
 @customHeader('
-	// Clang workaround
-	void __chkstk(void) asm("__chkstk");
-	void __chkstk(void) {
 	#define HEXA_NEW(z) HeapAlloc(0,0,z)
 
 	void *tmemcpy(void *dest, const void *src, uint64_t count) {
@@ -70,6 +67,9 @@
 	// TODO
 	#define memcpy(z,u,x) tmemcpy(z,u,x)
 
+	// TODO move to Hexa .dll
+	void __cdecl __chkstk(size_t probeBytes) asm("__chkstk");
+	void __cdecl __chkstk(size_t probeBytes) {
 		// tofitaDebugLog_(L"__chkstk called", 0, 0);
 	}
 
