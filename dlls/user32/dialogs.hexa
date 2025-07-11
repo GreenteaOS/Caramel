@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+// TODO turn all `as! Message` into `Message.TAG`
+
 // TODO docs
 @struct
 class DlgControlInfo {
@@ -221,12 +223,12 @@ fun dialog_CreateControls32(
 		}
 
 		if dlgInfo.hUserFont != null {
-			sendMessageW(hwndCtrl, 48u32, dlgInfo.hUserFont as! WParam, null)
+			sendMessageW(hwndCtrl, 48u32 as! Message, dlgInfo.hUserFont as! WParam, null)
 		}
 
-		if sendMessageW(hwndCtrl, 135u32, null, null) as! Int32 & 16i32 != 0 {
+		if sendMessageW(hwndCtrl, 135u32 as! Message, null, null) as! Int32 & 16i32 != 0 {
 			if hwndDefButton != null {
-				sendMessageW(hwndDefButton, 244u32, null, null)
+				sendMessageW(hwndDefButton, 244u32 as! Message, null, null)
 			}
 
 			hwndDefButton = hwndCtrl
@@ -565,7 +567,7 @@ fun dialog_CreateIndirect(
 	}
 
 	if dlgProc != null and dlgInfo.hUserFont != null {
-		sendMessageW(hwnd, 48u32, dlgInfo.hUserFont as! WParam, null)
+		sendMessageW(hwnd, 48u32 as! Message, dlgInfo.hUserFont as! WParam, null)
 	}
 
 	if dialog_CreateControls32(hwnd, dlgTemplate as! ConstArrayPointer<ClangChar>, template, hInst, unicode) == Bool32.True {
@@ -578,7 +580,7 @@ fun dialog_CreateIndirect(
 				focus = getNextDlgGroupItem(hwnd, null, 0)
 			}
 
-			if sendMessageW(hwnd, 272u32, focus as! WParam, param) != null and isWindow(hwnd) == Bool32.True and ((~template.style & 1024u32) != 0 or (template.style & 268435456u32) != 0) {
+			if sendMessageW(hwnd, 272u32 as! Message, focus as! WParam, param) != null and isWindow(hwnd) == Bool32.True and ((~template.style & 1024u32) != 0 or (template.style & 268435456u32) != 0) {
 				focus = getNextDlgTabItem(hwnd, null, 0)
 
 				if focus == null {
@@ -586,8 +588,8 @@ fun dialog_CreateIndirect(
 				}
 
 				if focus != null {
-					if sendMessageW(focus, 135u32, null, null) as! Int32 & 8i32 != 0 {
-						sendMessageW(focus, 177u32, null, 2147483647 as! LParam)
+					if sendMessageW(focus, 135u32 as! Message, null, null) as! Int32 & 8i32 != 0 {
+						sendMessageW(focus, 177u32 as! Message, null, 2147483647 as! LParam)
 					}
 
 					ntUserSetFocus(focus)
@@ -600,7 +602,7 @@ fun dialog_CreateIndirect(
 		}
 
 		if modal_owner != null and (capture = getCapture()) != null {
-			sendMessageW(capture, 31u32, null, null)
+			sendMessageW(capture, 31u32 as! Message, null, null)
 		}
 
 		// TODO Hexa: != wrong priority
@@ -728,7 +730,7 @@ fun dialog_DoDialogBox(hwnd HWnd, owner HWnd) Int32 {
 				}
 
 				if (getWindowLongW(hwnd, -16) & 256) == 0 {
-					sendMessageW(owner, 289u32, null, hwnd as! LParam)
+					sendMessageW(owner, 289u32 as! Message, null, hwnd as! LParam)
 				}
 
 				getMessageW(msg.ref, null, 0, 0)
@@ -931,7 +933,7 @@ fun dialog_IsAccelerator(hwnd HWnd, hwndDlg HWnd, wParam WParam) Bool32 {
 		var style UInt32 = getWindowLongW(hwndControl, -16) as! UInt32
 
 		if (style & ((268435456 | 134217728) as! UInt32)) == 268435456u32 {
-			dlgCode = sendMessageW(hwndControl, 135u32, null, null) as! Int32
+			dlgCode = sendMessageW(hwndControl, 135u32 as! Message, null, null) as! Int32
 
 			if (dlgCode & (8192 | 256)) != 0 and getWindowTextW(hwndControl, buffer.ref, (sizeOf<UInt32>() / sizeOf<UInt32>()) as! Int32) != 0 {
 				var p ArrayPointer<ClangWideChar> = buffer.ref.offsetItemsBack(-2)
@@ -942,11 +944,11 @@ fun dialog_IsAccelerator(hwnd HWnd, hwndDlg HWnd, wParam WParam) Bool32 {
 
 				if p != (null) and (towupper(p [1]) as! Int32) == (towupper(wParam as! ClangWideChar) as! Int32) {
 					if (dlgCode & 256) != 0 or (style & 15u32) == 7u32 {
-						sendMessageW(hwndDlg, 40u32, hwndControl as! WParam, 1 as! LParam)
-						sendMessageW(hwndDlg, 40u32, null, null)
+						sendMessageW(hwndDlg, 40u32 as! Message, hwndControl as! WParam, 1 as! LParam)
+						sendMessageW(hwndDlg, 40u32 as! Message, null, null)
 					} else {
 						if dlgCode & 8192 != 0 {
-							sendMessageW(hwndControl, 245u32, null, null)
+							sendMessageW(hwndControl, 245u32 as! Message, null, null)
 						}
 					}
 
@@ -1005,8 +1007,8 @@ fun dialog_FindMsgDestination(hwndDlg HWnd) HWnd {
 
 fun dialog_FixOneChildOnChangeFocus(hwndChild HWnd, lParam LParam) Bool32 {
 	tofitaDebugLog("dialog_FixOneChildOnChangeFocus called".utf16())
-	if 16i32 & (sendMessageW(hwndChild, 135u32, null, null) as! Int) != 0 {
-		sendMessageW(hwndChild, 244u32, null, 1 as! LParam)
+	if 16i32 & (sendMessageW(hwndChild, 135u32 as! Message, null, null) as! Int) != 0 {
+		sendMessageW(hwndChild, 244u32 as! Message, null, 1 as! LParam)
 	}
 
 	return Bool32.True
@@ -1014,11 +1016,11 @@ fun dialog_FixOneChildOnChangeFocus(hwndChild HWnd, lParam LParam) Bool32 {
 
 fun dialog_FixChildrenOnChangeFocus(hwndDlg HWnd, hwndNext HWnd) Void {
 	tofitaDebugLog("dialog_FixChildrenOnChangeFocus called".utf16())
-	var dlgcode_next Int32 = sendMessageW(hwndNext, 135u32, null, null) as! Int32
+	var dlgcode_next Int32 = sendMessageW(hwndNext, 135u32 as! Message, null, null) as! Int32
 	enumChildWindows(hwndDlg, dialog_FixOneChildOnChangeFocus, null)
 
 	if dlgcode_next & 16 != 0 {
-		var def_id UInt32 = sendMessageW(hwndDlg, (1024 + 0) as! UInt32, null, null) as! UInt32
+		var def_id UInt32 = sendMessageW(hwndDlg, (1024 + 0) as! Message, null, null) as! UInt32
 
 		if ((((def_id) >> 16) as! UInt16) as! Int32) == 21323 {
 			var hwndDef HWnd = null
@@ -1026,16 +1028,16 @@ fun dialog_FixChildrenOnChangeFocus(hwndDlg HWnd, hwndNext HWnd) Void {
 			hwndDef = getDlgItem(hwndDlg, def_id as! Int32)
 
 			if hwndDef != null {
-				var dlgcode_def Int32 = sendMessageW(hwndDef, 135u32, null, null) as! Int32
+				var dlgcode_def Int32 = sendMessageW(hwndDef, 135u32 as! Message, null, null) as! Int32
 
 				if (dlgcode_def & 8192) != 0 and (dlgcode_def & 32) != 0 {
-					sendMessageW(hwndDef, 244u32, 1 as! WParam, 1 as! LParam)
+					sendMessageW(hwndDef, 244u32 as! Message, 1 as! WParam, 1 as! LParam)
 				}
 			}
 		}
 	} else {
 		if (dlgcode_next & 8192) != 0 and (dlgcode_next & 32) != 0 {
-			sendMessageW(hwndNext, 244u32, 1 as! WParam, 1 as! LParam)
+			sendMessageW(hwndNext, 244u32 as! Message, 1 as! WParam, 1 as! LParam)
 		}
 	}
 }
@@ -1099,7 +1101,7 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 	switch msg.message {
 		// TODO Hexa: support `case 256u32:`
 		case WM_KEY_DOWN:
-			dlgCode = sendMessageW(msg.hwnd, 135u32, msg.wParam, msg as! LParam) as! Int32
+			dlgCode = sendMessageW(msg.hwnd, 135u32 as! Message, msg.wParam, msg as! LParam) as! Int32
 			if dlgCode & (4) != 0 {
 				// TODO break
 			}
@@ -1111,24 +1113,24 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 						var fIsDialog Bool32 = Bool32.fromBool(win_IsCurrentProcess(hwndDlg) == null or ntUserGetDialogInfo(hwndDlg) != (null))
 
 						if fIsDialog == Bool32.True {
-							sendMessageW(hwndDlg, 40u32, ((ntUserGetKeyState(16) as! Int32) & 32768) as! WParam, null)
+							sendMessageW(hwndDlg, 40u32 as! Message, ((ntUserGetKeyState(16) as! Int32) & 32768) as! WParam, null)
 						} else {
 							var hwndFocus HWnd = getFocus()
 							var hwndNext HWnd = getNextDlgTabItem(hwndDlg, (hwndFocus == hwndDlg) ? (null): hwndFocus, Bool32.fromBool((ntUserGetKeyState(16) as! Int32) & 32768 != 0))
 
 							if hwndNext != null {
-								dlgCode = sendMessageW(hwndNext, 135u32, msg.wParam, msg as! LParam) as! Int32
+								dlgCode = sendMessageW(hwndNext, 135u32 as! Message, msg.wParam, msg as! LParam) as! Int32
 
 								if dlgCode & 8 != 0 {
-									var maxlen Int32 = 1i32 + sendMessageW(hwndNext, 14u32, null, null) as! Int32
+									var maxlen Int32 = 1i32 + sendMessageW(hwndNext, 14u32 as! Message, null, null) as! Int32
 									var buffer = heapAlloc(getProcessHeap(), 0, (maxlen as! UInt32) * sizeOf<UInt32>() as! UInt32) as! ConstArrayPointer<ClangWideChar>
 
 									if buffer != null {
 										var length Int32 = 0
-										sendMessageW(hwndNext, 13u32, maxlen as! WParam, buffer as! LParam)
+										sendMessageW(hwndNext, 13u32 as! Message, maxlen as! WParam, buffer as! LParam)
 										length = lstrlenW(buffer)
 										heapFree(getProcessHeap(), 0, buffer as! ArrayPointer<Void>)
-										sendMessageW(hwndNext, 177u32, null, length as! LParam)
+										sendMessageW(hwndNext, 177u32 as! Message, null, length as! LParam)
 									}
 								}
 
@@ -1146,44 +1148,44 @@ fun isDialogMessageW(hwndDlg HWnd, msg Msg) Bool32 {
 						var fPrevious Bool32 = Bool32.fromBool((msg.wParam as! UInt32) == 37u32 or (msg.wParam as! UInt32) == 38u32)
 						var hwndNext HWnd = getNextDlgGroupItem(hwndDlg, msg.hwnd, fPrevious)
 
-						if hwndNext != null and sendMessageW(hwndNext, 135u32, msg.wParam, msg as! LParam) as! Int32 == ((8192 | 64) as! Int32) {
+						if hwndNext != null and sendMessageW(hwndNext, 135u32 as! Message, msg.wParam, msg as! LParam) as! Int32 == ((8192 | 64) as! Int32) {
 							ntUserSetFocus(hwndNext)
 
-							if (getWindowLongW(hwndNext, -16) & 15) == 9 and sendMessageW(hwndNext, 240u32, null, null) as! Int32 != 1i32 {
-								sendMessageW(hwndNext, 245u32, 1 as! WParam, null)
+							if (getWindowLongW(hwndNext, -16) & 15) == 9 and sendMessageW(hwndNext, 240u32 as! Message, null, null) as! Int32 != 1i32 {
+								sendMessageW(hwndNext, 245u32 as! Message, 1 as! WParam, null)
 							}
 						} else {
-							sendMessageW(hwndDlg, 40u32, hwndNext as! WParam, 1 as! LParam)
+							sendMessageW(hwndDlg, 40u32 as! Message, hwndNext as! WParam, 1 as! LParam)
 						}
 
 						return Bool32.True
 					}
 				case 3 | 27:
-					sendMessageW(hwndDlg, 273u32, 2 as! WParam, getDlgItem(hwndDlg, 2) as! LParam)
+					sendMessageW(hwndDlg, 273u32 as! Message, 2 as! WParam, getDlgItem(hwndDlg, 2) as! LParam)
 					return Bool32.True
 				case 43 | 13:
 					{
 						var dw UInt32 = 0
 						var hwndFocus HWnd = getFocus()
 
-						if isChild(hwndDlg, hwndFocus) == Bool32.True and (sendMessageW(hwndFocus, 135u32, null, null) as! Int32 & 16i32) != 0 {
-							sendMessageW(hwndDlg, 273u32, ((((((((getDlgCtrlID(hwndFocus)) as! UInt32) & 65535u32) as! UInt16) as! UInt32) | ((((0 as! UInt32) & 65535u32) as! UInt16) as! UInt32) << 16) as! Int32) as! UInt32) as! WParam, hwndFocus as! LParam)
+						if isChild(hwndDlg, hwndFocus) == Bool32.True and (sendMessageW(hwndFocus, 135u32 as! Message, null, null) as! Int32 & 16i32) != 0 {
+							sendMessageW(hwndDlg, 273u32 as! Message, ((((((((getDlgCtrlID(hwndFocus)) as! UInt32) & 65535u32) as! UInt16) as! UInt32) | ((((0 as! UInt32) & 65535u32) as! UInt16) as! UInt32) << 16) as! Int32) as! UInt32) as! WParam, hwndFocus as! LParam)
 						} else {
-							if 21323 == ((((dw = sendMessageW(hwndDlg, (1024 + 0) as! UInt32, null, null) as! UInt32) >> 16) as! UInt16) as! Int32) {
+							if 21323 == ((((dw = sendMessageW(hwndDlg, (1024 + 0) as! Message, null, null) as! UInt32) >> 16) as! UInt16) as! Int32) {
 								var hwndDef HWnd = dialog_IdToHwnd(hwndDlg, (((dw) & 65535u32) as! UInt16) as! Int32)
 
 								if hwndDef == null or isWindowEnabled(hwndDef) == Bool32.True {
-									sendMessageW(hwndDlg, 273u32, (((((((((((dw) & 65535u32) as! UInt16)) as! UInt32) & 65535u32) as! UInt16) as! UInt32) | ((((0 as! UInt32) & 65535u32) as! UInt16) as! UInt32) << 16) as! Int32) as! UInt32) as! WParam, hwndDef as! LParam)
+									sendMessageW(hwndDlg, 273u32 as! Message, (((((((((((dw) & 65535u32) as! UInt16)) as! UInt32) & 65535u32) as! UInt16) as! UInt32) | ((((0 as! UInt32) & 65535u32) as! UInt16) as! UInt32) << 16) as! Int32) as! UInt32) as! WParam, hwndDef as! LParam)
 								}
 							} else {
-								sendMessageW(hwndDlg, 273u32, 1 as! WParam, getDlgItem(hwndDlg, 1) as! LParam)
+								sendMessageW(hwndDlg, 273u32 as! Message, 1 as! WParam, getDlgItem(hwndDlg, 1) as! LParam)
 							}
 						}
 					}
 					return Bool32.True
 			}
 		case WM_CHAR:
-			dlgCode = sendMessageW(msg.hwnd, 135u32, msg.wParam, msg as! LParam) as! Int32
+			dlgCode = sendMessageW(msg.hwnd, 135u32 as! Message, msg.wParam, msg as! LParam) as! Int32
 			if dlgCode & (128 | 4) != 0 {
 				// TODO break
 			}
@@ -1261,7 +1263,7 @@ fun sendDlgItemMessageA(
 fun sendDlgItemMessageW(
 	hwnd HWnd,
 	id Int32,
-	msg UInt32,
+	msg Message,
 	wParam WParam,
 	lParam LParam
 ) LResult {
@@ -1284,7 +1286,7 @@ fun setDlgItemTextA(hwnd HWnd, id Int32, lpString ConstArrayPointer<ClangChar>) 
 @dllExport('SetDlgItemTextW')
 fun setDlgItemTextW(hwnd HWnd, id Int32, lpString ConstArrayPointer<ClangWideChar>) Bool32 {
 	tofitaDebugLog("setDlgItemTextW called".utf16())
-	return sendDlgItemMessageW(hwnd, id, 12u32, null, lpString as! LParam) as! Bool32
+	return sendDlgItemMessageW(hwnd, id, 12u32 as! Message, null, lpString as! LParam) as! Bool32
 }
 
 @dllExport('GetDlgItemTextA')
@@ -1315,7 +1317,7 @@ fun getDlgItemTextW(
 		str[0] = null
 	}
 
-	return sendDlgItemMessageW(hwnd, id, 13u32, len as! WParam, str as! LParam) as! UInt32
+	return sendDlgItemMessageW(hwnd, id, 13u32 as! Message, len as! WParam, str as! LParam) as! UInt32
 }
 
 @dllExport('SetDlgItemInt')
@@ -1391,13 +1393,13 @@ fun getDlgItemInt(
 
 fun checkDlgButton(hwnd HWnd, id Int32, check UInt32) Bool32 {
 	tofitaDebugLog("checkDlgButton called".utf16())
-	sendDlgItemMessageW(hwnd, id, 241u32, check as! WParam, null)
+	sendDlgItemMessageW(hwnd, id, 241u32 as! Message, check as! WParam, null)
 	return Bool32.True
 }
 
 fun isDlgButtonChecked(hwnd HWnd, id Int32) UInt32 {
 	tofitaDebugLog("isDlgButtonChecked called".utf16())
-	return sendDlgItemMessageW(hwnd, id, 240u32, null, null) as! UInt32
+	return sendDlgItemMessageW(hwnd, id, 240u32 as! Message, null, null) as! UInt32
 }
 
 fun checkRB(hwndChild HWnd, lParam LParam) Bool32 {
@@ -1407,9 +1409,9 @@ fun checkRB(hwndChild HWnd, lParam LParam) Bool32 {
 
 	if ((lChildID as! UInt32) >= (lpRadioGroup.firstID as! UInt32)) and ((lChildID as! UInt32) <= (lpRadioGroup.lastID as! UInt32)) {
 		if (lChildID as! UInt32) == (lpRadioGroup.checkID as! UInt32) {
-			sendMessageW(hwndChild, 241u32, 1 as! WParam, null)
+			sendMessageW(hwndChild, 241u32 as! Message, 1 as! WParam, null)
 		} else {
-			sendMessageW(hwndChild, 241u32, null, null)
+			sendMessageW(hwndChild, 241u32 as! Message, null, null)
 		}
 	}
 
@@ -1671,13 +1673,13 @@ fun dialog_DlgDirSelect(
 		return Bool32.False
 	}
 
-	item = sendMessageW(listbox, (combo == Bool32.True) ? 327u32: 392 as! UInt32, null, null) as! Int32
+	item = sendMessageW(listbox, (combo == Bool32.True) ? 327u32 as! Message: 392 as! Message, null, null) as! Int32
 
 	if item == (-1) {
 		return Bool32.False
 	}
 
-	size = sendMessageW(listbox, (combo == Bool32.True) ? 329u32: 394 as! UInt32, item as! WParam, null) as! Int32
+	size = sendMessageW(listbox, (combo == Bool32.True) ? 329u32 as! Message: 394 as! Message, item as! WParam, null) as! Int32
 
 	if size == (-1) {
 		return Bool32.False
@@ -1688,7 +1690,7 @@ fun dialog_DlgDirSelect(
 	}
 
 	// TODO `393 as! UInt32`
-	sendMessageW(listbox, (combo == Bool32.True) ? 328u32: 393 as! UInt32, item as! WParam, buffer as! LParam)
+	sendMessageW(listbox, (combo == Bool32.True) ? 328u32 as! Message: 393 as! Message, item as! WParam, buffer as! LParam)
 
 	if (ret = Bool32.fromBool((buffer [0] as! Int32) == 91)) == Bool32.True {
 		if (buffer [1] as! Int32) == 45 {
