@@ -652,9 +652,10 @@ fun outerRect(dc HDc, lprc Rect, brush HBrush) {
 	tofitaDebugLog("[internal] outerRect done".utf16())
 }
 
-@dllExport('FillRect')
-fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 // TODO `Rect?`
+// TODO this is a draft
+@dllExport('xFillRect')
+fun xfillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 	tofitaDebugLog("FillRect called with hdc %8 lprc %8".utf16(), dc as! UInt64, lprc as! UInt64)
 	tofitaDebugLog("> hbr %8".utf16(), brush as! UInt64)
 	tofitaDebugLog("> lprc %8".utf16(), lprc as! UInt64)
@@ -670,7 +671,28 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 
 	let fb = (dc as! DC).fb // Copy
 	let fb = fb.ref
+	tofitaDebugLog("> fb %8".utf16(), fb as! UInt64)
+	tofitaDebugLog("> fb.width %u".utf16(), fb.width as! UInt64)
+	tofitaDebugLog("> fb.height %u".utf16(), fb.height as! UInt64)
+	tofitaDebugLog("> fb.pixels %8".utf16(), fb.pixels as! UInt64)
 	// TODO validate != null and that it is actually a WindowFrameBuffer
+
+	let bitmap = (dc as! DC).hBitmap as! Bitmap
+	if fb.pixels == null and bitmap != null {
+		tofitaDebugLog("> fb.pixels == null and bitmap != null, using bitmap".utf16())
+		fb.pixels = bitmap.bits as! UInt64
+		fb.width = bitmap.width as! UInt32
+		fb.height = bitmap.height as! UInt32
+	}
+
+	if bitmap != null { return 1 }
+
+	// Get brush properties
+	let brushObj = brush as! Brush
+	if brushObj == null {
+		tofitaDebugLog("> Invalid brush".utf16())
+		return 0
+	}
 
 	let color = ByValue<Pixel32>()
 	// TODO by val
@@ -678,6 +700,11 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 	if brush as! Int != 7 {
 		color.ref.color = 0xFFF0F0F0u32 // TODO brush
 		color.ref.color = brush as! UInt32 // TODO brush
+		if brush as! Int == 0 {
+			color.ref.color = randomize(rand() as! UInt32)
+		}
+
+		color.ref.color = brushObj.color
 	}
 
 	for y in lprc.top ... lprc.bottom {
@@ -690,6 +717,12 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 			// TODO ^ this can be unsafe write, cause within bounds
 
 			// TODO this is for demo purposes and to check frame buffer size
+			// if (x == 0 or y == 0 or y == lprc.bottom - 1 or x == lprc.right - 1) {
+			// color.ref.color = 0x00AA0000
+			// setFramebufferPixel(fb, x, y, color)
+			// }
+		}
+	}
 
 	tofitaDebugLog("> FillRect done".utf16())
 	return 1

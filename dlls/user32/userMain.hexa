@@ -472,7 +472,6 @@ fun emptyWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRes
 
 			let color_window = 5 // TODO
 
-			fillRect(hdc, ps.ref.rcPaint.ref, (color_window + 1) as! HBrush)
 
 			endPaint(hWnd, ps.ref)
 
