@@ -14,34 +14,64 @@
 
 // Entry point of the project
 @customHeader('
-    void *tmemcpy(void *dest, const void *src, uint64_t count) {
-        uint8_t *dst8 = (uint8_t *)dest;
-        const uint8_t *src8 = (const uint8_t *)src;
-
-        while (count--) {
-            *dst8++ = *src8++;
-        }
-
-        return dest;
-    }
 	// Clang workaround
 	void __chkstk(void) asm("__chkstk");
 	void __chkstk(void) {
 	#define HEXA_NEW(z) HeapAlloc(0,0,z)
+
+	void *tmemcpy(void *dest, const void *src, uint64_t count) {
+		// Handle edge cases
+		if (count == 0 || dest == src) {
+			return dest;
+		}
+
+		uint8_t *dst = (uint8_t *)dest;
+		const uint8_t *src8 = (const uint8_t *)src;
+
+	#ifdef bit64
+		// Align destination to 16-byte boundary for SIMD
+		while (((uintptr_t)dst & 15) && count) {
+			*dst++ = *src8++;
+			count--;
+		}
+
+		// Use 64-bit copies for unaligned or non-SIMD cases
+		if (count >= 8 && !((uintptr_t)src8 & 7)) {
+			uint64_t* dst64 = (uint64_t*)dst;
+			const uint64_t* src64 = (const uint64_t*)src8;
+			while (count >= 8) {
+				*dst64++ = *src64++;
+				count -= 8;
+			}
+			dst = (uint8_t*)dst64;
+			src8 = (const uint8_t*)src64;
+		}
+
+		// Use SSE2 for large, aligned blocks
+		/*if (count >= 16) {
+			__m128i* dst128 = (__m128i*)dst;
+			const __m128i* src128 = (const __m128i*)src8;
+			while (count >= 16) {
+				_mm_store_si128(dst128++, _mm_loadu_si128(src128++));
+				count -= 16;
+			}
+			dst = (uint8_t*)dst128;
+			src8 = (const uint8_t*)src128;
+		}*/
+	#endif
+
+		// Copy remaining bytes
+		while (count--) {
+			*dst++ = *src8++;
+		}
+
+		return dest;
+	}
 	// TODO
 	#define memcpy(z,u,x) tmemcpy(z,u,x)
 
 		// tofitaDebugLog_(L"__chkstk called", 0, 0);
 	}
-
-    void _memset() asm("_memset");
-    void _memset() {
-    } // TODO TODO TODO
-
-    void _memcpy() asm("_memcpy");
-    void _memcpy() {
-    } // TODO TODO TODO
-    #endif
 
 	#define wprintf(z,...) {}
 	#define HEAP_ZERO_MEMORY 0
@@ -282,6 +312,28 @@
 		tofitaDebugLog_(L"__aullrem result %d", remainder, 0);
 		return remainder;
 	}
+
+	void* /*__cdecl*/ _memset(void *dest, int val, size_t count) asm("_memset");
+	__attribute__((no_builtin("memset"))) void* /*__cdecl*/ _memset(void *dest, int val, size_t count) {
+		tofitaDebugLog_(L"userMain _memset called %8 %d", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)count));
+		for (size_t i = 0; i < count; i++) {
+			((uint8_t *)dest)[i] = val;
+		}
+		return dest;
+	} // TODO use crt/ntdll imports
+
+	// TODO @attribute and @attributeAtDefinition
+	// TODO try those at Tofita: i.e. use built-ins despite freestanding, so clang uses and optimizes them
+
+	void* __cdecl _memcpy(void *dest, const void *src, size_t count) asm("_memcpy");
+	__attribute__((no_builtin("memcpy"))) void* __cdecl _memcpy(void *dest, const void *src, size_t count) {
+		tofitaDebugLog_(L"userMain _memcpy called %8 %8", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)src));
+		for (size_t i = 0; i < count; i++) {
+			((uint8_t *)dest)[i] = ((uint8_t *)src)[i];
+		}
+		return dest;
+	} // TODO
+	#endif
 
 	void startup() {
 		HEXA_MAIN(0, nullptr);
