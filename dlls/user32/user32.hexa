@@ -313,7 +313,8 @@ fun createWindowExA(
 	lpParam LParam
 ) HWnd {
 	tofitaDebugLog("CreateWindowExA called {%s} of {%s}".utf16(), lpWindowName as! UInt64, lpClassName as! UInt64)
-	var utf16zClassName ArrayByValue<ClangWideChar, 4096> = [0]
+	// TODO crash when 4096 (supposedly wrong stack checker signature)
+	var utf16zClassName ArrayByValue<ClangWideChar, 256> = [0]
 	var i = 0
 	while lpClassName != null { // TODO avoid infinite loop
 		utf16zClassName[i] = lpClassName[i]
@@ -324,7 +325,7 @@ fun createWindowExA(
 		i++
 	}
 
-	var utf16zWindowName ArrayByValue<ClangWideChar, 4096> = [0]
+	var utf16zWindowName ArrayByValue<ClangWideChar, 256> = [0]
 	var i = 0
 	while lpWindowName != null { // TODO avoid infinite loop
 		utf16zWindowName[i] = lpWindowName[i]
@@ -502,9 +503,50 @@ fun dispatchMessageW(msg Msg) LResult? {
 			result = render(window, msg)
 		} else {
 			tofitaDebugLog("> not_WM_PAINT".utf16())
-			result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
 			tofitaDebugLog(">> msg.message = %8".utf16(), msg.message as! UInt64)
 
+			// TODO Do this in the `GetMessageW`
+			if msg.message == Message.WM_MOUSE_MOVE or
+				msg.message == Message.WM_LEFT_BUTTON_DOWN or
+				msg.message == Message.WM_LEFT_BUTTON_UP or
+				msg.message == Message.WM_RIGHT_BUTTON_DOWN or
+				msg.message == Message.WM_RIGHT_BUTTON_UP or
+				msg.message == Message.WM_MIDDLE_BUTTON_DOWN or
+				msg.message == Message.WM_MIDDLE_BUTTON_UP or
+				msg.message == Message.WM_LEFT_BUTTON_DOUBLE_CLICK or
+				msg.message == Message.WM_RIGHT_BUTTON_DOUBLE_CLICK or
+				msg.message == Message.WM_MIDDLE_BUTTON_DOUBLE_CLICK {
+				tofitaDebugLog(">> Mouse event".utf16())
+				tofitaDebugLog(">> msg.lParam = %d".utf16(), msg.lParam as! UInt64)
+				// Extract mouse coordinates
+				let lParam UInt32 = msg.lParam as! UInt32
+				let frameWidth = 1
+				let x Int32 = LParam.loWord(lParam) - frameWidth // Tofita sends non-client mouse
+				let frameHeight = 33
+				let y Int32 = LParam.hiWord(lParam) - frameHeight // Tofita sends non-client mouse
+				tofitaDebugLog(">> x = %d, y = %d".utf16(), x as! UInt64, y as! UInt64)
+
+				// Find the target window (parent or child) under the cursor
+				let targetWindow = miceTarget(window, x, y)
+				if let targetWindow = targetWindow {
+					// Translate coordinates to target window's client space
+					let translatedX = x - targetWindow.x
+					let translatedY = y - targetWindow.y
+					let translatedLParam = LParam.makeULong(translatedX as! UInt16, translatedY as! UInt16) as! LParam
+					tofitaDebugLog(">> Forwarding to window %8".utf16(), targetWindow as! UInt64)
+					tofitaDebugLog(">> translated x = %d, y = %d".utf16(), translatedX as! UInt64, translatedY as! UInt64)
+					result = targetWindow.proc(targetWindow as! HWnd, msg.message, msg.wParam, translatedLParam)
+				} else {
+					tofitaDebugLog("> No window found under cursor".utf16())
+					result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
+				}
+			} else if msg.message == Message.WM_TIMER, msg.lParam != null {
+				// TODO capture exceptions and flag for non-capturing
+				let timerProc = msg.lParam as! TimerProcedure
+				timerProc(msg.hwnd, Message.WM_TIMER, msg.wParam as! UInt64, msg.time)
+			} else {
+				result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
+			}
 		}
 		// TODO result = ERROR_SUCCESS
 	} else {
@@ -611,8 +653,8 @@ fun outerRect(dc HDc, lprc Rect, brush HBrush) {
 }
 
 @dllExport('FillRect')
-// NOTE `Rect?`
 fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
+// TODO `Rect?`
 	tofitaDebugLog("FillRect called with hdc %8 lprc %8".utf16(), dc as! UInt64, lprc as! UInt64)
 	tofitaDebugLog("> hbr %8".utf16(), brush as! UInt64)
 	tofitaDebugLog("> lprc %8".utf16(), lprc as! UInt64)
@@ -648,6 +690,11 @@ fun fillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
 			// TODO ^ this can be unsafe write, cause within bounds
 
 			// TODO this is for demo purposes and to check frame buffer size
+
+	tofitaDebugLog("> FillRect done".utf16())
+	return 1
+}
+
 @dllExport('FillRect')
 fun fillRect(hdc HDc, lprc Rect, brush HBrush) Int32 {
 	// Validate device context
