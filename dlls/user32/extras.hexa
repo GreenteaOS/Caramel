@@ -1111,6 +1111,26 @@ fun createCompatibleDC(hdc HDc?) HDc {
 	dc.penPosX = 0
 	dc.penPosY = 0
 
+	// Create default pen (black, solid, 1-pixel wide)
+	let defaultPen = @heap new Pen()
+	defaultPen.style = 0 // PS_SOLID
+	defaultPen.width = 1
+	defaultPen.color = 0x000000 as! COLORREF // Black
+	dc.hPen = defaultPen as! HPen
+
+	// Create a default 1x1 monochrome bitmap
+	let bitmap = @heap new Bitmap()
+	bitmap.width = 1
+	bitmap.height = 1
+	bitmap.bitsPerPixel = 1i16
+	bitmap.bytesPerRow = 4 // Minimal aligned row size
+	bitmap.bits = malloc(4) as! ArrayPointer<UInt8>
+	bitmap.isTopDown = true
+	if bitmap.bits != null {
+		bitmap.bits[0] = 0xFFu8 // White pixel
+	}
+	dc.hBitmap = bitmap as! HBitmap
+
 	return dc as! HDc
 }
 
