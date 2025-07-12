@@ -2127,18 +2127,29 @@ fun getObjectW(hObject SizeOfPointer, nSize Int32, lpvObject SizeOfPointer) Int3
 	tofitaDebugLog("> lpvObject %8".utf16(), lpvObject as! UInt64)
 
 	// TODO Hexa: `case (BITMAP.meta.sizeOf):`
-	if true {
+	if nSize == 32 or nSize == 24 /* 32-bit*/ {
 		tofitaDebugLog("> assuming BITMAP".utf16())
+		let bitmapSource Bitmap = hObject as! Bitmap
 		let bitmap BITMAP = lpvObject as! BITMAP
-		bitmap.bmWidth = 72
-		bitmap.bmHeight = 112
+		bitmap.bmWidth = bitmapSource.width // 72 // TODO
+		bitmap.bmHeight = bitmapSource.height // 112 // TODO
 		bitmap.bmBitsPixel = 8i16
 		bitmap.bmPlanes = 1i16
 		bitmap.bmWidthBytes = 72
 		bitmap.bmType = 0
-		var bmBits ArrayByValue<ClangWideChar, 8064> = [0]
+		// TODO `var bmBits ArrayByValue<ClangWideChar, 8064> = [0]` crashes when 8064 on stack on 32-bit
+		var bmBits ArrayByValue<ClangWideChar, 256> = [0]
 		// TODO currently `bmBits` field never used or its a unnecessary `BITMAP` type alias?
 		bitmap.bmBits = bmBits as! SizeOfPointer // TODO .address
+		// let bitmap = new Bitmap()
+		// bitmap.width = width
+		// bitmap.height = absHeight
+		// bitmap.bitsPerPixel = bitDepth as! Int16 // TODO Hexa: `bitDepth.toSignedSaturated`/clamped + ensure its not runtime field
+		// bitmap.bytesPerRow = bytesPerRow as! Int32
+		// bitmap.bits = bits
+		// bitmap.colorTable = colorTable
+		// bitmap.colorTableSize = colorTableSize
+		// bitmap.isTopDown = isTopDown
 
 		return 0
 	}
