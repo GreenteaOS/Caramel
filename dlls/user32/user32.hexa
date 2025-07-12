@@ -622,6 +622,13 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 	rcPaint.bottom = fb.height as! Int32
 	rcPaint.bottom = window.clipY + window.clipHeight // TODO MIN(fb.height)
 
+	// Set fErase (assume true if no WM_ERASEBKGND handler)
+	ps.fErase = Bool32.True // TODO Check if background was erased
+
+	// Validate update region
+	// window.invalidRect = null // Clear invalid region
+	// TODO Implement ValidateRect to update system-wide invalid region
+
 	tofitaDebugLog("> BeginPaint done HDc = %8".utf16(), fb as! UInt64)
 	return dc as! HDc
 	// TODO ^ proper HDc implementation (at least as a handle with secret)
