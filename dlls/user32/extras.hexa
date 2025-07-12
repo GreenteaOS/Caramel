@@ -654,6 +654,7 @@ fun loadBitmapW(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangWideCh
 	return loadBitmapA(hInstance, lpBitmapName)
 }
 
+// TODO special type for "string-or-resource-id"
 @dllExport('LoadBitmapA')
 fun loadBitmapA(hModule HModule, lpBitmapName ConstArrayPointer<ClangChar>) HBitmap {
 	tofitaDebugLog("loadBitmapA called %8 %8".utf16(), hModule as! UInt64, lpBitmapName as! UInt64)
@@ -876,6 +877,11 @@ fun bitBlt(
 		return Bool32.False
 	}
 
+	tofitaDebugLog("> dcDest: %8".utf16(), dcDest as! UInt64)
+	tofitaDebugLog("> dcDest.handleType: %8".utf16(), dcDest.handleType as! UInt64)
+	tofitaDebugLog("> dcSrc: %8".utf16(), dcSrc as! UInt64)
+	tofitaDebugLog("> dcSrc.handleType: %8".utf16(), dcSrc.handleType as! UInt64)
+
 	// let bmpDest = dcDest.hBitmap as! Bitmap
 	// if bmpDest == null {
 	// tofitaDebugLog("> Invalid destination bitmap, trying framebuffer".utf16())
@@ -894,11 +900,19 @@ fun bitBlt(
 	var heightDest = 0i32
 	var bppDest = 0i16
 	if let bmpDest = dcDest.hBitmap as! Bitmap {
+		tofitaDebugLog("> Using dcDest.hBitmap: %8".utf16(), dcDest.hBitmap as! UInt64)
+
 		bytesPerRowDest = bmpDest.bytesPerRow
 		bitsDest = bmpDest.bits
 		widthDest = bmpDest.width
 		heightDest = bmpDest.height
 		bppDest = bmpDest.bitsPerPixel
+
+		tofitaDebugLog("> bytesPerRowDest: %d".utf16(), bytesPerRowDest as! UInt64)
+		tofitaDebugLog("> bitsDest: %8".utf16(), bitsDest as! UInt64)
+		tofitaDebugLog("> widthDest: %d".utf16(), widthDest as! UInt64)
+		tofitaDebugLog("> heightDest: %d".utf16(), heightDest as! UInt64)
+		tofitaDebugLog("> bppDest: %d".utf16(), bppDest as! UInt64)
 	} else {
 		tofitaDebugLog("> Invalid destination bitmap, trying framebuffer".utf16())
 		let fb = dcDest.fb.ref
@@ -908,6 +922,11 @@ fun bitBlt(
 		widthDest = fb.width as! Int32
 		heightDest = fb.height as! Int32
 		bppDest = 32i16
+
+		tofitaDebugLog("> fb.pixels: %8".utf16(), fb.pixels as! UInt64)
+		tofitaDebugLog("> fb.width: %d".utf16(), fb.width as! UInt64)
+		tofitaDebugLog("> fb.height: %d".utf16(), fb.height as! UInt64)
+		tofitaDebugLog("> calculated bytesPerRow: %d".utf16(), bytesPerRowDest as! UInt64)
 	}
 
 	// let bmpSrc = dcSrc.hBitmap as! Bitmap
@@ -932,6 +951,8 @@ fun bitBlt(
 	var colorTableSize = 0u32
 	var isBottomUpSrc = false
 	if let bmpSrc = dcSrc.hBitmap as! Bitmap {
+		tofitaDebugLog("> Using dcSrc.hBitmap: %8".utf16(), dcSrc.hBitmap as! UInt64)
+
 		bytesPerRowSrc = bmpSrc.bytesPerRow
 		bitsSrc = bmpSrc.bits
 		widthSrc = bmpSrc.width
@@ -940,6 +961,15 @@ fun bitBlt(
 		colorTable = bmpSrc.colorTable
 		colorTableSize = bmpSrc.colorTableSize
 		isBottomUpSrc = not bmpSrc.isTopDown
+
+		tofitaDebugLog("> bytesPerRowSrc: %d".utf16(), bytesPerRowSrc as! UInt64)
+		tofitaDebugLog("> bitsSrc: %8".utf16(), bitsSrc as! UInt64)
+		tofitaDebugLog("> widthSrc: %d".utf16(), widthSrc as! UInt64)
+		tofitaDebugLog("> heightSrc: %d".utf16(), heightSrc as! UInt64)
+		tofitaDebugLog("> bppSrc: %d".utf16(), bppSrc as! UInt64)
+		tofitaDebugLog("> colorTable: %8".utf16(), colorTable as! UInt64)
+		tofitaDebugLog("> colorTableSize: %d".utf16(), colorTableSize as! UInt64)
+		tofitaDebugLog("> isBottomUpSrc: %d".utf16(), isBottomUpSrc as! UInt64)
 	} else {
 		tofitaDebugLog("> Invalid source bitmap, trying framebuffer".utf16())
 		let fb = dcSrc.fb.ref
@@ -949,6 +979,11 @@ fun bitBlt(
 		widthSrc = fb.width as! Int32
 		heightSrc = fb.height as! Int32
 		bppSrc = 32i16
+
+		tofitaDebugLog("> fb.pixels: %8".utf16(), fb.pixels as! UInt64)
+		tofitaDebugLog("> fb.width: %d".utf16(), fb.width as! UInt64)
+		tofitaDebugLog("> fb.height: %d".utf16(), fb.height as! UInt64)
+		tofitaDebugLog("> calculated bytesPerRow: %d".utf16(), bytesPerRowSrc as! UInt64)
 	}
 
 	// Validate bounds
@@ -1110,9 +1145,9 @@ fun srand(seed UInt32) Void {
 }
 
 @dllExport('memcmp')
-fun memcmp(stub SizeOfPointer) SizeOfPointer {
 // TODO Global item `memcmp` declared in `/extras` already defined at `Hexa\library\c\c.hexa` line `493`
 // ^ must only type-check `declare` vs `fun`
+fun _memcmp(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("memcmp called".utf16())
 	return 0
@@ -2627,6 +2662,7 @@ fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation)
 	return Bool32.True
 }
 
+// TODO Hexa: use `@linkAsTitleCase` or whatever to avoid repeating "[p->P]olyBezier"
 @dllExport('PolyBezier')
 fun polyBezier(stub SizeOfPointer) SizeOfPointer {
 	// TODO
@@ -3739,14 +3775,6 @@ fun setClassLongA(stub SizeOfPointer) SizeOfPointer {
 fun getClassNameA(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetClassNameA called".utf16())
-	return 0
-}
-
-// TODO special type for "sring-or-resource-id"
-@dllExport('LoadBitmapA')
-fun loadBitmapA(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangChar>) HBitmap {
-	// TODO
-	tofitaDebugLog("LoadBitmapA called %8 %S".utf16(), hInstance as! UInt64, lpBitmapName as! UInt64)
 	return 0
 }
 
@@ -4984,6 +5012,11 @@ fun copyRect(lprcDst Rect, lprcSrc Rect) Bool32 {
 
 @dllExport('SetWindowLongPtrA')
 fun setWindowLongPtrA(hWnd HWnd, nIndex Int32, dwNewLong SizeOfPointer) SizeOfPointer {
+	// TODO
+	// Here is a summary of the return behavior:
+	// Success: Returns the previous value of the specified offset.
+	// Failure: Returns zero, and you should check GetLastError for more details.
+	// Previous Value is Zero: Returns zero, but you need to clear the last error information to confirm success.
 	// TODO Hexa: `.windowLongPtrA` nullable check
 	tofitaDebugLog("SetWindowLongPtrA called %8 with index %u".utf16(), hWnd as! UInt64, nIndex as! UInt64)
 	let previous = handleToWindow(hWnd).windowLongPtrA
@@ -5013,8 +5046,9 @@ class WindowClassExA {
 fun registerClassExA(wc WindowClassExA) Atom {
 	// TODO
 	tofitaDebugLog("RegisterClassExA called {%s}".utf16(), wc.lpszClassName as! UInt64)
-	var lpszMenuName ArrayByValue<ClangWideChar, 4096> = [0]
-	var utf16zClassName ArrayByValue<ClangWideChar, 4096> = [0]
+	// TODO crash when 4096
+	var lpszMenuName ArrayByValue<ClangWideChar, 256> = [0]
+	var utf16zClassName ArrayByValue<ClangWideChar, 256> = [0]
 
 	var i = 0
 	while true {
@@ -5143,6 +5177,10 @@ fun loadResource(hModule HModule, hResInfo HRsrc) HGlobal // Load a resource fro
 fun deleteObject(ho Handle) Bool32 // BOOL -> Bool (return type)
 {
 	tofitaDebugLog("DeleteObject called with h %8".utf16(), ho as! UInt64)
+	let handleTypeHolder = ho as! HandleTypeHolder
+	if handleTypeHolder != null and handleTypeHolder.handleType == HandleType.HPen {
+		// TODO free(ho as! RuntimeAllocated)
+	}
 	return Bool32.True
 }
 
