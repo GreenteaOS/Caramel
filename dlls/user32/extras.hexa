@@ -5784,14 +5784,20 @@ fun setDIBitsToDevice(
 	var dstBits ArrayPointer<UInt8> = null
 	var dstRow Int32 = 0
 	var dstBpp Int32 = 0
+	var dstWidth Int32 = 0
+	var dstHeight Int32 = 0
 	if bmp != null {
 		dstBits = bmp.bits
 		dstRow = bmp.bytesPerRow
 		dstBpp = bmp.bitsPerPixel as! Int32
+		dstWidth = bmp.width as! Int32
+		dstHeight = bmp.height as! Int32
 	} else {
 		dstBits = fb.pixels as! ArrayPointer<UInt8>
 		dstRow = fb.width * 4i32
 		dstBpp = 32
+		dstWidth = fb.width as! Int32
+		dstHeight = fb.height as! Int32
 	}
 
 	// For simplicity, assume dstBpp is 32; reject otherwise
@@ -5804,6 +5810,18 @@ fun setDIBitsToDevice(
 	let srcRow = ((hdr.biWidth * hdr.biBitCount + 31) / 32) * 4
 	let absH = hdr.biHeight < 0 ? -hdr.biHeight : hdr.biHeight
 	let isTopDn = hdr.biHeight < 0
+
+	// Validate source bounds
+	if xSrc < 0 or xSrc + w > hdr.biWidth or startScan + scanLines > absH {
+		tofitaDebugLog("> Invalid source coordinates or dimensions".utf16())
+		return 0
+	}
+
+	// Validate destination bounds
+	if xDest < 0 or xDest + w > dstWidth or yDest < 0 or yDest + scanLines > dstHeight {
+		tofitaDebugLog("> Destination out of bounds".utf16())
+		return 0
+	}
 
 	// Handle different bit depths ----------------------------------------------
 	if hdr.biBitCount == 24 or hdr.biBitCount == 32 {
@@ -5842,24 +5860,44 @@ fun setDIBitsToDevice(
 		// Handle 4bpp with color table
 		let numColors = (hdr.biClrUsed != 0) ? hdr.biClrUsed : 16u32 // 2^4 = 16
 		let colorTable = bmi.bmiColors as! ArrayPointer<ByValue<RGBQUAD>>
+		if colorTable == null or numColors == 0 {
+			tofitaDebugLog("> Color table missing for 4-bit source".utf16())
+			return 0
+		}
 
 		// Copy each requested scanline
 		for dy in 0u32 ... scanLines {
 			let srcY = startScan + dy
 			if srcY >= absH { break }
 			let realSrcY = isTopDn ? srcY : (absH - 1 - srcY)
-			let srcRowStart = bits.offsetItemsBack(realSrcY * srcRow)
 			let dstY = yDest + dy as! Int32
 			let dstOffset = (dstY * dstRow + xDest * 4) as! Int
 
-			// Process each pixel in the scanline
+			var srcRowForCopy: ConstArrayPointer<UInt8> = null
+
+			// Determine the source scanline, handling the vertical flip for bottom-up DIBs.
+			// This new logic correctly calculates the offset relative to the 'bits' pointer,
+			// which points to a buffer containing exactly 'scanLines' of data.
+			if isTopDn {
+				// Top-down DIB: process scanlines in forward order.
+				srcRowForCopy = bits.offsetItemsBack((dy * srcRow) as! Int)
+			} else {
+				// Bottom-up DIB: process scanlines in reverse order to flip the image.
+				let srcRowIndex = scanLines - 1 - dy
+				srcRowForCopy = bits.offsetItemsBack((srcRowIndex * srcRow) as! Int)
+			}
+
 			for dx in 0u32 ... w {
 				let srcX = xSrc + dx as! Int32
 				let byteOffset = (srcX / 2) as! Int
+				if byteOffset >= srcRow {
+					tofitaDebugLog("> Byte offset exceeds srcRow %d at srcX %d".utf16(),
+						srcRow as! UInt64, srcX as! UInt64)
+					continue
+				}
 				let isHighNibble = (srcX % 2) == 0
-				let byte = srcRowStart[byteOffset]
+				let byte = srcRowForCopy[byteOffset]
 				let index = if isHighNibble {(byte >> 4) & 0xF } else { byte & 0xF }
-
 				let destPixelOffset = dstOffset + (dx * 4) as! Int
 				if (index as! UInt32) < numColors {
 					let color = colorTable[index as! Int].ref
@@ -5902,6 +5940,7 @@ fun setDIBitsToDevice(
 		)
 	}*/
 	// trigger lazy swap so we see something on screen
+	// TODO do not do it when target is bitmap
 	tofitaFastSystemCall(TofitaSyscalls.LazySwap as! TofitaSyscalls, 0)
 
 	tofitaDebugLog("SetDIBitsToDevice completed for hdc %8".utf16(), hdc as! UInt64)
