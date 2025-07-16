@@ -5716,11 +5716,113 @@ fun setDIBitsToDevice(
 	nStartScan UInt32,
 	nNumScans UInt32,
 	lpBits ConstArrayPointer<UInt8>,
-	lpbmi ConstArrayPointer<BITMAPINFO>,
+	lpbmi BITMAPINFO,
 	fuColorUse UInt32
 ) Int32 {
 	tofitaDebugLog("SetDIBitsToDevice called with hdc %8".utf16(), hdc as! UInt64)
 	return 0
+}
+
+@dllExport('SetDIBitsToDevice')
+fun setDIBitsToDevice(
+	hdc HDc,
+	xDest Int32,
+	yDest Int32,
+	w UInt32,
+	h UInt32,
+	xSrc Int32,
+	ySrc Int32,
+	startScan UInt32,
+	scanLines UInt32,
+	bits ConstArrayPointer<UInt8>, // raw pixel bytes
+	bmi BITMAPINFO,
+	usage UInt32 // must be DIB_RGB_COLORS (0)
+) Int32 {
+	tofitaDebugLog("SetDIBitsToDevice called with hdc %8".utf16(), hdc as! UInt64)
+
+	// quick rejections ---------------------------------------------------------
+	if hdc == null or bits == null or bmi == null {
+		tofitaDebugLog("> hdc or bits or bmi is null".utf16())
+		tofitaDebugLog("> hdc: %8".utf16(), hdc as! UInt64)
+		tofitaDebugLog("> bits: %8".utf16(), bits as! UInt64)
+		tofitaDebugLog("> bmi: %8".utf16(), bmi as! UInt64)
+		return 0
+	}
+	if usage != 0 /*DIB_RGB_COLORS*/ {
+		tofitaDebugLog("> usage != 0".utf16())
+		tofitaDebugLog("> usage: %u".utf16(), usage as! UInt64)
+		return 0
+	}
+
+	let hdr = bmi.bmiHeader.ref
+	if hdr.biCompression != 0 /*BI_RGB*/ {
+		tofitaDebugLog("> hdr.biCompression != 0".utf16())
+		tofitaDebugLog("> hdr.biCompression: %u".utf16(), hdr.biCompression as! UInt64)
+		return 0
+	}
+	if hdr.biBitCount != 24 and hdr.biBitCount != 32 {
+		tofitaDebugLog("> hdr.biBitCount != 24 and hdr.biBitCount != 32".utf16())
+		tofitaDebugLog("> hdr.biBitCount: %u".utf16(), hdr.biBitCount as! UInt64)
+		tofitaDebugLog("> hdr.biWidth: %d".utf16(), hdr.biWidth as! UInt64)
+		tofitaDebugLog("> hdr.biHeight: %d".utf16(), hdr.biHeight as! UInt64)
+		return 0
+	}
+
+	let dc = hdc as! DC
+	let bmp = dc.hBitmap as! Bitmap
+	let fb = dc.fb.ref
+	if bmp == null and fb == null {
+		tofitaDebugLog("> bmp and fb are null".utf16())
+		tofitaDebugLog("> bmp: %8".utf16(), bmp as! UInt64)
+		tofitaDebugLog("> fb: %8".utf16(), fb as! UInt64)
+		return 0
+	}
+
+	// destination surface ------------------------------------------------------
+	var dstBits ArrayPointer<UInt8> = null
+	var dstRow Int32 = 0
+	var dstBpp Int32 = 0
+	if bmp != null {
+		dstBits = bmp.bits
+		dstRow = bmp.bytesPerRow
+		dstBpp = bmp.bitsPerPixel as! Int32
+	} else {
+		dstBits = fb.pixels as! ArrayPointer<UInt8>
+		dstRow = fb.width * 4i32
+		dstBpp = 32
+	}
+
+	// source layout ------------------------------------------------------------
+	let srcBpp = hdr.biBitCount as! Int32 / 8 // 3 or 4
+	let srcRow = ((hdr.biWidth * hdr.biBitCount + 31) / 32) * 4
+	let absH = hdr.biHeight < 0 ? -hdr.biHeight : hdr.biHeight
+	let isTopDn = hdr.biHeight < 0
+
+	// copy each requested scanline --------------------------------------------
+	for dy in 0u32 ... scanLines {
+		let srcY = startScan + dy
+		if srcY >= absH { break }
+
+		// flip: bottom-up DIB -> top-down bitmap
+		let realSrcY = isTopDn ? srcY : (absH - 1 - srcY)
+		let srcOff = realSrcY * srcRow + xSrc * srcBpp
+
+		let dstY = yDest + dy as! Int32
+		let dstOff = dstY * dstRow + xDest * (dstBpp / 8)
+
+		// copy one scanline
+		memcpy(
+			dstBits.offsetItemsBack(dstOff),
+			bits.offsetItemsBack(srcOff),
+			(w * srcBpp) as! Int
+		)
+	}
+
+	// trigger lazy swap so we see something on screen
+	tofitaFastSystemCall(TofitaSyscalls.LazySwap as! TofitaSyscalls, 0)
+
+	tofitaDebugLog("SetDIBitsToDevice completed for hdc %8".utf16(), hdc as! UInt64)
+	return scanLines as! Int32
 }
 
 @dllExport('GetPrivateProfileIntW')
