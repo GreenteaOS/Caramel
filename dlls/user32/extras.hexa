@@ -5524,6 +5524,7 @@ fun getCurrentDirectoryW(buflen UInt32, buf ArrayPointer<ClangWideChar>) UInt32
 	return 0
 }
 
+/// Retrieve a message from the queue in a non-blocking way, exact behavior is tunable by the flags
 @dllExport('PeekMessageW')
 fun peekMessageW(msg Msg, hWnd HWnd?, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 {
 	// tofitaDebugLog("peekMessageW called".utf16()) <- spammy
@@ -5944,25 +5945,6 @@ fun setLayout(hdc HDc, dwLayout UInt32) UInt32 {
 	if hdc == null { return 0u32 }
 	// { hdc as! DC }.layout = dwLayout
 	return 0u32 // Previous layout TODO
-}
-
-@dllExport('SetDIBitsToDevice')
-fun setDIBitsToDevice(
-	hdc HDc,
-	xDest Int32,
-	yDest Int32,
-	dwWidth UInt32,
-	dwHeight UInt32,
-	xSrc Int32,
-	ySrc Int32,
-	nStartScan UInt32,
-	nNumScans UInt32,
-	lpBits ConstArrayPointer<UInt8>,
-	lpbmi BITMAPINFO,
-	fuColorUse UInt32
-) Int32 {
-	tofitaDebugLog("SetDIBitsToDevice called with hdc %8".utf16(), hdc as! UInt64)
-	return 0
 }
 
 @dllExport('SetDIBitsToDevice')

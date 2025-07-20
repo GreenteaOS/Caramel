@@ -13,10 +13,31 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 @dllExport('GetStockObject')
-fun getStockObject(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("getStockObject called".utf16())
-	return 0
+fun getStockObject(index Int) Handle? {
+	// TODO cache
+	tofitaDebugLog("getStockObject called with index %d".utf16(), index as! UInt64)
+
+	let black_pen = 7
+	if index == black_pen {
+		tofitaDebugLog("> Creating black pen".utf16())
+		let pen = @heap new Pen()
+		pen.style = 0
+		pen.width = 0
+		pen.color = 0
+		return pen as! HPen
+	}
+
+	let ltgray_brush = 1
+	if index == ltgray_brush {
+		tofitaDebugLog("> Creating LTGRAY brush".utf16())
+		let brush = @heap new Brush()
+		brush.pattern = null
+		brush.color = 0x00C0C0C0u32
+		return brush as! HBrush
+	}
+
+	tofitaDebugLog("> Invalid index %d".utf16(), index as! UInt64)
+	return null
 }
 
 @dllExport('GetTextExtentPoint32W')
@@ -30,12 +51,6 @@ fun getTextExtentPoint32W(stub SizeOfPointer) SizeOfPointer {
 fun setBkMode(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("setBkMode called".utf16())
-	return 0
-}
-
-@dllExport('SetTextColor')
-fun setTextColor(stub SizeOfPointer) SizeOfPointer {
-	// TODO
 	return 0
 }
 
