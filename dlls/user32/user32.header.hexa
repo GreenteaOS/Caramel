@@ -132,16 +132,27 @@ fun monitorFromWindow(
 ) HMonitor // HMONITOR -> Pointer to ClangMonitor (return type)
 {
 	tofitaDebugLog("monitorFromWindow called".utf16())
-	return null
+	return 1 as! HMonitor
 }
 
 @dllExport('GetMonitorInfoW')
 fun getMonitorInfoW(
-	hMonitor HMonitor, // HMONITOR -> Pointer to ClangMonitor (monitor handle)
-	lpmi MonitorInfo // LPMONITORINFO -> Pointer to ClangMonitorInfo (output structure)
-) Bool32 // BOOL -> Bool (return type)
+	hMonitor HMonitor, // `HMONITOR` -> Pointer to ClangMonitor (monitor handle)
+	lpmi MonitorInfo // `LPMONITORINFO` -> Pointer to ClangMonitorInfo (output structure)
+) Bool32 // `BOOL` -> Bool (return type)
 {
 	tofitaDebugLog("getMonitorInfoW called".utf16())
+	lpmi.rcWork.ref.left = 0
+	lpmi.rcWork.ref.top = 0
+	lpmi.rcWork.ref.right = 1920
+	lpmi.rcWork.ref.bottom = 1040 // TODO Work area (excludes taskbar; taskbar is 40px tall at bottom)
+	lpmi.rcMonitor.ref.left = 0
+	lpmi.rcMonitor.ref.top = 0
+	lpmi.rcMonitor.ref.right = 1920
+	lpmi.rcMonitor.ref.bottom = 1080
+	lpmi.dwFlags = 0x00000001 // `MONITORINFOF_PRIMARY`
+	// TODO mi.szDevice = L"\\.\DISPLAY1" // Device name for the monitor (null-terminated string)
+	// TODO Size of the structure (40 for `MONITORINFO`, 72 for `MONITORINFOEXW`)
 	return Bool32.True
 }
 
@@ -151,7 +162,7 @@ fun monitorFromPoint(
 ) HMonitor // HMONITOR -> HMonitor (return type for the handle to the monitor)
 {
 	tofitaDebugLog("monitorFromPoint called".utf16())
-	return null
+	return 1 as! HMonitor
 }
 
 @dllExport('ClientToScreen')
@@ -172,7 +183,7 @@ fun monitorFromRect(
 ) HMonitor // HMONITOR -> HMonitor (return type indicating the monitor handle)
 {
 	tofitaDebugLog("monitorFromRect called".utf16())
-	return null
+	return 1 as! HMonitor
 }
 
 @dllExport('GetDesktopWindow')

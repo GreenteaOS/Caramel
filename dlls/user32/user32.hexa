@@ -1609,9 +1609,9 @@ fun trackPopupMenu(stub SizeOfPointer) SizeOfPointer {
 @struct
 class MonitorInfo {
 	var cbSize UInt32
-	let rcMonitor ByValue<Rect>
-	let rcWork ByValue<Rect>
-	let dwFlags UInt32
+	var rcMonitor ByValue<Rect>
+	var rcWork ByValue<Rect>
+	var dwFlags UInt32
 }
 
 @struct
