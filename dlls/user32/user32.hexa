@@ -1235,13 +1235,6 @@ fun isWindowEnabled(hWnd HWnd) Bool32 // BOOL -> Bool (return type)
 	return Bool32.True
 }
 
-@dllExport('LoadImageW')
-fun loadImageW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("LoadImageW called".utf16())
-	return 0
-}
-
 @dllExport('LoadMenuW')
 fun loadMenuW(hInstance HInstance, lpMenuName ConstArrayPointer<ClangWideChar>) Handle {
 	// TODO

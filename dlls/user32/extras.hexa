@@ -521,7 +521,7 @@ fun updateWindow(hWnd HWnd) Bool32 {
 
 	// Check if rendering was successful
 	if result == null {
-		tofitaDebugLog("UpdateWindow: render failed for hWnd %8".utf16(), hWnd as! UInt64)
+		tofitaDebugLog("UpdateWindow: render failed (result == null) for hWnd %8".utf16(), hWnd as! UInt64)
 		return Bool32.False
 	}
 
@@ -640,30 +640,38 @@ fun equalRect(lprc1 Rect, lprc2 Rect) Bool32 {
 fun loadIconW(hInstance HInstance?, lpIconName ConstArrayPointer<ClangWideChar>) HIcon {
 	// TODO
 	tofitaDebugLog("LoadIconW called %8 %S".utf16(), hInstance as! UInt64, lpIconName as! UInt64)
-	return 0
+	return loadImageW(hInstance, lpIconName, /*IMAGE_ICON*/ 1, 0, 0, 0) as! HIcon
 }
 
 @dllExport('LoadCursorW')
 fun loadCursorW(hInstance HInstance?, lpCursorName ConstArrayPointer<ClangWideChar>) HCursor {
 	// TODO
 	tofitaDebugLog("LoadCursorW called %8 %S".utf16(), hInstance as! UInt64, lpCursorName as! UInt64)
-	return 0
+	return loadImageW(hInstance, lpCursorName, /*IMAGE_CURSOR*/ 2, 0, 0, 0) as! HCursor
 }
 
 @dllExport('LoadBitmapW')
 fun loadBitmapW(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangWideChar>) HBitmap {
 	// TODO
 	tofitaDebugLog("LoadBitmapW called %8 %S".utf16(), hInstance as! UInt64, lpBitmapName as! UInt64)
-	return loadBitmapA(hInstance, lpBitmapName)
+	return loadImageW(hInstance, lpBitmapName, /*IMAGE_BITMAP*/ 0, 0, 0, 0) as! HBitmap
 }
 
 // TODO special type for "string-or-resource-id"
 @dllExport('LoadBitmapA')
-fun loadBitmapA(hModule HModule, lpBitmapName ConstArrayPointer<ClangChar>) HBitmap {
-	tofitaDebugLog("loadBitmapA called %8 %8".utf16(), hModule as! UInt64, lpBitmapName as! UInt64)
+fun loadBitmapA(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangChar>) HBitmap {
+	// TODO
+	tofitaDebugLog("LoadBitmapA called %8 %S".utf16(), hInstance as! UInt64, lpBitmapName as! UInt64)
+	return loadBitmapW(hInstance, lpBitmapName)
+}
+
+@dllExport('LoadImageW')
+fun loadImageW(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangWideChar>, uType Int, cx Int, cy Int, fuLoad Int) Handle {
+	// TODO
+	tofitaDebugLog("loadImageW called %8 %8".utf16(), hInstance as! UInt64, lpBitmapName as! UInt64)
 
 	// Resolve module
-	let hModule = getDefaultModule(hModule)
+	let hModule = getDefaultModule(hInstance)
 	if hModule == null {
 		return null
 	}
@@ -679,30 +687,31 @@ fun loadBitmapA(hModule HModule, lpBitmapName ConstArrayPointer<ClangChar>) HBit
 		multiByteToWideChar(cp_acp, 0, lpBitmapName, -1, wszName.ref, 256)
 	}
 
-	// Find the bitmap resource
+	// Find the resource of the specified type
 	let rt_bitmap = makeIntResourceW(2)
+	// TODO not this way `let rt_bitmap = makeIntResourceW(uType as! UInt32)`
 	let hResource = namedResource ? findResourceW(hModule, wszName.ref, rt_bitmap) : findResourceW(hModule, lpBitmapName, rt_bitmap)
 	if hResource == null {
-		tofitaDebugLog("loadBitmapA findResourceW failed".utf16())
+		tofitaDebugLog("loadImageW findResourceW failed".utf16())
 		return null
 	}
 
 	// Load and lock the resource
 	let hMem = loadResource(hModule, hResource)
 	if hMem == null {
-		tofitaDebugLog("loadBitmapA loadResource failed".utf16())
+		tofitaDebugLog("loadImageW loadResource failed".utf16())
 		return null
 	}
 	let bmi = lockResource(hMem) as! BITMAPINFO
 	if bmi == null {
-		tofitaDebugLog("loadBitmapA lockResource failed".utf16())
+		tofitaDebugLog("loadImageW lockResource failed".utf16())
 		return null
 	}
 
 	// Get the bitmap size
 	let resourceSize UInt32 = sizeOfResource(hModule, hResource)
 	if resourceSize < sizeOf<BITMAPINFOHEADER>() {
-		tofitaDebugLog("loadBitmapA sizeOfResource failed".utf16())
+		tofitaDebugLog("loadImageW sizeOfResource failed".utf16())
 		return null
 	}
 
@@ -733,7 +742,7 @@ fun loadBitmapA(hModule HModule, lpBitmapName ConstArrayPointer<ClangChar>) HBit
 
 		/*
 		let destination = bits[0]
-		tofitaDebugLog("loadBitmapA memcpy destination %8".utf16(), destination as! UInt64)
+		tofitaDebugLog("loadImageW memcpy destination %8".utf16(), destination as! UInt64)
 		let bmiHeaderSize = sizeOf<BITMAPINFOHEADER>()
 		memcpy(
 			destination,
@@ -744,10 +753,10 @@ fun loadBitmapA(hModule HModule, lpBitmapName ConstArrayPointer<ClangChar>) HBit
 
 		*/
 	} else {
-		tofitaDebugLog("loadBitmapA memcpy failed".utf16())
+		tofitaDebugLog("loadImageW memcpy failed".utf16())
 	}
 
-	tofitaDebugLog("loadBitmapA done %8".utf16(), hBitmap as! UInt64)
+	tofitaDebugLog("loadImageW done %8".utf16(), hBitmap as! UInt64)
 	return hBitmap
 }
 
@@ -3826,21 +3835,21 @@ fun loadCursorA(hInstance HInstance?, lpCursorName ConstArrayPointer<ClangChar>)
 	tofitaDebugLog("LoadCursorA called with hInstance %8".utf16(), hInstance as! UInt64)
 	tofitaDebugLog("lpCursorName %8".utf16(), lpCursorName as! UInt64)
 	// TODO Load cursor resource
-	return null
+	return loadImageA(hInstance, lpCursorName, /*IMAGE_CURSOR*/ 2, 0, 0, 0) as! HCursor
 }
 
 @dllExport('LoadIconA')
-fun loadIconA(stub SizeOfPointer) SizeOfPointer {
+fun loadIconA(hInstance HInstance?, lpIconName ConstArrayPointer<ClangChar>) HIcon {
 	// TODO
 	tofitaDebugLog("LoadIconA called".utf16())
-	return 0
+	return loadImageA(hInstance, lpIconName, /*IMAGE_ICON*/ 1, 0, 0, 0) as! HIcon
 }
 
 @dllExport('LoadImageA')
-fun loadImageA(stub SizeOfPointer) SizeOfPointer {
+fun loadImageA(hInstance HInstance?, lpName ConstArrayPointer<ClangChar>, uType Int, cx Int, cy Int, fuLoad Int) Handle {
 	// TODO
 	tofitaDebugLog("LoadImageA called".utf16())
-	return 0
+	return loadImageW(hInstance, lpName, uType, cx, cy, fuLoad)
 }
 
 @dllExport('SystemParametersInfoA')
