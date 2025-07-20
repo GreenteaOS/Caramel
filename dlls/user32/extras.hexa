@@ -1683,8 +1683,8 @@ fun pathStripPathW(stub SizeOfPointer) SizeOfPointer {
 }
 
 // TODO this is a draft
-@dllExport('xCreateBitmap')
-fun xcreateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
+@dllExport('CreateBitmapTODO')
+fun createBitmapTODO(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
 	tofitaDebugLog("CreateBitmap called with nWidth %d nHeight %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
 	tofitaDebugLog("> nPlanes %u nBitCount %u".utf16(), nPlanes as! UInt64, nBitCount as! UInt64)
 	tofitaDebugLog("> lpBits %8".utf16(), lpBits as! UInt64)
@@ -1774,8 +1774,8 @@ fun xcreateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32,
 }
 
 // TODO this is a draft
-@dllExport('zCreateBitmap')
-fun zcreateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
+@dllExport('CreateBitmapTODOTODO')
+fun createBitmapTODOTODO(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
 	tofitaDebugLog("CreateBitmap called with nWidth %d nHeight %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
 	tofitaDebugLog("> nPlanes %u nBitCount %u".utf16(), nPlanes as! UInt64, nBitCount as! UInt64)
 	tofitaDebugLog("> lpBits %p".utf16(), lpBits as! UInt64) // Use %p for pointers
@@ -1914,8 +1914,8 @@ fun zcreateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32,
 }
 
 // TODO this is a draft
-@dllExport('CkreateBitmap')
-fun crkeateBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
+@dllExport('CreateBitmapTODOTODOTODO')
+fun createBitmapTODOTODOTODO(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, lpBits ConstArrayPointer<UInt8>?) HBitmap {
 	tofitaDebugLog("CreateBitmap called with nWidth %d nHeight %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
 	tofitaDebugLog("> nPlanes %u nBitCount %u".utf16(), nPlanes as! UInt64, nBitCount as! UInt64)
 	tofitaDebugLog("> lpBits %p".utf16(), lpBits as! UInt64)
@@ -2874,8 +2874,8 @@ fun createBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, 
 			bitmap.colorTable[1].ref.rgbRed = 255u8
 			bitmap.colorTable[1].ref.rgbReserved = 0u8
 		} else {
-			for i in 0u32 ... numColors - 1 {
-				let value = (i * 255 / (numColors - 1)) as! UInt8
+			for i in 0u32 ... numColors {
+				let value = (i * 255 / (numColors)) as! UInt8
 				bitmap.colorTable[i].ref.rgbRed = value
 				bitmap.colorTable[i].ref.rgbGreen = value
 				bitmap.colorTable[i].ref.rgbBlue = value
@@ -2899,12 +2899,12 @@ fun createBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, 
 			// Initialize to zero first
 			memset(bitmap.bits, 0x00, totalSize as! SizeOfPointer)
 
-			for y in 0 ... nHeight - 1 {
+			for y in nHeight {
 				let destRowStart = bitmap.bits.offsetItemsBack(y * bytesPerRow)
 				let srcRowStart = lpBits.offsetItemsBack(y * srcBytesPerRow)
 
 				// Process each pixel in the row
-				for x in 0 ... nWidth - 1 {
+				for x in nWidth {
 					// Calculate which WORD contains this pixel
 					let wordIdx = x / 16
 					let bitInWord = x % 16
@@ -2913,10 +2913,10 @@ fun createBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, 
 					let srcWordOffset = wordIdx * 2
 					let lowByte = srcRowStart[srcWordOffset]
 					let highByte = srcRowStart[srcWordOffset + 1]
-					let srcWord = (highByte as! UInt16) << 8 | (lowByte as! UInt16)
+					let srcWord = (lowByte as! UInt16) << 8 | (highByte as! UInt16)
 
 					// Extract the bit for this pixel (bit 0 is rightmost/LSB)
-					let srcBit = (srcWord >> bitInWord) & 1
+					let srcBit = (srcWord >> (15i32 - bitInWord)) & 1
 
 					// Set the corresponding bit in destination
 					// In destination: MSB is leftmost pixel in each byte
@@ -2939,7 +2939,7 @@ fun createBitmap(nWidth Int32, nHeight Int32, nPlanes UInt32, nBitCount UInt32, 
 			// Initialize to zero to avoid garbage in unused bytes
 			memset(bitmap.bits, 0x00, totalSize as! SizeOfPointer)
 
-			for y in 0 ... nHeight - 1 {
+			for y in nHeight {
 				let destRowStartPtr = bitmap.bits.offsetItemsBack(y * bytesPerRow)
 				let srcRowStartPtr = lpBits.offsetItemsBack(y * srcScanlineStride)
 				memcpy(destRowStartPtr, srcRowStartPtr, srcBytesPerScanlineActualData as! Int)
@@ -3030,7 +3030,7 @@ fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation)
 	tofitaDebugLog("> brushOrgX %d brushOrgY %d".utf16(), brushOrgX as! UInt64, brushOrgY as! UInt64)
 	tofitaDebugLog("> fgColor %8 bgColor %8".utf16(), fgColor as! UInt64, bgColor as! UInt64)
 
-	for row in 0 ... cy - 1 {
+	for row in cy {
 		let destY = y + row
 		// Calculate pattern Y coordinate relative to brush origin
 		let patternY = (destY - brushOrgY) % patternHeight
@@ -3038,7 +3038,7 @@ fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation)
 
 		let destRowOffset = (isDestTopDown ? destY : (destHeight - 1 - destY)) * destBytesPerRow
 
-		for col in 0 ... cx - 1 {
+		for col in cx {
 			let destX = x + col
 			// Calculate pattern X coordinate relative to brush origin
 			let patternX = (destX - brushOrgX) % patternWidth
@@ -3048,13 +3048,13 @@ fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation)
 			let byteIndex = patternY * patternBytesPerRow + (patternX / 8)
 			// Calculate bit position within the byte (MSB is leftmost pixel)
 			let bitPosition = 7 - (patternX % 8)
-			let bitMask = 0x01u8 << bitPosition
+			let bitMask = 0x01i32 << bitPosition
 			let pixelValue = (patternBits[byteIndex] & bitMask) != 0
 			let color = if pixelValue { fgColor } else { bgColor }
 
 			let destOffset = destRowOffset + destX * 4
 			// TODO renaming to `offsetByElements` may be less error prone
-			let pixel = (destBits as! ArrayPointer<ByValue<Pixel32>>).offsetItemsBack(destOffset)
+			// let pixel = (destBits as! ArrayPointer<ByValue<Pixel32>>).offsetItemsBack(destOffset)
 			let pixel = (destBits as! ArrayPointer<UInt8>).offsetItemsBack(destOffset)
 			let pixel = pixel as! ArrayPointer<ByValue<Pixel32>>
 			pixel[0].ref.color = color
