@@ -3963,14 +3963,17 @@ fun msgWaitForMultipleObjects(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('SetTimer')
-fun setTimer(hWnd HWnd, nIDEvent UInt64, uElapse UInt32, lpTimerFunc TimerProcedure) UInt64 {
+fun setTimer(hWnd HWnd, nIDEvent SizeOfPointer, uElapse UInt32, lpTimerFunc TimerProcedure) UInt64 {
 	tofitaDebugLog("SetTimer called with hWnd %8, nIDEvent %u".utf16(),
 		hWnd as! UInt64, nIDEvent as! UInt64)
+
+	let uElapse = uElapse < 0x0000000A ? 0x0000000Au32 : uElapse // USER_TIMER_MINIMUM
+	let uElapse = uElapse > 0x7FFFFFFF ? 0x7FFFFFFFu32 : uElapse // USER_TIMER_MAXIMUM
 
 	let payload = new ByValue<SetTimerPayload>()
 	let payload = payload.ref
 	payload.hwnd = hWnd as! UInt64
-	payload.nIDEvent = nIDEvent
+	payload.nIDEvent = nIDEvent as! UInt64
 	payload.uElapse = uElapse
 	payload.timerProc = lpTimerFunc as! TimerProcedure
 
@@ -3980,14 +3983,14 @@ fun setTimer(hWnd HWnd, nIDEvent UInt64, uElapse UInt32, lpTimerFunc TimerProced
 }
 
 @dllExport('KillTimer')
-fun killTimer(hWnd HWnd, uIDEvent UInt64) Bool32 {
+fun killTimer(hWnd HWnd, uIDEvent SizeOfPointer) Bool32 {
 	tofitaDebugLog("KillTimer called with hWnd %8, uIDEvent %u".utf16(),
 		hWnd as! UInt64, uIDEvent as! UInt64)
 
 	let payload = new ByValue<KillTimerPayload>()
 	let payload = payload.ref
 	payload.hwnd = hWnd as! UInt64
-	payload.nIDEvent = uIDEvent
+	payload.nIDEvent = uIDEvent as! UInt64
 
 	let result = tofitaKillTimer(payload)
 	tofitaDebugLog("KillTimer done, result = %u".utf16(), result as! UInt64)
