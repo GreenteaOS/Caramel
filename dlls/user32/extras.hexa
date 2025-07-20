@@ -577,11 +577,48 @@ fun releaseCapture() Bool32 {
 	return Bool32.True
 }
 
+@struct
+class WindowClassEx {
+	var cbSize Int32
+	var style UInt32
+	var lpfnWndProc WindowProcedure
+	var cbClsExtra Int32
+	var cbWndExtra Int32
+	var hInstance HInstance
+	var hIcon HIcon
+	var hCursor HCursor
+	var hbrBackground HBrush
+	var lpszMenuName ConstArrayPointer<ClangWideChar>
+	var utf16zClassName ConstArrayPointer<ClangWideChar>
+	var hIconSm HIcon
+	new () { }
+}
+
 @dllExport('RegisterClassExW')
-fun registerClassExW(stub SizeOfPointer) SizeOfPointer {
-	// TODO
+fun registerClassExW(wc WindowClassEx) Atom {
+	// TODO actually do opposite: `registerClassW` calls `registerClassExW`
 	tofitaDebugLog("RegisterClassExW called".utf16())
-	return 0
+
+	let wcw = ByValue<WindowClass>()
+	let wcw WindowClass = wcw.ref
+	// wcw.cbSize = sizeOf<WindowClass>()
+	wcw.style = wc.style
+	wcw.lpfnWndProc = wc.lpfnWndProc
+	wcw.cbClsExtra = wc.cbClsExtra
+	// TODO respect cbWndExtra
+	wcw.cbWndExtra = wc.cbWndExtra
+	wcw.hInstance = wc.hInstance
+	wcw.hIcon = wc.hIcon
+	wcw.hCursor = wc.hCursor
+	wcw.hbrBackground = wc.hbrBackground
+	wcw.lpszMenuName = wc.lpszMenuName
+	wcw.utf16zClassName = wc.utf16zClassName
+	// wcw.hIconSm = 0
+
+	// TODO Hexa: `let wc = wc ?? return setLastErrorAndFalse(code)` -> returns `Bool32.False`
+	// ^ `wc! ??` ? support `!` variant too just in case (simple check for `?? return/throw/continue/break`)
+
+	return registerClassW(wcw)
 }
 
 @dllExport('RedrawWindow')
