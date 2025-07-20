@@ -2203,8 +2203,8 @@ fun getROP2(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('LineTo')
-fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
+@dllExport('LineToTODO')
+fun lineToTODO(hdc HDc, x Int32, y Int32) Bool32 {
 	// TODO Implement drawing a line from the DC's current pen position to (x, y).
 	// 1. Get the DC structure for hdc.
 	// 2. Get the current pen position (startX, startY) from the DC.
@@ -2227,10 +2227,36 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 		return Bool32.False
 	}
 
-	let bitmap = dc.hBitmap as! Bitmap
-	if bitmap == null {
-		tofitaDebugLog("> No bitmap selected".utf16())
-		return Bool32.False
+	/* Determine if we're drawing to a bitmap or framebuffer */
+	var bits ArrayPointer<UInt8> = null
+	var width Int32 = 0
+	var height Int32 = 0
+	var bytesPerRow Int32 = 0
+	var bitsPerPixel Int16 = 32i16
+	var isTopDown Bool = true
+	if let bmp = dc.hBitmap as! Bitmap {
+		/* Bitmap-backed DC */
+		tofitaDebugLog("> Using bitmap".utf16())
+		bits = bmp.bits
+		width = bmp.width
+		height = bmp.height
+		bytesPerRow = bmp.bytesPerRow
+		bitsPerPixel = bmp.bitsPerPixel
+		isTopDown = bmp.isTopDown
+	} else {
+		/* Framebuffer-backed DC */
+		tofitaDebugLog("> Using framebuffer".utf16())
+		let fb = dc.fb.ref
+		if fb.pixels == 0 {
+			tofitaDebugLog("> Invalid framebuffer pixels".utf16())
+			return Bool32.False
+		}
+		bits = fb.pixels as! ArrayPointer<UInt8>
+		width = fb.width as! Int32
+		height = fb.height as! Int32
+		bytesPerRow = fb.width * 4i32
+		bitsPerPixel = 32i16
+		isTopDown = true
 	}
 
 	// Get start and end points
@@ -2252,6 +2278,7 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 	let steps = if dx > dy { dx } else { dy } // Max of absolute values
 	if steps == 0 {
 		tofitaDebugLog("> No movement".utf16())
+		// TODO draw a single point?
 		return Bool32.True // No movement
 	}
 
@@ -2272,12 +2299,12 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 	for i in 0i32 ... steps {
 		let pixelX = currentX as! Int32
 		let pixelY = currentY as! Int32
-		if pixelX >= 0 and pixelX < bitmap.width and pixelY >= 0 and pixelY < bitmap.height {
-			let offset = (pixelY * bitmap.bytesPerRow + pixelX * 4) as! Int
-			bitmap.bits[offset] = blue
-			bitmap.bits[offset + 1] = green
-			bitmap.bits[offset + 2] = red
-			bitmap.bits[offset + 3] = alpha
+		if pixelX >= 0 and pixelX < width and pixelY >= 0 and pixelY < height {
+			let offset = (pixelY * bytesPerRow + pixelX * 4) as! Int
+			bits[offset] = blue
+			bits[offset + 1] = green
+			bits[offset + 2] = red
+			bits[offset + 3] = alpha
 		}
 		currentX += xInc
 		currentY += yInc
@@ -2287,8 +2314,111 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 	dc.penPosX = endX
 	dc.penPosY = endY
 
-	tofitaDebugLog("> Drew line from (%d, %d) to (%d, %d)".utf16(), startX as! UInt64, startY as! UInt64)
+	tofitaDebugLog("> Drew line from (%d, %d)".utf16(), startX as! UInt64, startY as! UInt64)
 	tofitaDebugLog("> to (%d, %d)".utf16(), endX as! UInt64, endY as! UInt64)
+	return Bool32.True
+}
+
+@dllExport('LineTo')
+fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
+	tofitaDebugLog("LineTo called on DC %8".utf16(), hdc as! UInt64)
+	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return Bool32.False
+	}
+
+	// --- 1. Get Drawing Surface ---
+	var bits ArrayPointer<UInt8> = null
+	var surfaceWidth Int32 = 0
+	var surfaceHeight Int32 = 0
+	var bytesPerRow Int32 = 0
+	// Simplified surface setup from your code...
+	if let bmp = dc.hBitmap as! Bitmap {
+		tofitaDebugLog("> Using bitmap".utf16())
+		bits = bmp.bits
+		surfaceWidth = bmp.width
+		surfaceHeight = bmp.height
+		bytesPerRow = bmp.bytesPerRow
+	} else if let fb = dc.fb.ref {
+		tofitaDebugLog("> Using framebuffer".utf16())
+		bits = fb.pixels as! ArrayPointer<UInt8>
+		surfaceWidth = fb.width as! Int32
+		surfaceHeight = fb.height as! Int32
+		bytesPerRow = fb.width * 4i32
+	} else {
+		tofitaDebugLog("> No valid drawing surface on DC".utf16())
+		return Bool32.False
+	}
+
+	// --- 2. Get Pen and Color ---
+	let pen = dc.hPen as! Pen
+	// Default to black if no pen is selected
+	let color = if pen != null { pen.color } else { 0xFF000000u32 as! COLORREF }
+
+	// TODO handle others properly
+	let color = dc.rop2 == ROP2.R2_WHITE? 0xFFFFFFFFu32 as! COLORREF : color
+	let color = dc.rop2 == ROP2.R2_BLACK? 0x00000000u32 as! COLORREF : color
+
+	let blue = (color & 0x00FF) as! UInt8
+	let green = ((color >> 8) & 0x00FF) as! UInt8
+	let red = ((color >> 16) & 0x00FF) as! UInt8
+	let alpha = ((color >> 24) & 0x00FF) as! UInt8
+
+	// --- 3. Bresenham's Line Algorithm (GDI-Compliant) ---
+	var x0 = dc.penPosX
+	var y0 = dc.penPosY
+	let x1 = x
+	let y1 = y
+
+	let dx = if x1 > x0 { x1 - x0 } else { x0 - x1 } // abs(x1 - x0)
+	// TODO format `- (` preserve spacing
+	let dy = if y1 > y0 { - (y1 - y0) } else { - (y0 - y1) } // abs(y1 - y0) with a negative sign
+
+	let sx = if x0 < x1 { 1 } else { -1 }
+	let sy = if y0 < y1 { 1 } else { -1 }
+	var err = dx + dy
+
+	tofitaDebugLog("> Drawing line from (%d, %d)".utf16(), x0 as! UInt64, y0 as! UInt64)
+	tofitaDebugLog("> to (%d, %d)".utf16(), x1 as! UInt64, y1 as! UInt64)
+
+	// Main drawing loop
+	while true {
+		// Check for loop termination
+		if x0 == x1 and y0 == y1 {
+			break
+		}
+
+		// Plot the pixel (with bounds checking)
+		if x0 >= 0 and x0 < surfaceWidth and y0 >= 0 and y0 < surfaceHeight {
+			let offset = (y0 * bytesPerRow + x0 * 4) as! Int
+			bits[offset] = blue
+			bits[offset + 1] = green
+			bits[offset + 2] = red
+			bits[offset + 3] = alpha
+		}
+
+		let e2 = 2 * err
+		if e2 >= dy {
+			if x0 == x1 { break } // prevent overshooting on straight lines
+			err += dy
+			x0 += sx
+		}
+		if e2 <= dx {
+			if y0 == y1 { break } // prevent overshooting on straight lines
+			err += dx
+			y0 += sy
+		}
+	}
+
+	// --- 4. Update Pen Position ---
+	dc.penPosX = x
+	dc.penPosY = y
+
+	// trigger lazy swap so we see something on screen
+	// tofitaFastSystemCall(TofitaSyscalls.LazySwap as! TofitaSyscalls, 0)
 	return Bool32.True
 }
 
