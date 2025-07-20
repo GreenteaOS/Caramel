@@ -6106,19 +6106,42 @@ fun _except_handler3(stub SizeOfPointer) SizeOfPointer {
 @dllExport('_adjust_fdiv')
 var _adjust_fdiv Int32 = 0
 
+var argvStub ArrayByValue<UInt8, 4> = [
+	// TODO
+	// Just "exe\0"
+	101u8,
+	120u8,
+	101u8,
+	0u8
+]
+
+var envpStub ArrayByValue<UInt8, 4> = [
+	// TODO
+	// Just "exe\0"
+	101u8,
+	120u8,
+	101u8,
+	0u8
+]
+
 #if bit32
 	@convention('cdecl')
 #end
 @dllExport('__getmainargs')
 fun __getmainargs(
-	argc SizeOfPointer, // Pointer to int for argument count
-	argv SizeOfPointer, // Pointer to char** for argument vector
-	envp SizeOfPointer, // Pointer to char** for environment variables
+	argc ArrayPointer<Int32>, // Pointer to int for argument count
+	argv ArrayPointer<ArrayPointer<ClangChar>>, // Pointer to `char**` for argument vector
+	envp ArrayPointer<ArrayPointer<ClangChar>>, // Pointer to `char**` for environment variables
 	doWildcards Int32, // Flag for wildcard expansion
 	startupInfo SizeOfPointer // Pointer to startup info structure
 ) Int32 {
 	tofitaDebugLog("__getmainargs called with argc %8 argv %8".utf16(),
 		argc as! UInt64, argv as! UInt64)
+	argc[0] = 1
+	// TODO Hexa: no error `argv[0] = argvStub.ref as! Bool`
+	argv[0] = argvStub.ref as! ArrayPointer<ClangChar>
+	// TODO do pointer-to-pointers as in `__wgetmainargs` (w-version)
+	envp[0] = envpStub.ref as! ArrayPointer<ClangChar>
 	return 0
 }
 
