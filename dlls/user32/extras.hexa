@@ -622,10 +622,37 @@ fun registerClassExW(wc WindowClassEx) Atom {
 }
 
 @dllExport('RedrawWindow')
-fun redrawWindow(stub SizeOfPointer) SizeOfPointer {
+fun redrawWindow(hwnd HWnd, r Rect?, rgn HRgn?, flags UInt32) Bool32 {
 	// TODO
 	tofitaDebugLog("RedrawWindow called".utf16())
-	return 0
+
+	let rdw_invalidate = flags & 0x0001 != 0
+	let rdw_internal_paint = flags & 0x0002 != 0
+	let rdw_erase = flags & 0x0004 != 0
+	let rdw_validate = flags & 0x0008 != 0
+	let rdw_no_internal = flags & 0x0010 != 0
+	let rdw_no_erase = flags & 0x0020 != 0
+	let rdw_no_children = flags & 0x0040 != 0
+	let rdw_all_children = flags & 0x0080 != 0
+	let rdw_update_now = flags & 0x0100 != 0
+	let rdw_erase_now = flags & 0x0200 != 0
+	let rdw_frame = flags & 0x0400 != 0
+	let rdw_no_frame = flags & 0x0800 != 0
+
+	if rdw_invalidate {
+		if rgn != null {
+			// TODO return invalidateRgn(hwnd, rgn, Bool32.fromBool(rdw_erase))
+		} else {
+			return invalidateRect(hwnd, r, Bool32.fromBool(rdw_erase))
+		}
+	}
+
+	// TODO Forcing it for now
+	if rdw_update_now or true {
+		sendMessageW(hwnd, Message.WM_PAINT, null, null)
+	}
+
+	return Bool32.True
 }
 
 // Purpose: Determines if a point is inside a rectangle
