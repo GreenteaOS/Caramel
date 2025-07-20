@@ -498,7 +498,7 @@ fun updateWindow(hWnd HWnd) Bool32 {
 	}
 
 	// Check if the update region is non-empty
-	// TODO: Implement update region tracking in Window structure
+	// TODO Implement update region tracking in Window structure
 	// For now, assume update region exists (or proceed to send WM_PAINT unconditionally)
 	// if window.updateRegion == null {
 	// tofitaDebugLog("UpdateWindow: no update region for hWnd %8".utf16(), hWnd as? UInt64 ?: 0u64)
@@ -530,17 +530,20 @@ fun updateWindow(hWnd HWnd) Bool32 {
 }
 
 @dllExport('TranslateAcceleratorW')
-fun translateAcceleratorW(stub SizeOfPointer) SizeOfPointer {
+fun translateAcceleratorW(hWnd HWnd, hAccTable HAccel, lpMsg Msg) Int32 {
 	// TODO
 	tofitaDebugLog("TranslateAcceleratorW called".utf16())
 	return 0
 }
 
+var previousCapture HWnd? = null
 @dllExport('SetCapture')
-fun setCapture(stub SizeOfPointer) SizeOfPointer {
+fun setCapture(hWnd HWnd) HWnd? {
 	// TODO
-	tofitaDebugLog("SetCapture called".utf16())
-	return 0
+	tofitaDebugLog("SetCapture called with hWnd %8".utf16(), hWnd as! UInt64)
+	let result = previousCapture
+	previousCapture = hWnd
+	return result
 }
 
 @dllExport('ReleaseDC')
@@ -568,10 +571,10 @@ fun releaseDC(hWnd HWnd, hdc HDc) Int32 {
 }
 
 @dllExport('ReleaseCapture')
-fun releaseCapture(stub SizeOfPointer) SizeOfPointer {
+fun releaseCapture() Bool32 {
 	// TODO
 	tofitaDebugLog("ReleaseCapture called".utf16())
-	return 0
+	return Bool32.True
 }
 
 @dllExport('RegisterClassExW')

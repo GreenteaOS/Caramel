@@ -400,7 +400,7 @@ fun getMessageW(msg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32) 
 	payload.hWnd = hWnd as! UInt64
 	payload.wMsgFilterMin = wMsgFilterMin
 	payload.wMsgFilterMax = wMsgFilterMax
-	tofitaGetMessage(payload)
+	tofitaGetMessage(payload) // TODO use its returned value
 
 	msg.hwnd = payload.hwnd as! Handle
 	msg.message = payload.message
@@ -961,10 +961,10 @@ fun xTODOcheckDlgButton(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('CheckMenuItem')
-fun checkMenuItem(stub SizeOfPointer) SizeOfPointer {
+fun checkMenuItem(hWnd HWnd, uIDItem Int, uCheck Int) Int {
 	// TODO
 	tofitaDebugLog("CheckMenuItem called".utf16())
-	return 0
+	return 1
 }
 
 @dllExport('CheckRadioButton')
@@ -1563,10 +1563,10 @@ fun setFocus(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('SetMenu')
-fun setMenu(stub SizeOfPointer) SizeOfPointer {
+fun setMenu(hWnd HWnd, hMenu HMenu) Bool32 {
 	// TODO
 	tofitaDebugLog("SetMenu called".utf16())
-	return 0
+	return Bool32.True
 }
 
 @dllExport('SetWindowLongW')
