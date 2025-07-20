@@ -444,10 +444,10 @@ fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRe
 						}
 					}
 
-				// TODO
-				// if focus
-				// - drawEdge(hdc, &r, BDR_RAISEDINNER, BF_MIDDLE | BF_RECT);
-				// - drawFocusRect(hdc, &r);
+					// TODO
+					// if focus
+					// - drawEdge(hdc, &r, BDR_RAISEDINNER, BF_MIDDLE | BF_RECT);
+					// - drawFocusRect(hdc, &r);
 			}
 
 			// TODO restore font and bkg
@@ -491,6 +491,11 @@ fun registerDefaultComponents() Bool32 {
 	// BUTTON
 	wc.ref.lpfnWndProc = buttonWindowProcW
 	wc.ref.utf16zClassName = "Button".utf16()
+	registerClassW(wc.ref)
+
+	// TODO make class registration code case-insensitive
+	wc.ref.lpfnWndProc = buttonWindowProcW
+	wc.ref.utf16zClassName = "BUTTON".utf16()
 	registerClassW(wc.ref)
 
 	// COMBO

@@ -98,6 +98,9 @@ fun regQueryValueExW(
 	tofitaDebugLog("RegQueryValueExW called with hKey %8 lpValueName %S".utf16(), hKey as! UInt64, lpValueName as! UInt64)
 	if lpData != null and lpcbData != null {
 		lpData[0] = 1
+		lpData[1] = 0
+		lpData[2] = 0
+		lpData[3] = 0
 		// memset(lpData, 1, lpcbData[0]) // Stub
 		// memset(lpData, 0, lpcbData[0]) // Zero-fill buffer
 	}
@@ -198,7 +201,7 @@ fun regEnumKeyExA(
 	var utf16zName ArrayByValue<ClangWideChar, 256> = [0]
 	var utf16zClass ArrayByValue<ClangWideChar, 256> = [0]
 	let result = regEnumKeyExW(hKey, dwIndex, utf16zName.ref, lpcchName, lpReserved, utf16zClass.ref, lpcchClass, lpftLastWriteTime)
-	// TODO: Convert utf16zName and utf16zClass to ANSI and copy to lpName, lpClass
+	// TODO Convert utf16zName and utf16zClass to ANSI and copy to lpName, lpClass
 	return result
 }
 
@@ -231,7 +234,7 @@ fun regEnumValueA(
 	tofitaDebugLog("RegEnumValueA called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
 	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
 	let result = regEnumValueW(hKey, dwIndex, utf16zValueName.ref, lpcchValueName, lpReserved, lpType, lpData, lpcbData)
-	// TODO: Convert utf16zValueName to ANSI and copy to lpValueName
+	// TODO Convert utf16zValueName to ANSI and copy to lpValueName
 	return result
 }
 
