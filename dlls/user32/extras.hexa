@@ -3194,6 +3194,9 @@ fun setBkColor(hdc HDc, color COLORREF) COLORREF {
 
 	let prevColor = dc.bkColor
 	dc.bkColor = color
+	// TODO create on demand and cache + destroy old one + set some default
+	// ^ Hmm technically we may create the brush once and just update its color field and that's it (brush may be `ByValue`)
+	dc.bkBrush = createSolidBrush(color)
 	return prevColor
 }
 
@@ -4831,14 +4834,14 @@ fun getObjectA(hObject SizeOfPointer, nSize Int32, lpvObject SizeOfPointer) Int3
 }
 
 @dllExport('ExtTextOutA')
-fun extTextOutA(hdc HDc, x Int32, y Int32, options UInt32, lprc ConstArrayPointer<ClangChar>?, lpString ConstArrayPointer<ClangChar>, c UInt32, lpDx ConstArrayPointer<ClangChar>?) Bool32 {
+fun extTextOutA(hdc HDc, x Int32, y Int32, options UInt32, lprc Rect?, lpString ConstArrayPointer<ClangChar>, c UInt32, lpDx ConstArrayPointer<Int32>?) Bool32 {
 	tofitaDebugLog("ExtTextOutA called with hdc %8".utf16(), hdc as! UInt64)
 	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
 	tofitaDebugLog("> options %u c %u".utf16(), options as! UInt64, c as! UInt64)
 	tofitaDebugLog("> lprc %8 lpString {%S}".utf16(), lprc as! UInt64, lpString as! UInt64)
 	tofitaDebugLog("> lpDx %8".utf16(), lpDx as! UInt64)
 	// TODO Draw text with specified options
-	return Bool32.False
+	return extTextOutW(hdc, x, y, options, lprc, lpString, c, lpDx)
 }
 
 @dllExport('EnumFontFamiliesExW')
@@ -4863,10 +4866,18 @@ fun getTextExtentExPointW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('ExtTextOutW')
-fun extTextOutW(stub SizeOfPointer) SizeOfPointer {
+fun extTextOutW(hdc HDc, x Int32, y Int32, options UInt32, lprect Rect, lpString ConstArrayPointer<ClangWideChar>, c UInt32, lpDx ConstArrayPointer<Int32>?) Bool32 {
 	// TODO
-	tofitaDebugLog("ExtTextOutW called".utf16())
-	return 0
+	tofitaDebugLog("ExtTextOutW called with hdc %8".utf16(), hdc as! UInt64)
+	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt64, y as! UInt64)
+	tofitaDebugLog("> options %u c %u".utf16(), options as! UInt64, c as! UInt64)
+	tofitaDebugLog("> lprect %8 lpString {%S}".utf16(), lprect as! UInt64, lpString as! UInt64)
+	tofitaDebugLog("> lpDx %8".utf16(), lpDx as! UInt64)
+	// TODO Draw text with specified options i.e. ETO_OPAQUE
+	if let dc = hdc as! DC {
+		fillRect(hdc, lprect, dc.bkBrush)
+	}
+	return Bool32.fromBool(drawTextW(hdc, lpString, -1, lprect, DrawTextFormat.DT_SINGLE_LINE) != 0)
 }
 
 @dllExport('GetRandomRgn')
