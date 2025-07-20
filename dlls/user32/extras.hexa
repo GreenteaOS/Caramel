@@ -752,7 +752,7 @@ fun loadBitmapA(hModule HModule, lpBitmapName ConstArrayPointer<ClangChar>) HBit
 }
 
 @dllExport('LoadAcceleratorsW')
-fun loadAcceleratorsW(stub SizeOfPointer) SizeOfPointer {
+fun loadAcceleratorsW(hInstance HInstance?, lpTableName ConstArrayPointer<ClangWideChar>) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("LoadAcceleratorsW called".utf16())
 	return 0
@@ -2240,7 +2240,7 @@ fun lineTo(hdc HDc, x Int32, y Int32) Bool32 {
 	let red = ((color >> 16) & 0x000000FF) as! UInt8
 	let alpha = ((color >> 24) & 0x000000FF) as! UInt8
 
-	// TODO Hexa: Range start and end must be of the same type, but got `Int...Int32`
+	// TODO Hexa: Range start and end must be of the same type, but got `Int...Int32` for `for i in 0i32 ... steps`
 	// ^ also infer 0/123 to be u32 or i64 from the other part of the range
 	for i in 0i32 ... steps {
 		let pixelX = currentX as! Int32
@@ -2751,10 +2751,19 @@ fun setBkColor(hdc HDc, color COLORREF) COLORREF {
 }
 
 @dllExport('SetROP2')
-fun setROP2(stub SizeOfPointer) SizeOfPointer {
+fun setROP2(hdc HDc, rop2 ROP2) ROP2 {
 	// TODO
-	tofitaDebugLog("SetROP2 called".utf16())
-	return 0
+	tofitaDebugLog("SetROP2 called with hdc %8 rop2 %d".utf16(), hdc as! UInt64, rop2 as! UInt64)
+
+	let dc = hdc as! DC
+	if dc == null {
+		tofitaDebugLog("> Invalid DC".utf16())
+		return 0
+	}
+
+	let prevROP2 = dc.rop2
+	dc.rop2 = rop2
+	return prevROP2
 }
 
 @dllExport('StretchBlt')
@@ -4014,10 +4023,10 @@ fun deleteMenu(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('GetMenuItemRect')
-fun getMenuItemRect(stub SizeOfPointer) SizeOfPointer {
+fun getMenuItemRect(hWnd HWnd?, hMenu HMenu?, uItem UInt32, lprcItem ConstArrayPointer<ClangWideChar>) Bool32 {
 	// TODO
 	tofitaDebugLog("GetMenuItemRect called".utf16())
-	return 0
+	return Bool32.True
 }
 
 @dllExport('SetActiveWindow')
@@ -5357,6 +5366,11 @@ fun getDeviceCaps(
 ) Int // Return type int -> Int
 {
 	tofitaDebugLog("getDeviceCaps called".utf16())
+
+	if index == /*NUMCOLORS*/ 24 {
+		return - 1
+	}
+
 	return 0
 }
 
@@ -5977,7 +5991,8 @@ fun getPrivateProfileStringW(
 
 @dllExport('OutputDebugStringA')
 fun outputDebugStringA(lpOutputString ConstArrayPointer<ClangChar>) Void {
-	tofitaDebugLog("OutputDebugStringA called with %s".utf16(), lpOutputString as! UInt64)
+	tofitaDebugLog("OutputDebugStringA called with '%s'".utf16(), lpOutputString as! UInt64)
+	// TODO can this be used as a `tofitaDebugLog`? is their prpose the same?
 }
 
 #if bit32
@@ -6030,7 +6045,7 @@ fun __setusermatherr(pf SizeOfPointer) Void {
 @dllExport('_controlfp')
 fun _controlfp(newControl Int32, mask Int32) UInt32 {
 	tofitaDebugLog("_controlfp called with newControl %d mask %d".utf16(), newControl as! UInt64, mask as! UInt64)
-	return 0u32
+	return 589855u32
 }
 
 #if bit32
