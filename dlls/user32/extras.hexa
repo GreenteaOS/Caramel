@@ -5395,10 +5395,35 @@ fun getCurrentDirectoryW(buflen UInt32, buf ArrayPointer<ClangWideChar>) UInt32
 }
 
 @dllExport('PeekMessageW')
-fun peekMessageW(lpMsg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 // Retrieve a message from the queue
-{
-	tofitaDebugLog("peekMessageW called".utf16())
-	return Bool32.True
+fun peekMessageW(msg Msg, hWnd HWnd?, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 {
+	// tofitaDebugLog("peekMessageW called".utf16()) <- spammy
+
+	let payload = ByValue<PeekMessagePayload>()
+	let payload = payload.ref
+	// TODO others by value too
+
+	payload.hwnd = hWnd as! UInt64
+	payload.wMsgFilterMin = wMsgFilterMin
+	payload.wMsgFilterMax = wMsgFilterMax
+	payload.remove = wRemoveMsg
+	let result = tofitaPeekMessage(payload)
+
+	msg.hwnd = payload.hwnd as! Handle
+	msg.message = payload.message
+	msg.wParam = payload.wParam as! WParam
+	msg.lParam = payload.lParam as! LParam
+	msg.time = payload.time
+	msg.pt = payload.pt
+	msg.lPrivate = payload.lPrivate
+
+	return result
+}
+
+@dllExport('PeekMessageA')
+fun peekMessageA(lpMsg Msg, hWnd HWnd?, wMsgFilterMin UInt32, wMsgFilterMax UInt32, wRemoveMsg UInt32) Bool32 {
+	// tofitaDebugLog("peekMessageA called".utf16()) <- spammy
+	// TODO
+	return peekMessageW(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg)
 }
 
 @dllExport('GetWindow')
