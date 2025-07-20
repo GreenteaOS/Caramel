@@ -4158,11 +4158,51 @@ fun getCaretPos(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+// Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mapwindowpoints
 @dllExport('MapWindowPoints')
-fun mapWindowPoints(stub SizeOfPointer) SizeOfPointer {
+fun mapWindowPoints(hWndFrom HWnd, hWndTo HWnd, lpPoints ArrayPointer<ByValue<Point>>, cPoints UInt32) Int32 {
 	// TODO
-	tofitaDebugLog("MapWindowPoints called".utf16())
-	return 0
+	// TODO make proper logging
+	tofitaDebugLog("MapWindowPoints called with hWndFrom %8 hWndTo %8".utf16(),
+		hWndFrom as! UInt64, hWndTo as! UInt64)
+
+	if lpPoints == null or cPoints == 0 {
+		tofitaDebugLog("> Invalid lpPoints or cPoints".utf16())
+		return 0
+	}
+
+	/* Retrieve window structures, traversing to top-level parent as in GetDC/ReleaseDC */
+	var fromWindow = handleToWindow(hWndFrom)
+	while fromWindow != null and fromWindow.parent != null {
+		fromWindow = fromWindow.parent
+	}
+
+	var toWindow = handleToWindow(hWndTo)
+	while toWindow != null and toWindow.parent != null {
+		toWindow = toWindow.parent
+	}
+
+	/* Determine coordinate offsets: screen coordinates if window is null */
+	let fromX = if fromWindow == null { 0 } else { fromWindow.x }
+	let fromY = if fromWindow == null { 0 } else { fromWindow.y }
+	let toX = if toWindow == null { 0 } else { toWindow.x }
+	let toY = if toWindow == null { 0 } else { toWindow.y }
+
+	/* Calculate relative offset: from source window to target window */
+	let offsetX = toX - fromX
+	let offsetY = toY - fromY
+	tofitaDebugLog("> Mapping offset: x %d, y %d".utf16(), offsetX as! UInt64, offsetY as! UInt64)
+
+	/* Transform each point in the array */
+	for i in cPoints {
+		/* Access lpPoints[i].ref to modify x, y fields, assuming Point is ByValue<Point> */
+		lpPoints[i].ref.x += offsetX
+		lpPoints[i].ref.y += offsetY
+	}
+
+	/* Return number of points processed, per Win32 spec */
+	tofitaDebugLog("> Mapped %u points".utf16(), cPoints as! UInt64)
+	return cPoints as! Int32
 }
 
 @dllExport('WindowFromPoint')
