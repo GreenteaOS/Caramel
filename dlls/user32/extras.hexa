@@ -1084,16 +1084,16 @@ fun bitBlt(
 	}*/
 	// Handle different bit depths
 	if bppSrc == 8i16 and bppDest == 32i16 {
-		tofitaDebugLog("> bppSrc == 8i16 and bppDest == 32i16".utf16())
+		tofitaDebugLog("> bppSrc == %di16 and bppDest == 32i16".utf16(), bppSrc as! UInt16)
 
-		// 8-bit source (indexed) to 32-bit destination (RGBA)
+		// N-bit source (indexed) to 32-bit destination (RGBA)
 		if colorTable == null or colorTableSize == 0 {
-			tofitaDebugLog("> Color table missing for 8-bit source".utf16())
+			tofitaDebugLog("> Color table missing for N-bit source".utf16())
 			return Bool32.False
 		}
 
 		// TODO Hexa: `let isBottomUp = if let bmpSrc = dcSrc.hBitmap as! Bitmap { bmpSrc.height > 0 } else { true }`
-		for row in 0 ... cy - 1 {
+		for row in cy {
 			// TODO Hexa: `let srcRow = if isBottomUp { cy - 1 - row } else { row }`
 			let srcRow = isBottomUpSrc? (cy - 1 - row) : row
 			let srcRowOffset = (ySrc + srcRow) * bytesPerRowSrc + xSrc
@@ -1101,7 +1101,7 @@ fun bitBlt(
 			let destRowOffset = ((yDest + row) * bytesPerRowDest + xDest * 4) as! Int
 			let colorTable = colorTable as! ArrayPointer<UInt32>
 
-			for col in 0 ... cx - 1 {
+			for col in cx {
 				let srcPixel = bitsSrc[srcRowOffset + col]
 				let destPixelOffset = destRowOffset + col * 4
 				// if (srcPixel as! UInt32) < colorTableSize {
@@ -1139,11 +1139,52 @@ fun bitBlt(
 				}
 			}
 		}
+	} else if bppSrc == 4i16 and bppDest == 32i16 {
+		// The thing is that in 4bpp every byte is two pixels instead of one
+		tofitaDebugLog("> bppSrc == %di16 and bppDest == 32i16 (two pixels per byte)".utf16(), bppSrc as! UInt16)
+
+		// N-bit source (indexed) to 32-bit destination (RGBA)
+		if colorTable == null or colorTableSize == 0 {
+			tofitaDebugLog("> Color table missing for N-bit source".utf16())
+			return Bool32.False
+		}
+
+		for row in cy {
+			// logical row *inside* the whole bitmap (sub-rectangle)
+			let logicalY = ySrc + row
+
+			// physical row in the byte array
+			let physicalRow = if isBottomUpSrc {
+				heightSrc - 1 - logicalY // bottom-up storage
+			} else {
+				logicalY // top-down storage
+			}
+
+			let srcRowOffset = physicalRow * bytesPerRowSrc + xSrc / 2 // 4-bpp
+
+			let destRowOffset = ((yDest + row) * bytesPerRowDest + xDest * 4) as! Int
+			let colorTable = colorTable as! ArrayPointer<UInt32>
+
+			for col in cx {
+				let byteIndex = (xSrc + col) / 2 // which byte
+				let nibbleSel = (xSrc + col) & 1 // 0 = high nibble, 1 = low nibble
+
+				let rawPixel = bitsSrc[srcRowOffset + byteIndex]
+				let srcPixel = if nibbleSel == 0 { rawPixel >> 4 } else { rawPixel & 0x0F }
+
+				let destPixelOffset = destRowOffset + col * 4
+				let color = ((srcPixel as! UInt32) < colorTableSize)
+				? (colorTable[srcPixel as! Int] | 0xFF000000u32)
+				: 0xFF000000u32
+				let bitsDest = (bitsDest.offsetItemsBack(destPixelOffset)) as! ArrayPointer<UInt32>
+				bitsDest[0] = color
+			}
+		}
 	} else if bppSrc == 32i16 and bppDest == 32i16 {
 		tofitaDebugLog("> bppSrc == 32i16 and bppDest == 32i16".utf16())
 
 		// 32-bit to 32-bit copy
-		for row in 0 ... cy - 1 {
+		for row in cy {
 			let srcOffset = ((ySrc + row) * bytesPerRowSrc + xSrc * 4) as! Int
 			let destOffset = ((yDest + row) * bytesPerRowDest + xDest * 4) as! Int
 			memcpy(bitsDest.offsetItemsBack(destOffset), bitsSrc.offsetItemsBack(srcOffset), cx * 4)
