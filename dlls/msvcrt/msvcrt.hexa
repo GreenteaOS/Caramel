@@ -57,20 +57,30 @@ fun __setusermatherr(stub SizeOfPointer) Void {
 	tofitaDebugLog("__setusermatherr(%8)\n".utf16(), stub as! UInt64)
 }
 
+// TODO use `meta.pointer` + rename to `wideCommandLine`
+@rename('&_wcmdln_') declare let wcmdlnPointer SizeOfPointer
 #if bit32
 	@convention('cdecl')
 #end
 @dllExport('__wgetmainargs')
 fun __wgetmainargs(
-	argc SizeOfPointer, // Pointer to int for argument count
-	argv SizeOfPointer, // Pointer to char** for argument vector
-	envp SizeOfPointer, // Pointer to char** for environment variables
-	doWildcards Int32, // Flag for wildcard expansion
-	startupInfo SizeOfPointer // Pointer to startup info structure
+	/// Pointer to int for argument count
+	argc ArrayPointer<Int32>,
+	/// Pointer to `char**` for argument vector
+	argv ArrayPointer<ArrayPointer<ClangWideChar>>,
+	/// Pointer to `char**` for environment variables
+	envp ArrayPointer<ArrayPointer<ClangWideChar>>,
+	/// Flag for wildcard expansion
+	doWildcards Int32,
+	/// Pointer to startup info structure
+	startupInfo SizeOfPointer
 ) Int32 {
 	// TODO
 	tofitaDebugLog("__wgetmainargs called with argc %8 argv %8".utf16(),
 		argc as! UInt64, argv as! UInt64)
+	argc[0] = 1
+	argv[0] = wcmdlnPointer
+	envp[0] = wcmdlnPointer
 	return 0
 }
 
@@ -116,11 +126,13 @@ fun _fmode(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('_fpreset')
-fun _fpreset(stub SizeOfPointer) SizeOfPointer {
+fun _fpreset() Void {
 	// TODO
 	tofitaDebugLog("_fpreset()\n".utf16())
-	return 0
 }
 
 // TODO Hexa: __cdecl on function types
@@ -221,6 +233,7 @@ fun _unlock(stub Int32) Void {
 	tofitaDebugLog("_unlock()\n".utf16())
 }
 
+// TODO rename to `*Stub`
 @dllExport('_acmdln')
 var _acmdln SizeOfPointer = _acmdln_stub.ref as! SizeOfPointer // TODO `.address`
 var _acmdln_stub ArrayByValue<UInt8, 4> = [
@@ -388,13 +401,13 @@ fun memmove(dest ConstArrayPointer<UInt8>, src ConstArrayPointer<UInt8>, count S
 fun memcpy(dest ConstArrayPointer<UInt8>, src ConstArrayPointer<UInt8>, count SizeOfPointer) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("memcpy()\n".utf16())
-	return 0
 	return dest as! SizeOfPointer
 }
 
 @dllExport('memset')
 fun memset(dest ConstArrayPointer<UInt8>, value Int, count SizeOfPointer) SizeOfPointer {
 	// TODO
+	tofitaDebugLog("memset() WARN: STUB\n".utf16())
 	return dest as! SizeOfPointer
 }
 
