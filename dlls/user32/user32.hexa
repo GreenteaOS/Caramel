@@ -105,7 +105,7 @@ fun registerClassW(wc WindowClass) Atom {
 
 	// TODO handle that proc can be null
 	tofitaDebugLog("RegisterClassW done".utf16())
-	return 0 as! Atom // TODO make atom
+	return 1 as! Atom // TODO make proper atom
 }
 
 // TODO extract to createWindowEx taking Hexa Strings and be called from W and A
