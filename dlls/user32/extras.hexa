@@ -1160,20 +1160,38 @@ fun time(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-var random = 1
+var random = 0
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('rand')
 fun rand() Int32 {
 	// TODO
 	tofitaDebugLog("rand called".utf16())
-	random++
-	return random
+
+	random ^= (random << 13)
+	random ^= (random >> 17)
+	random ^= (random << 5)
+
+	tofitaDebugLog("rand result %d".utf16(), random as! UInt64)
+
+	return random & 0x7FFF // Limit to 15 bits aka 32767
 }
 
+#if bit32
+	@convention('cdecl')
+#end
 @dllExport('srand')
 fun srand(seed UInt32) Void {
-	// TODO
+	// TODO well use unsigned
 	tofitaDebugLog("srand called with seed %u".utf16(), seed)
+	/* Prevent zero seed to avoid degenerate Xor-shift */
+	if seed == 0 {
+		random = 1
+	} else {
+		random = seed as! Int
+	}
 }
 
 @dllExport('memcmp')
