@@ -1523,7 +1523,12 @@ fun htmlHelpW(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('CreateSemaphoreW')
-fun createSemaphoreW(stub SizeOfPointer) SizeOfPointer {
+fun createSemaphoreW(
+	lpSemaphoreAttributes SizeOfPointer,
+	lInitialCount Int32,
+	lMaximumCount Int32,
+	lpName ConstArrayPointer<ClangWideChar>
+) Handle {
 	// TODO
 	tofitaDebugLog("CreateSemaphoreW called".utf16())
 	return 0
@@ -5736,6 +5741,15 @@ fun lstrcpyW(lpString ArrayPointer<ClangWideChar>, sourceString ConstArrayPointe
 
 	lpString[i] = 0
 	return lpString
+}
+
+@dllExport('GetThreadUILanguage')
+fun getThreadUILanguage() UInt16 { // TODO `LangId` type
+	// TODO
+	tofitaDebugLog("GetThreadUILanguage called".utf16())
+	let lang_english = 9u16
+	let sublang_english_us = 1u16
+	return make_lang_id(lang_english, sublang_english_us)
 }
 
 @dllExport('FindResourceW')

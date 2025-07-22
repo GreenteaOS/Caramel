@@ -1197,7 +1197,7 @@ fun getWindowTextW(
 }
 
 @dllExport('InvalidateRect')
-fun invalidateRect(hWnd HWnd?, lprc ConstArrayPointer<ClangWideChar>?, bErase Bool32) Bool32 {
+fun invalidateRect(hWnd HWnd?, lprc Rect, bErase Bool32) Bool32 {
 	// TODO Mark rectangle for repainting
 	tofitaDebugLog("InvalidateRect called with hWnd %8".utf16(), hWnd as! UInt64)
 	tofitaDebugLog("> lprc %8 bErase %u".utf16(), lprc as! UInt64, bErase as! UInt64)
