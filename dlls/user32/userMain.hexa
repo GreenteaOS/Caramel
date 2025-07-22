@@ -313,8 +313,8 @@
 		return remainder;
 	}
 
-	void* /*__cdecl*/ _memset(void *dest, int val, size_t count) asm("_memset");
-	__attribute__((no_builtin("memset"))) void* /*__cdecl*/ _memset(void *dest, int val, size_t count) {
+	void* __cdecl _memset(void *dest, int val, size_t count) asm("_memset");
+	__attribute__((no_builtin("memset"))) void* __cdecl _memset(void *dest, int val, size_t count) {
 		tofitaDebugLog_(L"userMain _memset called %8 %d", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)count));
 		for (size_t i = 0; i < count; i++) {
 			((uint8_t *)dest)[i] = val;
