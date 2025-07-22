@@ -364,8 +364,16 @@ fun log10(stub SizeOfPointer) SizeOfPointer {
 }
 
 @struct @packed
-class Malloc {
-	var payload ArrayByValue<UInt8, 2048> = [0]
+class Malloc128 {
+	var payload ArrayByValue<UInt8, 128> = [0]
+
+	// TODO Hexa: allow to be constructible by default
+	new () { }
+}
+
+@struct @packed
+class Malloc4096 {
+	var payload ArrayByValue<UInt8, 4096> = [0]
 
 	// TODO Hexa: allow to be constructible by default
 	new () { }
@@ -379,13 +387,17 @@ fun malloc(size SizeOfPointer) SizeOfPointer {
 	// TODO 16 bytes min + HeapAlloc?
 	tofitaDebugLog("[msvcrt] malloc called with size %u".utf16(), size as! UInt32)
 
-	// TODO Hexa: if size > 2048 {
-	if (size as! UInt32) > 2048u32 {
-		tofitaDebugLog("[msvcrt] malloc >2048".utf16())
+	// TODO Hexa: if size >= 128 {
+	if (size as! UInt32) >= 128u32 {
+		tofitaDebugLog("[msvcrt] malloc >= 128".utf16())
+
+		var stub = Malloc4096()
+		tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
+		return stub as! SizeOfPointer
 	}
 
-	var stub = Malloc()
 	// TODO use HeapAlloc
+	var stub = Malloc128()
 	tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
 	return stub as! SizeOfPointer
 }
