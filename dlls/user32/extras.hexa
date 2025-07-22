@@ -5752,16 +5752,24 @@ fun getThreadUILanguage() UInt16 { // TODO `LangId` type
 	return make_lang_id(lang_english, sublang_english_us)
 }
 
+/// Find a resource in the specified module
 @dllExport('FindResourceW')
-fun findResourceW(hModule HModule, lpName ConstArrayPointer<ClangWideChar>, lpType ConstArrayPointer<ClangWideChar>) HRsrc // Find a resource in the specified module
-{
+fun findResourceW(hModule HModule, lpName ConstArrayPointer<ClangWideChar>, lpType ConstArrayPointer<ClangWideChar>) HRsrc {
 	tofitaDebugLog("findResourceW called".utf16())
+
+	// TODO Hexa: this creates a "inline" function (unsupported on the C target yet)
+	// `return findResourceExW(hModule, lpType, lpName, getThreadUILanguage()) ?? findResourceExW(hModule, lpType, lpName, make_lang_id(lang_neutral, sub_lang_neutral))`
+
+	if let resource = findResourceExW(hModule, lpType, lpName, getThreadUILanguage()) {
+		return resource
+	}
+
 	return findResourceExW(hModule, lpType, lpName, make_lang_id(lang_neutral, sub_lang_neutral))
 }
 
+/// Load a resource from the specified module
 @dllExport('LoadResource')
-fun loadResource(hModule HModule, hResInfo HRsrc) HGlobal // Load a resource from the specified module
-{
+fun loadResource(hModule HModule, hResInfo HRsrc) HGlobal {
 	tofitaDebugLog("loadResource called".utf16())
 	return hResInfo as! HGlobal
 }
@@ -6209,6 +6217,7 @@ fun setPixel(hdc HDc, x Int32, y Int32, color COLORREF) COLORREF {
 
 		// Find closest color in color table (simplified: match RGB)
 		var newIndex = 0u8
+		// TODO this `- 1` may be unnecessary
 		for i in 0u32 ... colorTableSize - 1 {
 			let entry = colorTable[i].ref
 			// TODO if entry.rgbRed == color.ref.rgba.ref.r and entry.rgbGreen == color.ref.rgba.ref.g and entry.rgbBlue == color.ref.rgba.ref.b {

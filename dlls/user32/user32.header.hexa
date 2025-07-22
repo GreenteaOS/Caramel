@@ -420,7 +420,7 @@ class ExeResourceLoader<SIZE, HEADER> {
 		return blobSectionStart
 	}*/
 	// TODO rename
-	fun getIcon(asset HModule, lpType UInt16, lpName UInt16) HRsrc? {
+	fun getIcon(asset HModule, lpType UInt16, lpName UInt16, wLanguage UInt16) HRsrc? {
 		let ptr = asset as! ArrayPointer<UInt8>
 		// TODO 32 bit 0x3C
 		let peHeader = ((ptr as! UInt64) + ptr[0x3C] + ptr[0x3C + 1] * 256) as! PeHeader
@@ -493,6 +493,12 @@ class ExeResourceLoader<SIZE, HEADER> {
 						for id in byLanguage.numberOfIdEntries {
 							let byLanguageEntry = byLanguage.directoryEntries[id].ref
 							// tofitaDebugLog("[ExeResourceLoader] Scanning by language %8...".utf16(), byLanguageEntry.unionName.ref.id)
+
+							/* Skip languages that do not match the requested one (or any language when `wLanguage == 0` / `LANG_NEUTRAL`) */
+							if wLanguage != 0 and byLanguageEntry.unionName.ref.id != wLanguage {
+								continue
+							}
+
 							let dataEntry =
 								((ptr as! UInt64) + section.virtualAddress + (byLanguageEntry.unionOffset.ref.offsetToData & 0x7fffffffu64))
 								as! IMAGE_RESOURCE_DATA_ENTRY
@@ -533,7 +539,7 @@ fun findResourceExW(hModule HModule, lpType ConstArrayPointer<ClangWideChar>, lp
 
 	var simpleResource = true
 
-	if not is_int_resource(lpName as! UInt64) {
+	if not is_int_resource(lpType as! UInt64) {
 		tofitaDebugLog("findResourceExW lpType %8 %S".utf16(), lpType as! UInt64, lpType as! UInt64)
 		simpleResource = false
 	}
@@ -555,10 +561,10 @@ fun findResourceExW(hModule HModule, lpType ConstArrayPointer<ClangWideChar>, lp
 	// If this parameter is MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), the current language associated with the calling thread is used.
 	if is64 {
 		let loader = new ExeResourceLoader<UInt64, Pe64OptionalHeader>()
-		return loader.getIcon(hModule, lpType as! UInt16, lpName as! UInt16)
+		return loader.getIcon(hModule, lpType as! UInt16, lpName as! UInt16, wLanguage)
 	} else {
 		let loader = new ExeResourceLoader<UInt32, Pe32OptionalHeader>()
-		return loader.getIcon(hModule, lpType as! UInt16, lpName as! UInt16)
+		return loader.getIcon(hModule, lpType as! UInt16, lpName as! UInt16, wLanguage)
 	}
 }
 
