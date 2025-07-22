@@ -52,24 +52,156 @@ int64_t _fltused = 0;
 
 #ifdef bit64
 #else
-int64_t __alldiv() asm("__alldiv");
-int64_t __alldiv() { return 0; } // TODO
+	int64_t __stdcall __alldiv(int64_t dividend, int64_t divisor) asm("__alldiv");
+	int64_t __stdcall __allrem(int64_t dividend, int64_t divisor) asm("__allrem");
+	uint64_t __stdcall __aulldiv(uint64_t dividend, uint64_t divisor) asm("__aulldiv");
+	uint64_t __stdcall __aullrem(uint64_t dividend, uint64_t divisor) asm("__aullrem");
 
-int64_t __allrem() asm("__allrem");
-int64_t __allrem() { return 0; } // TODO
+	#define LLONG_MIN   -9223372036854775808LL
+	#define LLONG_MAX    9223372036854775807LL
 
-uint64_t __aulldiv() asm("__aulldiv");
-uint64_t __aulldiv() { return 0; } // TODO
+	int64_t __stdcall __alldiv(int64_t dividend, int64_t divisor) {
+		tofitaDebugLog_(L"__alldiv called", 0, 0);
+		bool result_is_negative = false; // Flag to determine the sign of the final result
+		uint64_t u_dividend;             // Unsigned absolute value of dividend
+		uint64_t u_divisor;              // Unsigned absolute value of divisor
+		uint64_t u_quotient;             // Unsigned quotient from the core division
 
-uint64_t __aullrem() asm("__aullrem");
-uint64_t __aullrem() { return 0; } // TODO
+		// --- Edge Case Handling ---
 
-void _memset() asm("_memset");
-void _memset() {
-	// TODO
-	tofitaDebugLog_(L"startup _memset", (uint64_t)((int32_t)0), (uint64_t)((int32_t)0));
+		// 1. Handle division by zero. This is undefined behavior.
+		//    We return LLONG_MAX or LLONG_MIN based on the dividends sign,
+		//    mimicking typical CPU behavior (e.g., for integer overflow/exceptions).
+		if (divisor == 0) {
+			if (dividend >= 0) {
+				return LLONG_MAX;
+			} else {
+				return LLONG_MIN;
+			}
+		}
 
-} // TODO
+		// --- Determine Result Sign ---
+
+		// The result is negative if exactly one of the operands is negative.
+		if ((dividend < 0 && divisor > 0) || (dividend > 0 && divisor < 0)) {
+			result_is_negative = true;
+		}
+
+		// --- Convert to Absolute Unsigned Values ---
+
+		// Convert dividend to its absolute unsigned value.
+		// Special handling for LLONG_MIN (0x8000000000000000LL) is required
+		// because its absolute value (0x8000000000000000ULL) cannot be represented
+		// as a positive int64_t and negating it directly would overflow.
+		if (dividend == LLONG_MIN) {
+			u_dividend = 0x8000000000000000ULL; // Represents (uint64_t)(-LLONG_MIN)
+		} else {
+			u_dividend = (uint64_t)(dividend < 0 ? -dividend : dividend);
+		}
+
+		// Convert divisor to its absolute unsigned value, with similar LLONG_MIN handling.
+		if (divisor == LLONG_MIN) {
+			u_divisor = 0x8000000000000000ULL; // Represents (uint64_t)(-LLONG_MIN)
+		} else {
+			u_divisor = (uint64_t)(divisor < 0 ? -divisor : divisor);
+		}
+
+		// --- Perform Unsigned Division ---
+
+		// Use the __aulldiv function for the core unsigned division.
+		u_quotient = __aulldiv(u_dividend, u_divisor);
+
+		// --- Apply Result Sign ---
+
+		// Apply the determined sign to the unsigned quotient.
+		if (result_is_negative) {
+			// Special case: If the unsigned quotient is 0x8000000000000000ULL
+			// (which is LLONG_MIN when interpreted as signed) and the result
+			// should be negative, it means the true mathematical result (e.g.,
+			// -LLONG_MIN) would overflow int64_t. This typically happens for
+			// LLONG_MIN / 1. In such cases, MSVC intrinsics commonly return LLONG_MIN.
+			if (u_quotient == 0x8000000000000000ULL) {
+				return LLONG_MIN; // Return LLONG_MIN for overflow cases
+			}
+			return -(int64_t)u_quotient;
+		} else {
+			return (int64_t)u_quotient;
+		}
+	}
+
+	// TODO use shared ones from .dll
+
+	int64_t __allrem(int64_t dividend, int64_t divisor) {
+		tofitaDebugLog_(L"__allrem called", 0, 0);
+		return 0;
+	}
+
+	uint64_t __stdcall __aulldiv(uint64_t dividend, uint64_t divisor) {
+		tofitaDebugLog_(L"__aulldiv called %d / %d", dividend, divisor);
+
+		// --- Edge Case Handling ---
+
+		// 1. Division by zero is undefined behavior. The processor would normally
+		//    raise an exception. We return the maximum possible value, a common
+		//    convention for indicating such an error from software.
+		if (divisor == 0) {
+			// TODO throw if needed
+			return 0xFFFFFFFFFFFFFFFFULL;
+		}
+
+		// 2. If the divisor is larger than the dividend, the result is always 0.
+		if (divisor > dividend) {
+			return 0;
+		}
+
+		// 3. Division by 1 is a no-op; the result is the dividend.
+		if (divisor == 1) {
+			return dividend;
+		}
+
+		// --- Binary Long Division Algorithm ---
+
+		uint64_t quotient = 0;
+		uint64_t remainder = 0;
+		int i;
+
+		// Iterate through each bit of the dividend from most significant to least.
+		for (i = 63; i >= 0; i--) {
+			// Shift the current remainder left by 1 bit to make room for the next bit.
+			remainder <<= 1;
+
+			// "Bring down" the next bit from the dividend and set it as the
+			// least significant bit of the remainder.
+			if ((dividend >> i) & 1) {
+				remainder |= 1;
+			}
+
+			// If the remainder is now greater than or equal to the divisor,
+			// a subtraction is possible.
+			if (remainder >= divisor) {
+				// Subtract the divisor from the remainder.
+				remainder -= divisor;
+
+				// Set the corresponding bit in the quotient to 1, signifying a
+				// successful subtraction for this bit position.
+				quotient |= (1ULL << i);
+			}
+		}
+
+		tofitaDebugLog_(L"__aulldiv result %d", quotient, 0);
+		return quotient;
+	}
+
+	uint64_t __aullrem(uint64_t dividend, uint64_t divisor) {
+		tofitaDebugLog_(L"__aullrem called", 0, 0);
+		return 0;
+	}
+
+	void _memset() asm("_memset");
+	void _memset() {
+		// TODO
+		//tofitaDebugLog_(L"startup _memset", (uint64_t)((int32_t)0), (uint64_t)((int32_t)0));
+	} // TODO
 #endif
 
 uint64_t bufferOffset_;
