@@ -413,13 +413,6 @@ fun terminateProcess(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('TlsGetValue')
-fun tlsGetValue(dwTlsIndex UInt32) SizeOfPointer {
-	// TODO
-	tofitaDebugLog("tlsGetValue()".utf16())
-	return 0
-}
-
 @dllExport('UnhandledExceptionFilter')
 fun unhandledExceptionFilter(stub SizeOfPointer) SizeOfPointer {
 	// TODO

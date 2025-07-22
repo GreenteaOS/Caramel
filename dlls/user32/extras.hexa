@@ -163,11 +163,20 @@ fun tlsAlloc() UInt32 {
 	return 1
 }
 
+var tlsValueStub SizeOfPointer = 0
 @dllExport('TlsSetValue')
 fun tlsSetValue(dwTlsIndex UInt32, lpTlsValue SizeOfPointer) Bool32 {
 	// TODO
-	tofitaDebugLog("TlsSetValue called".utf16())
+	tofitaDebugLog("TlsSetValue called %u %8".utf16(), dwTlsIndex, lpTlsValue as! UInt64)
+	tlsValueStub = lpTlsValue
 	return Bool32.True
+}
+
+@dllExport('TlsGetValue')
+fun tlsGetValue(dwTlsIndex UInt32) SizeOfPointer {
+	// TODO
+	tofitaDebugLog("tlsGetValue(%u)".utf16(), dwTlsIndex)
+	return tlsValueStub
 }
 
 @dllExport('TlsFree')
