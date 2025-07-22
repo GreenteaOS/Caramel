@@ -673,8 +673,8 @@ fun outerRect(dc HDc, lprc Rect, brush HBrush) {
 
 // TODO `Rect?`
 // TODO this is a draft
-@dllExport('xFillRect')
-fun xfillRect(dc HDc, lprc Rect, brush HBrush) Int32 {
+@dllExport('FillRectTODO')
+fun fillRectTODO(dc HDc, lprc Rect, brush HBrush) Int32 {
 	tofitaDebugLog("FillRect called with hdc %8 lprc %8".utf16(), dc as! UInt64, lprc as! UInt64)
 	tofitaDebugLog("> hbr %8".utf16(), brush as! UInt64)
 	tofitaDebugLog("> lprc %8".utf16(), lprc as! UInt64)
