@@ -363,9 +363,7 @@ fun showWindow(hWnd HWnd, nCmdShow CmdShow) Bool32 {
 				}
 				// NOTE rename them to SW_SHOW_NORMAL
 				// TODO this one is probably `case SW_SHOW or SW_SHOWNORMAL or SW_SHOWDEFAUL:`
-			case SW_SHOW:
-			case SW_SHOWNORMAL:
-			case SW_SHOWDEFAULT: {
+			case SW_SHOW | SW_SHOWNORMAL | SW_SHOWDEFAULT: {
 					let payload = ShowWindowPayload()
 					payload.windowId = window.windowId
 					payload.nCmdShow = nCmdShow
