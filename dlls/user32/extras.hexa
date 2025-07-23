@@ -3355,6 +3355,7 @@ fun isWindowVisible(hWnd HWnd) Bool32 {
 	let ws_visible = 0x10000000i32
 	let gwl_style = -16
 	// TODO test case if it returns `1` or some `non-zero` value
+	// ^ in case of "non-zero" we would have to use `bool.isTrue()` instead of stricter `bool == Bool32.True`
 	return Bool32.fromNonZero(
 		// TODO Hexa `SOP & SOP`
 		getWindowLongPtrW(hWnd, gwl_style) as! UInt32 & ws_visible
@@ -5922,6 +5923,35 @@ fun peekMessageW(msg Msg, hWnd HWnd?, wMsgFilterMin UInt32, wMsgFilterMax UInt32
 	msg.time = payload.time
 	msg.pt = payload.pt
 	msg.lPrivate = payload.lPrivate
+
+	// TODO This is copied from `dispatchMessageW` and then modified to handle `pt`
+	if msg.message == Message.WM_MOUSE_MOVE or
+		msg.message == Message.WM_LEFT_BUTTON_DOWN or
+		msg.message == Message.WM_LEFT_BUTTON_UP or
+		msg.message == Message.WM_RIGHT_BUTTON_DOWN or
+		msg.message == Message.WM_RIGHT_BUTTON_UP or
+		msg.message == Message.WM_MIDDLE_BUTTON_DOWN or
+		msg.message == Message.WM_MIDDLE_BUTTON_UP or
+		msg.message == Message.WM_LEFT_BUTTON_DOUBLE_CLICK or
+		msg.message == Message.WM_RIGHT_BUTTON_DOUBLE_CLICK or
+		msg.message == Message.WM_MIDDLE_BUTTON_DOUBLE_CLICK {
+
+		// Extract mouse coordinates
+		let lParam UInt32 = msg.lParam as! UInt32
+		let frameWidth = 1
+		let x Int32 = LParam.loWord(lParam) - frameWidth // Tofita sends non-client/non-screen mouse
+		let frameHeight = 33
+		let y Int32 = LParam.hiWord(lParam) - frameHeight // Tofita sends non-client/non-screen mouse
+
+		let translatedX = x
+		let translatedY = y
+		msg.lParam = LParam.makeULong(translatedX as! UInt16, translatedY as! UInt16) as! LParam
+
+		// TODO the `pt` field of the `Msg` structure is always in screen coordinates
+		// TODO Hexa `msg.pt = Point(translatedX, translatedY)` i.e. `@struct` are allocated on the stack by default anyway so
+		msg.pt.ref.x = translatedX
+		msg.pt.ref.y = translatedY
+	}
 
 	return result
 }
