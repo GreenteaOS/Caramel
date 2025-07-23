@@ -50,6 +50,8 @@ class Window {
 	var height Int32
 	var title String
 	var parent Window? = null
+	var style UInt32 = 0 // TODO use bit masks
+	var exStyle UInt32 = 0 // TODO use bit masks
 
 	// Clipping for painting
 	var clipX Int32 = 0

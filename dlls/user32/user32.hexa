@@ -49,6 +49,8 @@ fun handleToWindow(hWnd HWnd) Window {
 	// ^ makes sense cause this memory address would not be used elsewhere
 	// TODO Hexa: .meta.fromPointer()/fromAddress()
 	if (hWnd as! Window).windowIsWindowSecret != windowIsWindow {
+		// TODO Hexa: cool idea `let w = hwnd as Window ?? return ...` so it does both `null` check and a cast
+		// ^ (after null-check, to not produce RAII/ARC ref upfront)
 		return null
 	}
 	// TODO static Window.fromHandle
@@ -217,6 +219,10 @@ fun createWindowExW(
 	// TODO window name limit?
 	window.title = isAtom(lpWindowName as! UInt64) ? '#' + (lpWindowName as! UInt64) : String.fromUTF16zUpTo(lpWindowName as! ConstArrayPointer<UInt16>, 4096)
 
+	// Styles
+	window.style = dwStyle
+	window.exStyle = dwExStyle
+
 	// TODO change to a helper `isDesktopWindow()` or `isDesktopOwnedWindow()`
 	if windowId != 0 {
 		// Whole framebuffer
@@ -362,7 +368,7 @@ fun showWindow(hWnd HWnd, nCmdShow CmdShow) Bool32 {
 					result = Bool32.True
 				}
 				// NOTE rename them to SW_SHOW_NORMAL
-				// TODO this one is probably `case SW_SHOW or SW_SHOWNORMAL or SW_SHOWDEFAUL:`
+				// TODO Hexa: this one is probably `case SW_SHOW or SW_SHOWNORMAL or SW_SHOWDEFAUL:` cause mimic bit flags i.e. `A | B` implies `A and also B`
 			case SW_SHOW | SW_SHOWNORMAL | SW_SHOWDEFAULT: {
 					let payload = ShowWindowPayload()
 					payload.windowId = window.windowId
@@ -811,7 +817,7 @@ fun fillRect(hdc HDc, lprc Rect, brush HBrush) Int32 {
 
 	if noPattern {
 		// Solid brush: use brush color
-		tofitaDebugLog("> Solid brush color %08x".utf16(), color.ref.color as! UInt32)
+		tofitaDebugLog("> Solid brush color %8".utf16(), color.ref.color as! UInt32)
 		for y in lprc.top ... lprc.bottom {
 			for x in lprc.left ... lprc.right {
 				setFramebufferPixel(fb, x, y, color)
@@ -1161,7 +1167,7 @@ fun getWindowLongW(hWnd HWnd, nIndex Int) Int {
 	return getWindowLongPtrA(hWnd, nIndex) as! Int
 }
 
-// TODO #if x64
+// TODO #if x64 or leave it there for unified API
 @dllExport('GetWindowLongPtrW')
 fun getWindowLongPtrW(hWnd HWnd, nIndex Int) SizeOfPointer {
 	// TODO
