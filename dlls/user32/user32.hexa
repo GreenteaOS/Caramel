@@ -667,6 +667,19 @@ fun outerRect(dc HDc, lprc Rect, brush HBrush) {
 	let fb = (dc as! DC).fb.ref
 	let color = ByValue<Pixel32>()
 	color.ref.color = 0xFFADADADu32 // TODO brush
+
+	// TODO Hexa: make it possible to assign `let rect ByValue<Rect>() = lprc` to make a stack copy
+	let rect = ByValue<Rect>() // Copy cause we will modify it for clipping
+	rect.ref.left = lprc.left
+	rect.ref.top = lprc.top
+	rect.ref.right = lprc.right
+	rect.ref.bottom = lprc.bottom
+	let lprc = rect.ref
+	if lprc.right <= lprc.left or lprc.bottom <= lprc.top {
+		lprc.right += lprc.left
+		lprc.bottom += lprc.top
+	}
+
 	for y in lprc.top ... lprc.bottom {
 		for x in lprc.left ... lprc.right {
 			if (x == lprc.left or y == lprc.top or y == lprc.bottom - 1 or x == lprc.right - 1) {
@@ -765,6 +778,13 @@ fun fillRect(hdc HDc, lprc Rect, brush HBrush) Int32 {
 	let fb = dc.fb // Copy
 	let fb = fb.ref
 
+	let rect = ByValue<Rect>() // Copy cause we will modify it for clipping
+	rect.ref.left = lprc.left
+	rect.ref.top = lprc.top
+	rect.ref.right = lprc.right
+	rect.ref.bottom = lprc.bottom
+	let lprc = rect.ref
+
 	// Determine destination surface (framebuffer or bitmap)
 	var destBits = null
 	var destWidth = fb.width as! Int32
@@ -795,7 +815,20 @@ fun fillRect(hdc HDc, lprc Rect, brush HBrush) Int32 {
 	if lprc.left < 0 or lprc.top < 0 or lprc.right <= lprc.left or lprc.bottom <= lprc.top
 		or lprc.right > destWidth or lprc.bottom > destHeight {
 		tofitaDebugLog("> Invalid rectangle dimensions".utf16())
-		return 0
+		lprc.left = max(lprc.left, 0)
+		lprc.top = max(lprc.top, 0)
+
+		// TODO weird stuff maybe assumed `width` in begin paint?
+		if lprc.right <= lprc.left or lprc.bottom <= lprc.top {
+			lprc.right += lprc.left
+			lprc.bottom += lprc.top
+		}
+
+		// lprc.right = min(lprc.right, destWidth) // TODO need helper method to set `width` cause `right` != `width`
+		// lprc.bottom = min(lprc.bottom, destHeight)
+		tofitaDebugLog("> Clipped rectangle dimensions: left %d top %d".utf16(), lprc.left as! UInt64, lprc.top as! UInt64)
+		tofitaDebugLog("> right %d bottom %d".utf16(), lprc.right as! UInt64, lprc.bottom as! UInt64)
+		// TODO `return 0` just clip
 	}
 
 	// Get brush properties
