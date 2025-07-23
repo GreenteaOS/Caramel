@@ -17,6 +17,24 @@ fun getStockObject(index Int) Handle? {
 	// TODO cache
 	tofitaDebugLog("getStockObject called with index %d".utf16(), index as! UInt64)
 
+	let white_brush = 0
+	if index == white_brush {
+		tofitaDebugLog("> Creating white brush".utf16())
+		let brush = @heap new Brush()
+		brush.pattern = null
+		brush.color = 0x00FFFFFFu32
+		return brush as! HBrush
+	}
+
+	let gray_brush = 2
+	if index == gray_brush {
+		tofitaDebugLog("> Creating gray brush".utf16())
+		let brush = @heap new Brush()
+		brush.pattern = null
+		brush.color = 0x00D0D0D0u32 // TODO 192
+		return brush as! HBrush
+	}
+
 	let black_pen = 7
 	if index == black_pen {
 		tofitaDebugLog("> Creating black pen".utf16())
