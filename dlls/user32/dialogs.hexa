@@ -15,6 +15,10 @@
 
 // TODO turn all `as! Message` into `Message.TAG`
 
+// TODO this file will be replaced with custom implementation
+// ^ it was one of the test-cases for C-to-Hexa translation tool
+// but I'd like too see a more straight-forward, idiomatic implementation
+
 // TODO docs
 @struct
 class DlgControlInfo {

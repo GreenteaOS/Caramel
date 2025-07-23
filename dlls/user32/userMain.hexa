@@ -352,6 +352,7 @@
 ')
 declare fun entry() Void
 
+// TODO move those things
 enum ButtonStyles : Int {
 	// TODO Hexa: make it possible to use constants as tags like `BS_PUSHBUTTON = push_button`
 	BS_PUSH_BUTTON = 0x00000000
@@ -399,6 +400,12 @@ fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRe
 	switch uMsg {
 		case WM_PAINT:
 			tofitaDebugLog("buttonWindowProcW called - WM_PAINT".utf16())
+
+			if isWindowVisible(hWnd) != Bool32.True {
+				// TODO return what?
+				// return null
+			}
+
 			let ps ByValue<PaintStruct> = ByValue<PaintStruct>()
 			let hdc = beginPaint(hWnd, ps.ref)
 			// let color_window = 5 // TODO
@@ -430,20 +437,26 @@ fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRe
 					// (and strong black frame for default button)
 					let r = ByValue<Rect>()
 					getClientRect(hWnd, r.ref)
-					let fmt DrawTextFormat = DrawTextFormat.DT_CENTER // TODO | DrawTextFormat.DT_VCENTER
+					let fmt DrawTextFormat = DrawTextFormat.DT_CENTER // TODO | DrawTextFormat.DT_V_CENTER
 
 					let color_window = 5 // TODO
 					// fillRect(hdc, ps.ref.rcPaint.ref, (color_window + 2) as! HBrush)
 					// fillRect(hdc, r.ref, (color_window + 2) as! HBrush)
+					fillRect(hdc, r.ref, getStockObject(2) as! HBrush)
+					drawEdge(hdc, r.ref, EdgeFlags.BDR_RAISED_INNER, BorderFlags.BF_MIDDLE /* TODO | BF_RECT*/)
+					r.ref.left += 2
+					r.ref.top += 2
+					r.ref.right += 2
+					r.ref.bottom += 2
+					drawTextW(hdc, title, -1, r.ref, fmt)
 
-					if (userdata & (ButtonStates.BST_PUSHED as! UInt16) /*TODO*/) == 0 {
+					/*if (userdata & (ButtonStates.BST_PUSHED as! UInt16) /*TODO*/) == 0 {
 						drawEdge(hdc, r.ref, EdgeFlags.BDR_RAISED_INNER, BorderFlags.BF_MIDDLE /* TODO | BF_RECT*/)
 						if (style & (ButtonStyles.BS_MULTILINE as! UInt16) /*TODO*/) == 0 {
 							// TODO fmt |= DrawTextFormat.DT_SINGLE_LINE
 							drawTextW(hdc, title, -1, r.ref, fmt)
 						}
-					}
-
+					}*/
 					// TODO
 					// if focus
 					// - drawEdge(hdc, &r, BDR_RAISEDINNER, BF_MIDDLE | BF_RECT);
@@ -471,7 +484,7 @@ fun emptyWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRes
 			let hdc = beginPaint(hWnd, ps.ref)
 
 			let color_window = 5 // TODO
-
+			// fillRect(hdc, ps.ref.rcPaint.ref, (color_window + 1) as! HBrush)
 
 			endPaint(hWnd, ps.ref)
 
