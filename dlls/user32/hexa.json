@@ -10,6 +10,7 @@
 		"../../../Tofita/dlls/tofita32/tofita32.header",
 		"../kernel32/kernel32.header",
 		"../ntdll/ntdll.header",
+		"../gdi32/gdi32.header",
 		"user32.header",
 		"textDrawing",
 		"user32",
