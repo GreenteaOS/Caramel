@@ -3349,10 +3349,16 @@ fun invertRect(stub SizeOfPointer) SizeOfPointer {
 }
 
 @dllExport('IsWindowVisible')
-fun isWindowVisible(stub SizeOfPointer) SizeOfPointer {
+fun isWindowVisible(hWnd HWnd) Bool32 {
 	// TODO
 	tofitaDebugLog("IsWindowVisible called".utf16())
-	return 0
+	let ws_visible = 0x10000000i32
+	let gwl_style = -16
+	// TODO test case if it returns `1` or some `non-zero` value
+	return Bool32.fromNonZero(
+		// TODO Hexa `SOP & SOP`
+		getWindowLongPtrW(hWnd, gwl_style) as! UInt32 & ws_visible
+	)
 }
 
 @dllExport('MessageBoxW')
@@ -5668,6 +5674,17 @@ fun registerClassExA(wc WindowClassExA) Atom {
 fun getWindowLongPtrA(hWnd HWnd, nIndex Int32) SizeOfPointer {
 	// TODO
 	tofitaDebugLog("GetWindowLongPtrA called %8 with index %u".utf16(), hWnd as! UInt64, nIndex as! UInt64)
+
+	// TODO Hexa `case -n` and format
+	switch - nIndex {
+		case 16: // GWL_STYLE
+			return handleToWindow(hWnd).style
+		case 20: // GWL_EXSTYLE TODO aka GWL_EX_STYLE
+			return handleToWindow(hWnd).exStyle
+		case 4: // GWL_WNDPROC
+			return handleToWindow(hWnd).proc
+	}
+
 	let result = handleToWindow(hWnd).windowLongPtrA
 	// TODO Hexa: `.windowLongPtrA` nullable check
 	tofitaDebugLog("GetWindowLongPtrA result %8".utf16(), result as! UInt64)
