@@ -18,8 +18,7 @@ declare LSTATUS = Int32
 @dllExport('RegCloseKey')
 fun regCloseKey(hKey HKey) LSTATUS {
 	// TODO seems like functions with 1/0 arguments get corrupted stack, because tofitaDebugLog receives 64 bit integers
-	// tofitaDebugLog("RegCloseKey callerAddress (%8) callerFrame (%8)".utf16(), callerAddress, callerFrame)
-	// tofitaDebugLog("RegCloseKey called with hKey %8".utf16(), hKey as! UInt64)
+	// tofitaDebugLog("regCloseKey called with hKey %8".utf16(), hKey as! UInt64)
 	return 0 // ERROR_SUCCESS
 }
 
@@ -35,7 +34,7 @@ fun regCreateKeyExW(
 	phkResult ArrayPointer<HKey>,
 	lpdwDisposition ArrayPointer<UInt32> // TODO optional
 ) LSTATUS {
-	tofitaDebugLog("RegCreateKeyExW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	tofitaDebugLog("regCreateKeyExW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
 	phkResult[0] = 0x777 as! HKey
 	return 0 // ERROR_SUCCESS
 }
@@ -52,7 +51,7 @@ fun regCreateKeyExA(
 	phkResult ArrayPointer<HKey>,
 	lpdwDisposition ArrayPointer<UInt32>
 ) LSTATUS {
-	tofitaDebugLog("RegCreateKeyExA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	tofitaDebugLog("regCreateKeyExA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
 	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
 	simpleAtoW(lpSubKey, utf16zSubKey.ref)
 	var utf16zClass ArrayByValue<ClangWideChar, 256> = [0]
@@ -68,7 +67,7 @@ fun regOpenKeyExW(
 	samDesired UInt32,
 	phkResult ArrayPointer<HKey>
 ) LSTATUS {
-	tofitaDebugLog("RegOpenKeyExW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	tofitaDebugLog("regOpenKeyExW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
 	return 0 // ERROR_SUCCESS
 }
 
@@ -80,7 +79,7 @@ fun regOpenKeyExA(
 	samDesired UInt32,
 	phkResult ArrayPointer<HKey>
 ) LSTATUS {
-	tofitaDebugLog("RegOpenKeyExA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	tofitaDebugLog("regOpenKeyExA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
 	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
 	simpleAtoW(lpSubKey, utf16zSubKey.ref)
 	return regOpenKeyExW(hKey, utf16zSubKey.ref, ulOptions, samDesired, phkResult)
@@ -95,7 +94,7 @@ fun regQueryValueExW(
 	lpData ArrayPointer<UInt8>,
 	lpcbData ArrayPointer<UInt32>
 ) LSTATUS {
-	tofitaDebugLog("RegQueryValueExW called with hKey %8 lpValueName %S".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	tofitaDebugLog("regQueryValueExW called with hKey %8 lpValueName %S".utf16(), hKey as! UInt64, lpValueName as! UInt64)
 	if lpData != null and lpcbData != null {
 		lpData[0] = 1
 		lpData[1] = 0
@@ -117,7 +116,7 @@ fun regQueryValueExA(
 	lpData ArrayPointer<UInt8>,
 	lpcbData ArrayPointer<UInt32>
 ) LSTATUS {
-	tofitaDebugLog("RegQueryValueExA called with hKey %8 lpValueName %s".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	tofitaDebugLog("regQueryValueExA called with hKey %8 lpValueName %s".utf16(), hKey as! UInt64, lpValueName as! UInt64)
 	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
 	simpleAtoW(lpValueName, utf16zValueName.ref)
 	return regQueryValueExW(hKey, utf16zValueName.ref, lpReserved, lpType, lpData, lpcbData)
@@ -132,7 +131,7 @@ fun regSetValueExW(
 	lpData ConstArrayPointer<UInt8>,
 	cbData UInt32
 ) LSTATUS {
-	tofitaDebugLog("RegSetValueExW called with hKey %8 lpValueName %S".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	tofitaDebugLog("regSetValueExW called with hKey %8 lpValueName %S".utf16(), hKey as! UInt64, lpValueName as! UInt64)
 	return 0 // ERROR_SUCCESS
 }
 
@@ -145,7 +144,7 @@ fun regSetValueExA(
 	lpData ConstArrayPointer<UInt8>,
 	cbData UInt32
 ) LSTATUS {
-	tofitaDebugLog("RegSetValueExA called with hKey %8 lpValueName %s".utf16(), hKey as! UInt64, lpValueName as! UInt64)
+	tofitaDebugLog("regSetValueExA called with hKey %8 lpValueName %s".utf16(), hKey as! UInt64, lpValueName as! UInt64)
 	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
 	simpleAtoW(lpValueName, utf16zValueName.ref)
 	return regSetValueExW(hKey, utf16zValueName.ref, reserved, dwType, lpData, cbData)
@@ -156,7 +155,7 @@ fun regDeleteKeyW(
 	hKey HKey,
 	lpSubKey ConstArrayPointer<ClangWideChar>
 ) LSTATUS {
-	tofitaDebugLog("RegDeleteKeyW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	tofitaDebugLog("regDeleteKeyW called with hKey %8 lpSubKey %S".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
 	return 0 // ERROR_SUCCESS
 }
 
@@ -165,7 +164,7 @@ fun regDeleteKeyA(
 	hKey HKey,
 	lpSubKey ConstArrayPointer<ClangChar>
 ) LSTATUS {
-	tofitaDebugLog("RegDeleteKeyA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
+	tofitaDebugLog("regDeleteKeyA called with hKey %8 lpSubKey %s".utf16(), hKey as! UInt64, lpSubKey as! UInt64)
 	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
 	simpleAtoW(lpSubKey, utf16zSubKey.ref)
 	return regDeleteKeyW(hKey, utf16zSubKey.ref)
@@ -182,7 +181,7 @@ fun regEnumKeyExW(
 	lpcchClass ArrayPointer<UInt32>,
 	lpftLastWriteTime ArrayPointer<FILETIME>
 ) LSTATUS {
-	tofitaDebugLog("RegEnumKeyExW called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	tofitaDebugLog("regEnumKeyExW called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
 	return 259 // ERROR_NO_MORE_ITEMS
 }
 
@@ -197,7 +196,7 @@ fun regEnumKeyExA(
 	lpcchClass ArrayPointer<UInt32>,
 	lpftLastWriteTime ArrayPointer<FILETIME>
 ) LSTATUS {
-	tofitaDebugLog("RegEnumKeyExA called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	tofitaDebugLog("regEnumKeyExA called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
 	var utf16zName ArrayByValue<ClangWideChar, 256> = [0]
 	var utf16zClass ArrayByValue<ClangWideChar, 256> = [0]
 	let result = regEnumKeyExW(hKey, dwIndex, utf16zName.ref, lpcchName, lpReserved, utf16zClass.ref, lpcchClass, lpftLastWriteTime)
@@ -216,7 +215,7 @@ fun regEnumValueW(
 	lpData ArrayPointer<UInt8>,
 	lpcbData ArrayPointer<UInt32>
 ) LSTATUS {
-	tofitaDebugLog("RegEnumValueW called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	tofitaDebugLog("regEnumValueW called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
 	return 259 // ERROR_NO_MORE_ITEMS
 }
 
@@ -231,7 +230,7 @@ fun regEnumValueA(
 	lpData ArrayPointer<UInt8>,
 	lpcbData ArrayPointer<UInt32>
 ) LSTATUS {
-	tofitaDebugLog("RegEnumValueA called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
+	tofitaDebugLog("regEnumValueA called with hKey %8 dwIndex %u".utf16(), hKey as! UInt64, dwIndex as! UInt64)
 	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]
 	let result = regEnumValueW(hKey, dwIndex, utf16zValueName.ref, lpcchValueName, lpReserved, lpType, lpData, lpcbData)
 	// TODO Convert utf16zValueName to ANSI and copy to lpValueName
@@ -240,7 +239,7 @@ fun regEnumValueA(
 
 @dllExport('RegFlushKey')
 fun regFlushKey(hKey HKey) LSTATUS {
-	tofitaDebugLog("RegFlushKey called with hKey %8".utf16(), hKey as! UInt64)
+	tofitaDebugLog("regFlushKey called with hKey %8".utf16(), hKey as! UInt64)
 	return 0 // ERROR_SUCCESS
 }
 
@@ -254,7 +253,7 @@ fun regGetValueW(
 	pvData ArrayPointer<UInt8>,
 	lpcbData ArrayPointer<UInt32>
 ) LSTATUS {
-	tofitaDebugLog("RegGetValueW called with lpSubKey %S lpValueName %S".utf16(), lpSubKey as! UInt64, lpValueName as! UInt64)
+	tofitaDebugLog("regGetValueW called with lpSubKey %S lpValueName %S".utf16(), lpSubKey as! UInt64, lpValueName as! UInt64)
 	return 0 // ERROR_SUCCESS
 }
 
@@ -268,7 +267,7 @@ fun regGetValueA(
 	pvData ArrayPointer<UInt8>,
 	lpcbData ArrayPointer<UInt32>
 ) LSTATUS {
-	tofitaDebugLog("RegGetValueA called with lpSubKey %s lpValueName %s".utf16(), lpSubKey as! UInt64, lpValueName as! UInt64)
+	tofitaDebugLog("regGetValueA called with lpSubKey %s lpValueName %s".utf16(), lpSubKey as! UInt64, lpValueName as! UInt64)
 	var utf16zSubKey ArrayByValue<ClangWideChar, 256> = [0]
 	simpleAtoW(lpSubKey, utf16zSubKey.ref)
 	var utf16zValueName ArrayByValue<ClangWideChar, 256> = [0]

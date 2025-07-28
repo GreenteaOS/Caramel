@@ -69,8 +69,8 @@ fun windowToHandle(window Window) HWnd {
 
 @dllExport('RegisterClassW')
 fun registerClassW(wc WindowClass) Atom {
-	// TODO just `tofitaDebugLog("RegisterClassW called")` no `.utf16()`
-	tofitaDebugLog("RegisterClassW called".utf16())
+	// TODO just `tofitaDebugLog("registerClassW called")` no `.utf16()`
+	tofitaDebugLog("registerClassW called".utf16())
 
 	// TODO utf16zClassName takes atoms? then utf16zClassName PossiblyAtom .toString
 	// TODO rename to just className, ci to require no \wlpsz[A-Z_][A-z_]+\w/etc prefixes
@@ -106,7 +106,7 @@ fun registerClassW(wc WindowClass) Atom {
 	tail = tail.next
 
 	// TODO handle that proc can be null
-	tofitaDebugLog("RegisterClassW done".utf16())
+	tofitaDebugLog("registerClassW done".utf16())
 	return 1 as! Atom // TODO make proper atom
 }
 
@@ -126,7 +126,7 @@ fun createWindowExW(
 	hInstance HInstance,
 	lpParam LParam
 ) HWnd {
-	tofitaDebugLog("CreateWindowExW called".utf16())
+	tofitaDebugLog("createWindowExW called".utf16())
 
 	// Find class
 	// TODO Hexa: infer bug
@@ -318,7 +318,7 @@ fun createWindowExA(
 	hInstance HInstance,
 	lpParam LParam
 ) HWnd {
-	tofitaDebugLog("CreateWindowExA called {%s} of {%s}".utf16(), lpWindowName as! UInt64, lpClassName as! UInt64)
+	tofitaDebugLog("createWindowExA called {%s} of {%s}".utf16(), lpWindowName as! UInt64, lpClassName as! UInt64)
 	// TODO crash when 4096 (supposedly wrong stack checker signature)
 	var utf16zClassName ArrayByValue<ClangWideChar, 256> = [0]
 	var i = 0
@@ -342,14 +342,14 @@ fun createWindowExA(
 		i++
 	}
 
-	tofitaDebugLog("CreateWindowExA calls createWindowExW {%S} of {%S}".utf16(), utf16zClassName as! UInt64, utf16zWindowName as! UInt64)
+	tofitaDebugLog("createWindowExA calls createWindowExW {%S} of {%S}".utf16(), utf16zClassName as! UInt64, utf16zWindowName as! UInt64)
 	return createWindowExW(dwExStyle, utf16zClassName.ref, utf16zWindowName.ref, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam)
 	return null // TODO
 }
 
 @dllExport('ShowWindow')
 fun showWindow(hWnd HWnd, nCmdShow CmdShow) Bool32 {
-	tofitaDebugLog("ShowWindow called with nCmdShow %d for Hwnd %8".utf16(), nCmdShow as! UInt64, hWnd as! UInt64)
+	tofitaDebugLog("showWindow called with nCmdShow %d for Hwnd %8".utf16(), nCmdShow as! UInt64, hWnd as! UInt64)
 	// TODO ^ remove all debug logs, make them traceable with external tool
 	var window = handleToWindow(hWnd)
 	var result = Bool32.False
@@ -385,16 +385,16 @@ fun showWindow(hWnd HWnd, nCmdShow CmdShow) Bool32 {
 				}
 		}
 	} else {
-		tofitaDebugLog("ShowWindow window is null for Hwnd %8".utf16(), hWnd as! UInt64)
+		tofitaDebugLog("showWindow window is null for Hwnd %8".utf16(), hWnd as! UInt64)
 	}
-	tofitaDebugLog("ShowWindow done".utf16())
+	tofitaDebugLog("showWindow done".utf16())
 	return result
 }
 
 // TODO take 2 or more messages at a time for better perf (this is pretty common)
 @dllExport('GetMessageW')
 fun getMessageW(msg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32) Bool32 {
-	tofitaDebugLog("GetMessageW called".utf16())
+	tofitaDebugLog("getMessageW called".utf16())
 	var result = Bool32.True // TODO `true`
 
 	let payload = ByValue<GetMessagePayload>()
@@ -419,19 +419,19 @@ fun getMessageW(msg Msg, hWnd HWnd, wMsgFilterMin UInt32, wMsgFilterMax UInt32) 
 
 	// Stop iteration
 	if msg.message == Message.WM_QUIT {
-		tofitaDebugLog("GetMessageW got WM_QUIT".utf16())
+		tofitaDebugLog("getMessageW got WM_QUIT".utf16())
 		result = Bool32.False
 	}
 
-	tofitaDebugLog("GetMessageW done".utf16())
+	tofitaDebugLog("getMessageW done".utf16())
 	return result
 }
 
 @dllExport('TranslateMessage')
 fun translateMessage(msg Msg) Bool32 {
-	tofitaDebugLog("TranslateMessage called".utf16())
+	tofitaDebugLog("translateMessage called".utf16())
 	// TODO
-	tofitaDebugLog("TranslateMessage done".utf16())
+	tofitaDebugLog("translateMessage done".utf16())
 	return Bool32.False
 }
 
@@ -523,7 +523,7 @@ fun dispatchMessageW(msg Msg) LResult? {
 			tofitaDebugLog("> not_WM_PAINT".utf16())
 			tofitaDebugLog(">> msg.message = %8".utf16(), msg.message as! UInt64)
 
-			// TODO Do this in the `GetMessageW`
+			// TODO Do this in the `getMessageW`
 			if msg.message == Message.WM_MOUSE_MOVE or
 				msg.message == Message.WM_LEFT_BUTTON_DOWN or
 				msg.message == Message.WM_LEFT_BUTTON_UP or
@@ -576,7 +576,7 @@ fun dispatchMessageW(msg Msg) LResult? {
 
 @dllExport('PostMessage')
 fun postMessage(hWnd HWnd, msg Message, wParam WParam, lParam LParam) Bool32 {
-	tofitaDebugLog("PostMessage called HWnd = %8".utf16(), hWnd as! UInt64)
+	tofitaDebugLog("postMessage called HWnd = %8".utf16(), hWnd as! UInt64)
 	var payload PostMessagePayload = PostMessagePayload()
 	// TODO ^ by value
 	payload.hWnd = hWnd as! UInt64
@@ -589,7 +589,7 @@ fun postMessage(hWnd HWnd, msg Message, wParam WParam, lParam LParam) Bool32 {
 
 @dllExport('PostQuitMessage')
 fun postQuitMessage(nExitCode Int32) Void {
-	tofitaDebugLog("PostQuitMessage called".utf16())
+	tofitaDebugLog("postQuitMessage called".utf16())
 	postMessage(null, Message.WM_QUIT, nExitCode as! WParam, null)
 	tofitaDebugLog("> PostQuitMessage done".utf16())
 	// TODO ERROR_SUCCESS
@@ -597,8 +597,8 @@ fun postQuitMessage(nExitCode Int32) Void {
 
 @dllExport('BeginPaint')
 fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
-	tofitaDebugLog("BeginPaint called HWnd = %8".utf16(), hWnd as! UInt64)
 	let window = handleToWindow(hWnd)
+	tofitaDebugLog("beginPaint called HWnd = %8".utf16(), hWnd as! UInt64)
 	// TODO guard `let window = window ?? return null`
 	if window == null {
 		tofitaDebugLog("> window == null, cancelling".utf16())
@@ -694,7 +694,7 @@ fun outerRect(dc HDc, lprc Rect, brush HBrush) {
 // TODO this is a draft
 @dllExport('FillRectTODO')
 fun fillRectTODO(dc HDc, lprc Rect, brush HBrush) Int32 {
-	tofitaDebugLog("FillRect called with hdc %8 lprc %8".utf16(), dc as! UInt64, lprc as! UInt64)
+	tofitaDebugLog("fillRect called with hdc %8 lprc %8".utf16(), dc as! UInt64, lprc as! UInt64)
 	tofitaDebugLog("> hbr %8".utf16(), brush as! UInt64)
 	tofitaDebugLog("> lprc %8".utf16(), lprc as! UInt64)
 	tofitaDebugLog("> lprc.top %u".utf16(), lprc.top as! UInt64)
@@ -898,7 +898,7 @@ fun fillRect(hdc HDc, lprc Rect, brush HBrush) Int32 {
 @dllExport('EndPaint')
 fun endPaint(hWnd HWnd, ps PaintStruct) Bool32 {
 	// TODO respect ps
-	tofitaDebugLog("EndPaint called with hWnd %8 lpps %8".utf16(), hWnd as! UInt64, ps as! UInt64)
+	tofitaDebugLog("endPaint called with hWnd %8 lpps %8".utf16(), hWnd as! UInt64, ps as! UInt64)
 	// TODO `?? return 0` (hardcoded `return\throw` for now)
 	let window = handleToWindow(hWnd)
 	if window == null {
@@ -916,7 +916,7 @@ fun endPaint(hWnd HWnd, ps PaintStruct) Bool32 {
 // TODO move message handling, drawing etc to separate modules
 @dllExport('DefWindowProcW')
 fun defWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResult? {
-	tofitaDebugLog("DefWindowProcW called".utf16())
+	tofitaDebugLog("defWindowProcW called".utf16())
 	let window = handleToWindow(hWnd)
 	if window == null {
 		return null
@@ -954,13 +954,13 @@ fun defWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResul
 		// and/or extended style WS_EX_CLIENTEDGE and the scrollbars as set by SetScrollInfo().
 	}
 
-	tofitaDebugLog("DefWindowProcW done".utf16())
+	tofitaDebugLog("defWindowProcW done".utf16())
 	return null
 }
 
 @dllExport('DestroyWindow')
 fun destroyWindow(hWnd HWnd) Bool32 {
-	tofitaDebugLog("DestroyWindow called".utf16())
+	tofitaDebugLog("destroyWindow called".utf16())
 	return Bool32.False // TODO
 
 	let window = handleToWindow(hWnd)
@@ -972,49 +972,49 @@ fun destroyWindow(hWnd HWnd) Bool32 {
 	// TODO probably should be async post?
 	window.proc(hWnd, Message.WM_DESTROY, null, null)
 	window.proc(hWnd, Message.WM_NON_CLIENT_DESTROY, null, null)
-	tofitaDebugLog("DestroyWindow done".utf16())
+	tofitaDebugLog("destroyWindow done".utf16())
 	return Bool32.False // TODO false?
 }
 
 @dllExport('AppendMenuW')
 fun appendMenuW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("AppendMenuW called".utf16())
+	tofitaDebugLog("appendMenuW called".utf16())
 	return 0
 }
 
 @dllExport('CallWindowProcW')
 fun callWindowProcW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("CallWindowProcW called".utf16())
+	tofitaDebugLog("callWindowProcW called".utf16())
 	return 0
 }
 
 @dllExport('CheckDlgButton')
 fun xTODOcheckDlgButton(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("CheckDlgButton called".utf16())
+	tofitaDebugLog("checkDlgButton called".utf16())
 	return 0
 }
 
 @dllExport('CheckMenuItem')
 fun checkMenuItem(hWnd HWnd, uIDItem Int, uCheck Int) Int {
 	// TODO
-	tofitaDebugLog("CheckMenuItem called".utf16())
+	tofitaDebugLog("checkMenuItem called".utf16())
 	return 1
 }
 
 @dllExport('CheckRadioButton')
 fun xTODOcheckRadioButton(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("CheckRadioButton called".utf16())
+	tofitaDebugLog("checkRadioButton called".utf16())
 	return 0
 }
 
 @dllExport('CloseClipboard')
 fun closeClipboard(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("CloseClipboard called".utf16())
+	tofitaDebugLog("closeClipboard called".utf16())
 	return 0
 }
 
@@ -1035,56 +1035,56 @@ fun xTODOcreateDialogParamW(
 @dllExport('CreatePopupMenu')
 fun createPopupMenu(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("CreatePopupMenu called".utf16())
+	tofitaDebugLog("createPopupMenu called".utf16())
 	return 0
 }
 
 @dllExport('DestroyIcon')
 fun destroyIcon(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("DestroyIcon called".utf16())
+	tofitaDebugLog("destroyIcon called".utf16())
 	return 0
 }
 
 @dllExport('DestroyMenu')
 fun destroyMenu(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("DestroyMenu called".utf16())
+	tofitaDebugLog("destroyMenu called".utf16())
 	return 0
 }
 
 @dllExport('DrawFrameControl')
 fun drawFrameControl(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("DrawFrameControl called".utf16())
+	tofitaDebugLog("drawFrameControl called".utf16())
 	return 0
 }
 
 @dllExport('DrawStateW')
 fun drawStateW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("DrawStateW called".utf16())
+	tofitaDebugLog("drawStateW called".utf16())
 	return 0
 }
 
 @dllExport('EmptyClipboard')
 fun emptyClipboard(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("EmptyClipboard called".utf16())
+	tofitaDebugLog("emptyClipboard called".utf16())
 	return 0
 }
 
 @dllExport('EnableMenuItem')
 fun enableMenuItem(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("EnableMenuItem called".utf16())
+	tofitaDebugLog("enableMenuItem called".utf16())
 	return 0
 }
 
 @dllExport('EnableWindow')
 fun enableWindow(hWnd HWnd, bEnable Bool32) Bool32 {
 	// TODO
-	tofitaDebugLog("EnableWindow called".utf16())
+	tofitaDebugLog("enableWindow called".utf16())
 	return Bool32.False
 }
 
@@ -1096,28 +1096,28 @@ fun enumChildWindows(
 	lParam LParam // Application-defined value to be passed to the callback function
 ) Bool32
 {
-	tofitaDebugLog("EnumChildWindows called".utf16())
+	tofitaDebugLog("enumChildWindows called".utf16())
 	return Bool32.True
 }
 
 @dllExport('GetAsyncKeyState')
 fun getAsyncKeyState(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetAsyncKeyState called".utf16())
+	tofitaDebugLog("getAsyncKeyState called".utf16())
 	return 0
 }
 
 @dllExport('GetClassNameW')
 fun getClassNameW(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetClassNameW called".utf16())
+	tofitaDebugLog("getClassNameW called".utf16())
 	return 0
 }
 
 @dllExport('GetClipboardData')
 fun getClipboardData(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetClipboardData called".utf16())
+	tofitaDebugLog("getClipboardData called".utf16())
 	return 0
 }
 
@@ -1140,28 +1140,28 @@ fun getClipboardData(stub SizeOfPointer) SizeOfPointer {
 @dllExport('GetFocus')
 fun getFocus() HWnd {
 	// TODO
-	tofitaDebugLog("GetFocus called".utf16())
+	tofitaDebugLog("getFocus called".utf16())
 	return null
 }
 
 @dllExport('GetKeyboardLayout')
 fun getKeyboardLayout(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetKeyboardLayout called".utf16())
+	tofitaDebugLog("getKeyboardLayout called".utf16())
 	return 0
 }
 
 @dllExport('GetKeyboardState')
 fun getKeyboardState(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetKeyboardState called".utf16())
+	tofitaDebugLog("getKeyboardState called".utf16())
 	return 0
 }
 
 @dllExport('GetMenu')
 fun getMenu(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetMenu called".utf16())
+	tofitaDebugLog("getMenu called".utf16())
 	return 0
 }
 
@@ -1170,7 +1170,7 @@ fun getParent(
 	hWnd HWnd // HWND -> HWnd (input handle to the window)
 ) HWnd // HWND -> HWnd (return type indicating the handle to the parent window)
 {
-	tofitaDebugLog("GetParent called".utf16())
+	tofitaDebugLog("getParent called".utf16())
 
 	if let window = handleToWindow(hWnd) {
 		return window.parent as! HWnd
@@ -1182,21 +1182,21 @@ fun getParent(
 @dllExport('GetSubMenu')
 fun getSubMenu(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetSubMenu called".utf16())
+	tofitaDebugLog("getSubMenu called".utf16())
 	return 0
 }
 
 @dllExport('GetSystemMetrics')
 fun getSystemMetrics(nIndex Int32) Int32 {
 	// TODO
-	tofitaDebugLog("GetSystemMetrics called %u".utf16(), nIndex as! UInt64)
+	tofitaDebugLog("getSystemMetrics called %u".utf16(), nIndex as! UInt64)
 	return 0
 }
 
 @dllExport('GetWindowLongW')
 fun getWindowLongW(hWnd HWnd, nIndex Int) Int {
 	// TODO
-	tofitaDebugLog("GetWindowLongW called".utf16())
+	tofitaDebugLog("getWindowLongW called".utf16())
 	return getWindowLongPtrA(hWnd, nIndex) as! Int
 }
 
@@ -1204,13 +1204,13 @@ fun getWindowLongW(hWnd HWnd, nIndex Int) Int {
 @dllExport('GetWindowLongPtrW')
 fun getWindowLongPtrW(hWnd HWnd, nIndex Int) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("GetWindowLongPtrW called".utf16())
+	tofitaDebugLog("getWindowLongPtrW called".utf16())
 	return getWindowLongPtrA(hWnd, nIndex) as! SizeOfPointer
 }
 
 @dllExport('GetWindowRect')
 fun getWindowRect(hWnd HWnd, lprc Rect?) Bool32 {
-	tofitaDebugLog("GetWindowRect called with hWnd %8 lprc %8".utf16(), hWnd as! UInt64, lprc as! UInt64)
+	tofitaDebugLog("getWindowRect called with hWnd %8 lprc %8".utf16(), hWnd as! UInt64, lprc as! UInt64)
 	if let rc = lprc {
 		// TODO Get window dimensions
 		rc.left = 0
@@ -1229,14 +1229,14 @@ fun getWindowTextW(
 	nMaxCount Int // Maximum number of characters to copy to the buffer, including the null terminator
 ) Int
 {
-	tofitaDebugLog("GetWindowTextW called".utf16())
+	tofitaDebugLog("getWindowTextW called".utf16())
 	return 0
 }
 
 @dllExport('InvalidateRect')
 fun invalidateRect(hWnd HWnd?, lprc Rect, bErase Bool32) Bool32 {
 	// TODO Mark rectangle for repainting
-	tofitaDebugLog("InvalidateRect called with hWnd %8".utf16(), hWnd as! UInt64)
+	tofitaDebugLog("invalidateRect called with hWnd %8".utf16(), hWnd as! UInt64)
 	tofitaDebugLog("> lprc %8 bErase %u".utf16(), lprc as! UInt64, bErase as! UInt64)
 	return Bool32.True
 }
@@ -1244,7 +1244,7 @@ fun invalidateRect(hWnd HWnd?, lprc Rect, bErase Bool32) Bool32 {
 @dllExport('IsClipboardFormatAvailable')
 fun isClipboardFormatAvailable(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("IsClipboardFormatAvailable called".utf16())
+	tofitaDebugLog("isClipboardFormatAvailable called".utf16())
 	return 0
 }
 
@@ -1253,14 +1253,14 @@ fun isClipboardFormatAvailable(stub SizeOfPointer) SizeOfPointer {
 // It returns a value indicating whether the button is checked or not.
 fun xTODOisDlgButtonChecked(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("IsDlgButtonChecked called".utf16())
+	tofitaDebugLog("isDlgButtonChecked called".utf16())
 	return 0
 }
 
 @dllExport('IsWindow')
 fun isWindow(hWnd HWnd) Bool32 {
 	// TODO
-	tofitaDebugLog("IsWindow called".utf16())
+	tofitaDebugLog("isWindow called".utf16())
 	return Bool32.True
 	return handleToWindow(hWnd) != null ? Bool32.True : Bool32.False
 }
@@ -1268,14 +1268,14 @@ fun isWindow(hWnd HWnd) Bool32 {
 @dllExport('IsWindowEnabled')
 fun isWindowEnabled(hWnd HWnd) Bool32 // BOOL -> Bool (return type)
 {
-	tofitaDebugLog("IsWindowEnabled called".utf16())
+	tofitaDebugLog("isWindowEnabled called".utf16())
 	return Bool32.True
 }
 
 @dllExport('LoadMenuW')
 fun loadMenuW(hInstance HInstance, lpMenuName ConstArrayPointer<ClangWideChar>) Handle {
 	// TODO
-	tofitaDebugLog("LoadMenuW called %S".utf16(), lpMenuName as! UInt64)
+	tofitaDebugLog("loadMenuW called %S".utf16(), lpMenuName as! UInt64)
 	return 0
 }
 
@@ -1292,7 +1292,7 @@ fun makeIntResourceW(i UInt32) ConstArrayPointer<ClangWideChar> {
 
 @dllExport('LoadStringW')
 fun loadStringW(hInstance HInstance?, uID UInt32, lpBuffer ArrayPointer<ClangWideChar>, nBufferMax Int) Int {
-	tofitaDebugLog("LoadStringW called %8 with id %d".utf16(), hInstance as! UInt64, uID)
+	tofitaDebugLog("loadStringW called %8 with id %d".utf16(), hInstance as! UInt64, uID)
 
 	// Fill at least something
 	if let lpBuffer = lpBuffer, nBufferMax > 0 {
@@ -1372,7 +1372,7 @@ fun loadStringW(hInstance HInstance?, uID UInt32, lpBuffer ArrayPointer<ClangWid
 fun loadStringA(hInstance HInstance?, uID UInt32, lpBuffer ArrayPointer<ClangChar>, nBufferMax Int) Int {
 	// TODO
 	// var result ConstArrayPointer<ClangChar> = [0]
-	tofitaDebugLog("LoadStringA called %8 id %d".utf16(), hInstance as! UInt64, uID)
+	tofitaDebugLog("loadStringA called %8 id %d".utf16(), hInstance as! UInt64, uID)
 	if let lpBuffer = lpBuffer, nBufferMax > 0 {
 		lpBuffer[0] = 63 // TODO Hexa
 		lpBuffer[1] = 0
@@ -1388,14 +1388,15 @@ fun loadStringA(hInstance HInstance?, uID UInt32, lpBuffer ArrayPointer<ClangCha
 @dllExport('MapVirtualKeyExW')
 fun mapVirtualKeyExW(vkCode Int, scanCode Int, flags Int, lpTranslate ArrayPointer<ClangWideChar>) Int {
 	// TODO
-	tofitaDebugLog("MapVirtualKeyExW called".utf16())
+	tofitaDebugLog("mapVirtualKeyExW called".utf16())
 	return 0
 }
 
 @dllExport('MoveWindow')
 fun moveWindow(hwnd HWnd, x Int32, y Int32, width Int32, height Int32, repaint Bool32) Bool32 {
 	// TODO change position too
-	tofitaDebugLog("MoveWindow called".utf16())
+	tofitaDebugLog("moveWindow called w %d h %d".utf16(), width as! UInt32, height as! UInt32)
+	tofitaDebugLog("> x %d y %d".utf16(), x as! UInt32, y as! UInt32)
 
 	if let window = handleToWindow(hwnd), window.width != width or window.height != height {
 		window.x = x
@@ -1427,14 +1428,14 @@ fun moveWindow(hwnd HWnd, x Int32, y Int32, width Int32, height Int32, repaint B
 @dllExport('OpenClipboard')
 fun openClipboard(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("OpenClipboard called".utf16())
+	tofitaDebugLog("openClipboard called".utf16())
 	return 0
 }
 
 @dllExport('PostMessageW')
 fun postMessageW(hWnd HWnd, msg Message, wParam WParam, lParam LParam) Bool32 {
 	// TODO
-	tofitaDebugLog("PostMessageW called".utf16())
+	tofitaDebugLog("postMessageW called".utf16())
 	return 0
 }
 
@@ -1462,7 +1463,7 @@ fun getClientRect(
 	hWnd HWnd,
 	lpRect Rect
 ) Bool32 {
-	tofitaDebugLog("GetClientRect called with hWnd %8 lpRect %8".utf16(), hWnd as! UInt64, lpRect as! UInt64)
+	tofitaDebugLog("getClientRect called with hWnd %8 lpRect %8".utf16(), hWnd as! UInt64, lpRect as! UInt64)
 	// TODO verify that window.x and window.y are relative to the parent window’s client area (which they should be for child windows).
 	if let window = handleToWindow(hWnd) {
 		lpRect.left = window.x
@@ -1492,7 +1493,7 @@ fun drawTextW(
 	lprc Rect,
 	format DrawTextFormat
 ) Int32 {
-	tofitaDebugLog("DrawTextW called".utf16())
+	tofitaDebugLog("drawTextW called".utf16())
 	let color = ByValue<Pixel32>()
 	color.ref.color = 0xFF000000u32 // TODO
 	drawTextBox(
@@ -1560,7 +1561,7 @@ fun drawEdge(
 	edge EdgeFlags,
 	grfFlags BorderFlags
 ) Bool32 {
-	tofitaDebugLog("DrawEdge called".utf16())
+	tofitaDebugLog("drawEdge called".utf16())
 
 	let color_window = 5 // TODO
 	// TODO
@@ -1574,42 +1575,42 @@ fun getWindowLongA(
 	hWnd HWnd,
 	nIndex Int32
 ) Int32 {
-	tofitaDebugLog("GetWindowLongA called".utf16())
+	tofitaDebugLog("getWindowLongA called".utf16())
 	return getWindowLongPtrA(hWnd, nIndex) as! Int32 // TODO
 }
 
 @dllExport('SetClipboardData')
 fun setClipboardData(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("SetClipboardData called".utf16())
+	tofitaDebugLog("setClipboardData called".utf16())
 	return 0
 }
 
 @dllExport('SetFocus')
 fun setFocus(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("SetFocus called".utf16())
+	tofitaDebugLog("setFocus called".utf16())
 	return 0
 }
 
 @dllExport('SetMenu')
 fun setMenu(hWnd HWnd, hMenu HMenu) Bool32 {
 	// TODO
-	tofitaDebugLog("SetMenu called".utf16())
+	tofitaDebugLog("setMenu called".utf16())
 	return Bool32.True
 }
 
 @dllExport('SetWindowLongW')
 fun setWindowLongW(hWnd HWnd, nIndex Int, dwNewLong Int) Int {
 	// TODO
-	tofitaDebugLog("SetWindowLongW called".utf16())
+	tofitaDebugLog("setWindowLongW called".utf16())
 	return setWindowLongPtrA(hWnd, nIndex, dwNewLong as! SizeOfPointer) as! Int
 }
 
 @dllExport('SetWindowLongPtrW')
 fun setWindowLongPtrW(hWnd HWnd, nIndex Int32, dwNewLong SizeOfPointer) SizeOfPointer {
 	// TODO same as A?
-	tofitaDebugLog("SetWindowLongPtrW called %8 with index %u".utf16(), hWnd as! UInt64, nIndex as! UInt64)
+	tofitaDebugLog("setWindowLongPtrW called %8 with index %u".utf16(), hWnd as! UInt64, nIndex as! UInt64)
 	let previous = handleToWindow(hWnd).windowLongPtrA
 	handleToWindow(hWnd).windowLongPtrA = dwNewLong
 	return previous
@@ -1618,27 +1619,27 @@ fun setWindowLongPtrW(hWnd HWnd, nIndex Int32, dwNewLong SizeOfPointer) SizeOfPo
 @dllExport('ToAsciiEx')
 fun toAsciiEx(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("ToAsciiEx called".utf16())
+	tofitaDebugLog("toAsciiEx called".utf16())
 	return 0
 }
 
 @dllExport('TrackMouseEvent')
 fun trackMouseEvent(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("TrackMouseEvent called".utf16())
+	tofitaDebugLog("trackMouseEvent called".utf16())
 	return 0
 }
 
 @dllExport('TrackPopupMenu')
 fun trackPopupMenu(stub SizeOfPointer) SizeOfPointer {
 	// TODO
-	tofitaDebugLog("TrackPopupMenu called".utf16())
+	tofitaDebugLog("trackPopupMenu called".utf16())
 	return 0
 }
 
 @linkName('NO_DllMainCRTStartup')
 @fastcall fun _DllMainCRTStartup() Void {
-	tofitaDebugLog("DllMainCRTStartup called".utf16())
+	tofitaDebugLog("dllMainCRTStartup called".utf16())
 	// TODO how to handle in Hexa? just HX_MAIN?
 	rootClass.next = null
 }

@@ -477,6 +477,7 @@ fun buttonWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LRe
 fun emptyWindowProcW(hWnd HWnd, uMsg Message, wParam WParam, lParam LParam) LResult? {
 	// tofitaDebugLog("emptyWindowProcW called".utf16())
 
+	// TODO `WM_ERASEBKGND` must be handled in the def window proc ig
 	switch uMsg {
 		case WM_PAINT:
 			tofitaDebugLog("emptyWindowProcW called - WM_PAINT".utf16())
