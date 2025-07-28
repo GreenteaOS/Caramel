@@ -560,6 +560,9 @@ fun releaseDC(hWnd HWnd, hdc HDc) Int32 {
 	// TODO Release device context
 	tofitaDebugLog("ReleaseDC called with hWnd %8 hdc %8".utf16(), hWnd as! UInt64, hdc as! UInt64)
 
+	// TODO re-enable this after testing
+	return 0
+
 	var window = handleToWindow(hWnd)
 	if window == null {
 		return 0
@@ -683,8 +686,8 @@ fun ptInRect(lprc Rect, pt ByValue<Point>) Bool32 {
 
 	// TODO Hexa: cover `else {} as!` nad `if {} as!` with tests to ensure parsing to not break or change this logic
 	// cause its confusing (move to the typer)
-	tofitaDebugLog("> Point %s in rect".utf16(), if result { "is".utf16() } else { "is not".utf16() } as! UInt64)
-	return Bool32.fromBool(result)
+	// tofitaDebugLog("> Point %S in rect".utf16(), if result { "is".utf16() } else { "is not".utf16() } as! UInt64)
+	return result as! Bool32 // TODO Bool32.fromBool(result)
 }
 
 // Purpose: Determines if two rectangles are equal
@@ -892,11 +895,20 @@ let defaultDC DC = DC()
 fun getDC(hWnd HWnd?) HDc {
 	// TODO Retrieve device context
 	tofitaDebugLog("GetDC called with hWnd %8".utf16(), hWnd as! UInt64)
-	let window = handleToWindow(hWnd)
+	var window = handleToWindow(hWnd)
 	if window == null {
 		tofitaDebugLog("GetDC returned defaultDC %8".utf16(), defaultDC as! UInt64)
 		return defaultDC as! HDc
 	}
+
+	// TODO Share `fb` by reference, not by value
+	while window.parent != null {
+		window = window.parent
+	}
+
+	let dc = window.dc
+	let fb = dc.fb.ref
+	njraaGetOrCreateWindowFramebuffer(fb)
 
 	tofitaDebugLog("GetDC returned window.dc.ref %8".utf16(), window.dc as! UInt64)
 	return window.dc as! HDc
