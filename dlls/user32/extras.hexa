@@ -1373,6 +1373,8 @@ fun srand(seed UInt32) Void {
 	/* Prevent zero seed to avoid degenerate Xor-shift */
 	if seed == 0 {
 		random = 1
+		// TODO actual expected value
+		random = sizeOf<SizeOfPointer>() as! Int
 	} else {
 		random = seed as! Int
 	}
@@ -4659,7 +4661,9 @@ fun getCaretPos(stub SizeOfPointer) SizeOfPointer {
 // Win32 Spec: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mapwindowpoints
 @dllExport('MapWindowPoints')
 fun mapWindowPoints(hWndFrom HWnd, hWndTo HWnd, lpPoints ArrayPointer<ByValue<Point>>, cPoints UInt32) Int32 {
-	// TODO
+	// TODO currently we pass window-coordinates in Tofita, not screen ones
+	return cPoints as! Int32
+
 	// TODO make proper logging
 	tofitaDebugLog("MapWindowPoints called with hWndFrom %8 hWndTo %8".utf16(),
 		hWndFrom as! UInt64, hWndTo as! UInt64)
@@ -4686,16 +4690,41 @@ fun mapWindowPoints(hWndFrom HWnd, hWndTo HWnd, lpPoints ArrayPointer<ByValue<Po
 	let toX = if toWindow == null { 0 } else { toWindow.x }
 	let toY = if toWindow == null { 0 } else { toWindow.y }
 
+	// TODO currently we pass window-coordinates in Tofita, not screen ones
+	let fromX = 0
+	let fromY = 0
+	let toX = 0
+	let toY = 0
+
 	/* Calculate relative offset: from source window to target window */
 	let offsetX = toX - fromX
 	let offsetY = toY - fromY
 	tofitaDebugLog("> Mapping offset: x %d, y %d".utf16(), offsetX as! UInt64, offsetY as! UInt64)
 
-	/* Transform each point in the array */
-	for i in cPoints {
-		/* Access lpPoints[i].ref to modify x, y fields, assuming Point is ByValue<Point> */
-		lpPoints[i].ref.x += offsetX
-		lpPoints[i].ref.y += offsetY
+	/* If exactly two points are passed, treat them as a RECT and swap left/right if needed */
+	if cPoints == 2 {
+		let left = lpPoints[0].ref.x
+		let top = lpPoints[0].ref.y
+		let right = lpPoints[1].ref.x
+		let bottom = lpPoints[1].ref.y
+
+		lpPoints[0].ref.x = left + offsetX
+		lpPoints[0].ref.y = top + offsetY
+		lpPoints[1].ref.x = right + offsetX
+		lpPoints[1].ref.y = bottom + offsetY
+
+		/* Ensure left <= right after mapping */
+		if lpPoints[0].ref.x > lpPoints[1].ref.x {
+			let swap = lpPoints[0].ref.x
+			lpPoints[0].ref.x = lpPoints[1].ref.x
+			lpPoints[1].ref.x = swap
+		}
+	} else {
+		/* Transform each point in the array */
+		for i in cPoints {
+			lpPoints[i].ref.x += offsetX
+			lpPoints[i].ref.y += offsetY
+		}
 	}
 
 	/* Return number of points processed, per Win32 spec */
@@ -5828,6 +5857,7 @@ fun selectObject(
 
 	switch handleTypeHolder.handleType {
 		case HBitmap:
+			// Store the current bitmap and select the new one
 			let prev = dc.hBitmap
 			dc.hBitmap = h as! HBitmap
 			tofitaDebugLog("> Selected bitmap %8, previous %8".utf16(), h as! UInt64, prev as! UInt64)
@@ -5867,8 +5897,6 @@ fun selectObject(
 			tofitaDebugLog("> Invalid handle type".utf16())
 			return null
 	}
-
-	// Store the current bitmap and select the new one
 
 	return null
 }
