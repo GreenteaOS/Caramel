@@ -55,7 +55,7 @@ Decompilation is strictly limited to what's necessary for interoperability purpo
 
 Creating an open source, non-commercial, interoperable plugin is beneficial to the public interest and serves essential compatibility purposes.
 
-- Follow general clean-room *requirements* (i.e. search for existing public knowledge as much as possible)
+- [Follow general clean-room requirements](SAFETY.md) (i.e. search for existing public knowledge as much as possible)
 - Make sure the necessary information is not already readily available
 - Use AI to fill the gaps in the knowledge (our tests show that LLM's have not seen leaked source codes)
 - Limit the decompilation to the parts needed for interoperability
