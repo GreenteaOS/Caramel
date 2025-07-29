@@ -13,8 +13,8 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // TODO @linkName('KiFastSystemCall')
-fun kiFastSystemCall(rcx UInt64, rdx Payload) UInt64 {
-	return tofitaFastSystemCall(rcx as! TofitaSyscalls, rdx)
+fun kiFastSystemCall(rcx TofitaSyscalls, rdx SyscallPayload) SyscallResult {
+	return tofitaFastSystemCall(rcx, rdx)
 }
 
 @linkName('NtCurrentTeb')
@@ -22,7 +22,7 @@ fun kiFastSystemCall(rcx UInt64, rdx Payload) UInt64 {
 fun ntCurrentTeb() SizeOfPointer {
 	// return
 	#if bit64 // TODO format
-	// TODO `0x60u32`?
+		// TODO `0x60u32`?
 		return readgsqword(0x30u32)
 	#end
 	#if bit32
@@ -33,9 +33,12 @@ fun ntCurrentTeb() SizeOfPointer {
 
 // TODO calling convention
 // TODO no capture `@closure(false)`
+declare ConsoleEntry = (hInstance ConstArrayPointer<Void>, hPrev ConstArrayPointer<Void>, pCmdLine ConstArrayPointer<Void>, nCmdShow Int) => UInt32
 declare Entry = (hInstance ConstArrayPointer<Void>, hPrev ConstArrayPointer<Void>, pCmdLine ConstArrayPointer<Void>, nCmdShow Int) => UInt32
-declare DllEntry = (hinstDLL ConstArrayPointer<Void>, fdwReason DllEntryReason, lpvReserved ConstArrayPointer<Void>) => Bool32
-// TODO must error `hinstDLL` twice `declare DllEntry = (hinstDLL ConstArrayPointer<Void>, fdwReason DllEntryReason, hinstDLL ConstArrayPointer<Void>) => Bool32`
+declare ExeEntry = () => Int32
+// TODO The function must be defined to use the __stdcall calling convention
+declare DllEntry = (hInstanceDLL ConstArrayPointer<Void>, fdwReason DllEntryReason, lpvReserved ConstArrayPointer<Void>) => Bool32
+// TODO Hexa: must error `hinstDLL` twice `declare DllEntry = (hinstDLL ConstArrayPointer<Void>, fdwReason DllEntryReason, hinstDLL ConstArrayPointer<Void>) => Bool32`
 
 // @rename('hexa_entry') declare let hexa_entry Entry // TODO size_t
 // @rename('hexa_pid') declare let hexa_pid UInt64 // TODO size_t
@@ -43,8 +46,10 @@ declare DllEntry = (hinstDLL ConstArrayPointer<Void>, fdwReason DllEntryReason, 
 @rename('hexa_startup') declare let hexa_startup UInt64 // TODO size_t aka PointerSizedUInt (size_t is guaranteed to be an unsigned type)
 
 @dllExport('memset')
-fun memset(value UInt32) {
-	// TODO !!
+fun memset(dest ConstArrayPointer<UInt8>, value Int, count SizeOfPointer) SizeOfPointer {
+	// TODO !! inline(?) version here, full at msvcrt
+	tofitaDebugLog("[ntdll] memset() WARN: STUB\n".utf16())
+	return dest as! SizeOfPointer
 }
 
 enum DllEntryReason: UInt32 {
@@ -53,7 +58,9 @@ enum DllEntryReason: UInt32 {
 
 // TODO set as entry @linkName('greenteaosIsTheBest')
 fun greenteaosIsTheBest(startup ProcessStartupInformation) {
-	let entry Entry = startup.entry
+	tofitaDebugLog("CRT prepare for startup info at %8".utf16(), startup as! UInt32)
+	// TODO get this info from PEB, after all
+	let entry ExeEntry? = startup.entry as! ExeEntry
 	let pid UInt64 = startup.pid
 	let dllEntries UInt64 = startup.dllEntries
 	// TODO entry arguments (argv, argc)
@@ -81,15 +88,21 @@ fun greenteaosIsTheBest(startup ProcessStartupInformation) {
 	}
 
 	for i in count {
+		// TODO DLL name
 		// DLL may have no entry
 		if let entryPoint = dllMains[i] {
-			entryPoint(null, DllEntryReason.DLL_PROCESS_ATTACH, null)
+			tofitaDebugLog("entry != null OK for DLL %u at %8".utf16(), i, entryPoint)
+			// TODO hInstance
+			let hInstance = null as! ConstArrayPointer<Void>
+			// TODO handle returned value
+			entryPoint(hInstance, DllEntryReason.DLL_PROCESS_ATTACH, null)
 		}
+		// TODO add DLL to PEB list
 	}
 
 	// TODO unmap entries/ProcessStartupInformation if required
 	// ^ probably map it right after where NTDLL is mapped
-	tofitaDebugLog("Done %u DLLs".utf16(), count)
+	tofitaDebugLog("done %u DLLs".utf16(), count)
 
 	if entry != null {
 		// Note: some apps require entry to be called even if its zero to invoke TLS callbacks
@@ -101,9 +114,31 @@ fun greenteaosIsTheBest(startup ProcessStartupInformation) {
 	}
 
 	// TODO non-null stubs here, like HInstance etc
-	tofitaExitProcess(entry(null, null, null, 0))
-	while true { }
+	// let hInstance = null as! ConstArrayPointer<Void>
 	// TODO detect SUBSYSTEM:CONSOLE
+	// TODO actual command line
+	// let cmd ArrayByValue<UInt16, 5> = "demo"
+	// TODO is it really LPSTR or LPWSTR?
+	// let pCmdLine = cmd.ref as! ConstArrayPointer<Void>
+	// tofitaExitProcess(entry(hInstance, null, pCmdLine, 0))
+	if let entry = entry, false {
+		{ return }
+		// No arguments taken, they are produced by the CRT within .exe itself
+		// Guessing by CRT0 examples, it's likely to return error code than void
+		let entryPoint ConsoleEntry = entry as! ConsoleEntry
+		tofitaExitProcess(entryPoint(null, null, null, 0) as! Int32)
+		// TODO calling without args breaks demo64.exe but that one has no CRT so this should be used later
+		// tofitaExitProcess(entry())
+		return
+	}
+
+	// Well, weird .exe or does stuff via TLS callbacks, thus we *must* cause page fault when entry is null
+	// TODO Hexa: `= entry!`
+	let entry ExeEntry = entry as! ExeEntry
+	let result = entry()
+
+	// Whatever
+	tofitaExitProcess(result)
 }
 
 // TODO get this structure from FS/GS
