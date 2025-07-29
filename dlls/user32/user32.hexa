@@ -103,7 +103,6 @@ fun registerClassW(wc WindowClass) Atom {
 	// TODO still bad idea cause pointers to strings (aka wide chars)
 
 	tail.next = list
-	tail = tail.next
 
 	// TODO handle that proc can be null
 	tofitaDebugLog("registerClassW done".utf16())
@@ -178,10 +177,18 @@ fun createWindowExW(
 	// TODO test zero-width
 	// TODO Hexa: encode as `enum WindowSize { CW_USE_DEFAULT = 123 Custom = .../_ } case Custom(value):`
 	// TODO respect CW_USE_DEFAULT etc for pos and size
-	payload.nWidth = nWidth <= 0? 316 : nWidth
-	payload.nHeight = nHeight <= 0? 163 : nHeight
+	payload.nWidth = nWidth <= 0? 640 : nWidth
+	payload.nHeight = nHeight <= 0? 400 : nHeight
 	tofitaDebugLog("> CreateWindowExW requested size %d x %d".utf16(), nWidth as! UInt64, nHeight as! UInt64)
 	// TODO pass params as tags? are all those params even needed in server?
+
+	// if hWndParent != null and nWidth <= 0 {
+	// // TODO If CW_USEDEFAULT is specified for a pop-up or child window, nWidth and nHeight are set to zero.
+	// if let parent = handleToWindow(hWndParent) {
+	// payload.nWidth = 0 // parent.width
+	// payload.nHeight = 0 // parent.height
+	// }
+	// }
 
 	// Create local window counterpart
 	let window = Window()
@@ -213,8 +220,38 @@ fun createWindowExW(
 	// TODO `payload.x` must be updated in the syscall instead
 	window.x = x
 	window.y = y
+
+	// `CW_USE_DEFAULT`
+	if window.x < 0 {
+		window.x = 0 // NOTE currently non-zero breaks `miceTarget`
+	}
+
+	if window.y < 0 {
+		window.y = 0 // NOTE currently non-zero breaks `miceTarget`
+	}
+
 	window.width = payload.nWidth
+	window.width = nWidth
+
 	window.height = payload.nHeight
+	window.height = nHeight
+
+	if nWidth < 0 {
+		if hWndParent != null {
+			window.width = 0
+		} else {
+			window.width = payload.nWidth
+		}
+	}
+
+	if nHeight < 0 {
+		if hWndParent != null {
+			window.height = 0
+		} else {
+			window.height = payload.nHeight
+		}
+	}
+
 	// TODO null should produce `"null"`
 	// TODO window name limit?
 	window.title = isAtom(lpWindowName as! UInt64) ? '#' + (lpWindowName as! UInt64) : String.fromUTF16zUpTo(lpWindowName as! ConstArrayPointer<UInt16>, 4096)
@@ -222,6 +259,9 @@ fun createWindowExW(
 	// Styles
 	window.style = dwStyle
 	window.exStyle = dwExStyle
+
+	// TODO some template parsing is unclear
+	// window.style = window.style | window.exStyle
 
 	// TODO change to a helper `isDesktopWindow()` or `isDesktopOwnedWindow()`
 	if windowId != 0 {
@@ -452,9 +492,25 @@ fun render(window Window, msg Msg) LResult? {
 		child.clipWidth = child.width
 		child.clipHeight = child.height
 
-		render(child, msg)
 		// TODO Hexa: `render(child, {...msg, hwnd: child as! HWnd})` + ensure its on stack
 		// let childMsg = Msg() // TODO ensure allocated on stack
+		let childMsg = ByValue<Msg>()
+		let childMsg = childMsg.ref
+		childMsg.hwnd = child as! HWnd
+		childMsg.message = msg.message
+		childMsg.message = Message.WM_PAINT
+		childMsg.wParam = msg.wParam // TODO
+		childMsg.lParam = msg.lParam // TODO
+
+		child.clipX = 0
+		child.clipY = 0
+		child.clipWidth = child.width
+		child.clipHeight = child.height
+
+		childMsg.wParam = 0 as! WParam
+		childMsg.lParam = 0 as! LParam
+		// render(child, childMsg)
+		postMessageW(childMsg.hwnd, childMsg.message, childMsg.wParam, childMsg.lParam)
 
 		/*
 		TODO Probably adding local message queue for speed makes sense (for messages produced within the app like this one)
@@ -544,6 +600,10 @@ fun dispatchMessageW(msg Msg) LResult? {
 				let y Int32 = LParam.hiWord(lParam) - frameHeight // Tofita sends non-client mouse
 				tofitaDebugLog(">> x = %d, y = %d".utf16(), x as! UInt64, y as! UInt64)
 
+				// TODO screen coordinates should come from the DWM
+				msg.pt.ref.x = x
+				msg.pt.ref.y = y
+
 				// Find the target window (parent or child) under the cursor
 				let targetWindow = miceTarget(window, x, y)
 				if let targetWindow = targetWindow {
@@ -556,7 +616,10 @@ fun dispatchMessageW(msg Msg) LResult? {
 					result = targetWindow.proc(targetWindow as! HWnd, msg.message, msg.wParam, translatedLParam)
 				} else {
 					tofitaDebugLog("> No window found under cursor".utf16())
-					result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
+					let translatedX = x
+					let translatedY = y
+					let translatedLParam = LParam.makeULong(translatedX as! UInt16, translatedY as! UInt16) as! LParam
+					result = window.proc(msg.hwnd, msg.message, msg.wParam, translatedLParam)
 				}
 			} else if msg.message == Message.WM_TIMER, msg.lParam != null {
 				// TODO capture exceptions and flag for non-capturing
@@ -597,12 +660,16 @@ fun postQuitMessage(nExitCode Int32) Void {
 
 @dllExport('BeginPaint')
 fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
-	let window = handleToWindow(hWnd)
 	tofitaDebugLog("beginPaint called HWnd = %8".utf16(), hWnd as! UInt64)
+	var window = handleToWindow(hWnd)
 	// TODO guard `let window = window ?? return null`
 	if window == null {
 		tofitaDebugLog("> window == null, cancelling".utf16())
 		return null
+	}
+
+	while window.parent != null {
+		window = window.parent
 	}
 
 	let dc = window.dc
@@ -625,6 +692,12 @@ fun beginPaint(hWnd HWnd, ps PaintStruct) HDc {
 	rcPaint.right = window.clipX + window.clipWidth // TODO MIN(fb.width)
 	rcPaint.bottom = fb.height as! Int32
 	rcPaint.bottom = window.clipY + window.clipHeight // TODO MIN(fb.height)
+
+	// Default to entire *client* area
+	rcPaint.left = 0
+	rcPaint.top = 0
+	rcPaint.right = fb.width as! Int32
+	rcPaint.bottom = fb.height as! Int32
 
 	// Set fErase (assume true if no WM_ERASEBKGND handler)
 	ps.fErase = Bool32.True // TODO Check if background was erased
@@ -900,11 +973,20 @@ fun endPaint(hWnd HWnd, ps PaintStruct) Bool32 {
 	// TODO respect ps
 	tofitaDebugLog("endPaint called with hWnd %8 lpps %8".utf16(), hWnd as! UInt64, ps as! UInt64)
 	// TODO `?? return 0` (hardcoded `return\throw` for now)
-	let window = handleToWindow(hWnd)
+	var window = handleToWindow(hWnd)
 	if window == null {
 		return Bool32.False
 	}
+
+	// TODO unify this somehow, into function/method or logically
+	while window.parent != null {
+		window = window.parent
+	}
+
 	let dc = window.dc
+	if dc == null {
+		return Bool32.False
+	}
 	let fb = dc.fb.ref
 	njraaSwapWindowFramebuffer(fb)
 	// TODO ^ could be there multiple End Paint event? Probably swap after primary WM_PAINT
@@ -1238,6 +1320,19 @@ fun invalidateRect(hWnd HWnd?, lprc Rect, bErase Bool32) Bool32 {
 	// TODO Mark rectangle for repainting
 	tofitaDebugLog("invalidateRect called with hWnd %8".utf16(), hWnd as! UInt64)
 	tofitaDebugLog("> lprc %8 bErase %u".utf16(), lprc as! UInt64, bErase as! UInt64)
+
+	// TODO Hexa: BTW .True may defined as `1 or _` on the `enum` instead of hack described somewehre in the comments
+	// ^ so then it will *require* to do `case True:` and *disallow* `== True` or `!= True` due to ambiguity
+	// ^ also another option is simple `case _` and have only `False` but this disallow to have `var value = Bool32.True`
+	if bErase != Bool32.False {
+		postMessage(hWnd, Message.WM_ERASE_BACKGROUND, null, null)
+	}
+
+	// NOTE paint goes after erase bg
+	// TODO coalesce multiple `WM_PAINT` requests in the single queue
+	postMessage(hWnd, Message.WM_PAINT, null, null)
+
+	// TODO better call `redrawWindow` instead of direct message passing
 	return Bool32.True
 }
 
@@ -1403,16 +1498,18 @@ fun moveWindow(hwnd HWnd, x Int32, y Int32, width Int32, height Int32, repaint B
 		window.y = y
 		window.width = width
 		window.height = height
+		tofitaDebugLog("> triggering WM_SIZE".utf16())
 
-		// NOTE check `windowId != 0`
-		// let payload = ShowWindowPayload()
-		// payload.windowId = window.windowId
-		// payload.nCmdShow = CmdShow.SW_UNCHANGED
-		// payload.x = x
-		// payload.y = y
-		// payload.width = width
-		// payload.height = height
-		// tofitaShowWindow(payload)
+		// 1 x 0
+		// TODO check `windowId != 0` i.e. overlapped and non-desktop?
+		let payload = ShowWindowPayload()
+		payload.windowId = window.windowId
+		payload.nCmdShow = CmdShow.SW_UNCHANGED
+		payload.x = -1 // TODO window.x
+		payload.y = -1 // TODO window.y
+		payload.width = window.width
+		payload.height = window.height
+		tofitaShowWindow(payload)
 
 		let lParam = LParam.makeULong(window.width as! UInt16, window.height as! UInt16) as! LParam
 		sendMessageW(hwnd, Message.WM_SIZE, null, lParam)
