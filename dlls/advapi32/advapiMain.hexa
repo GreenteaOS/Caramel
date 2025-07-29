@@ -52,12 +52,22 @@
     uint64_t __aullrem() asm("__aullrem");
     uint64_t __aullrem() { return 0; } // TODO
 
-    void _memset() asm("_memset");
-    void _memset() {
+	void* __cdecl _memset(void *dest, int val, size_t count) asm("_memset");
+	void* __cdecl _memset(void *dest, int val, size_t count) {
+		// tofitaDebugLog_(L"__cdecl _memset called advapi", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)count));
+		for (size_t i = 0; i < count; i++) {
+			((uint8_t *)dest)[i] = val;
+		}
+		return dest;
 	} // TODO
 
-    void _memcpy() asm("_memcpy");
-    void _memcpy() {
+	void* __cdecl _memcpy(void *dest, const void *src, size_t count) asm("_memcpy");
+	void* __cdecl _memcpy(void *dest, const void *src, size_t count) {
+		tofitaDebugLog_(L"__cdecl _memcpy called", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)src));
+		for (size_t i = 0; i < count; i++) {
+			((uint8_t *)dest)[i] = ((uint8_t *)src)[i];
+		}
+		return dest;
 	} // TODO
     #endif
 
