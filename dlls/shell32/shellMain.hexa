@@ -13,6 +13,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // Entry point of the project
+fun tofitaDebugLog(message ConstArrayPointer<ClangWideChar>, extra UInt64 = 0, more UInt64 = 0) Void { }
 
 @customHeader('
     #define HEXA_NEW(z) HeapAlloc(0,0,z)
