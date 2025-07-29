@@ -16,7 +16,6 @@
 
 @customHeader('
 void *tmemcpy(void *dest, const void *src, uint64_t count) {
-	tofitaDebugLog_(L"tmemcpy dest %8 src %8", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)src));
 	if (count == 0 || dest == src) {
 		return dest;
 	}
