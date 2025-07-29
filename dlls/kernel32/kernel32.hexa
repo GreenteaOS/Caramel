@@ -14,16 +14,24 @@
 
 @dllExport('ExitProcess')
 @haltsProgram
-fun exitProcess(@hide exitCode UInt32) {
+fun exitProcess(@hide exitCode Int32) { // must be UInt32! but syscall takes Int64
 	tofitaExitProcess(exitCode)
 	// TODO jump to NtDLL or something
 	while true { }
 }
 
+// TODO !! important: when size >= bufferSize then call virtualAlloc directly, for now
+// i.e. huge allocations
+
 @dllExport('LocalAlloc')
 fun localAlloc(flags UInt32, bytes SizeOfPointer) HLocal {
 	// TODO better way to take pointer to array element `&buffer[bufferOffset]`
 	let result = (buffer as! UInt64) + bufferOffset
+
+	// TODO Hexa: `buffer.length` & `8uptr`/`8iptr`/`8ptr`
+	if (bufferOffset + 8u64 + bytes) >= 10485760 {
+		return 0 as! HLocal
+	}
 
 	bufferOffset += bytes as! UInt64 // TODO .toInt()
 
@@ -142,6 +150,7 @@ fun getModuleHandleA(lpLibFileName ConstArrayPointer<ClangChar>) HModule {
 	// TODO
 	// Does not increase the DLL's reference count
 
+	// tofitaDebugLog("getModuleHandleA(%s)".utf16(), lpLibFileName as! UInt64)
 	if lpLibFileName == null {
 		return getModuleHandleW(null)
 	}
@@ -226,14 +235,15 @@ fun findDllByName(dllName ConstArrayPointer<ClangWideChar>) HModule {
 		let module = moduleAt as! LDR_DATA_TABLE_ENTRY
 
 		// Check if baseDllName is valid and compare with the target name (case-insensitive)
-		tofitaDebugLog("> baseDllName(%S)".utf16(), module.baseDllName.ref.buffer as! UInt64)
-		if module.baseDllName.ref.buffer != 0 and module.baseDllName.ref.length > 0 {
+		tofitaDebugLog("> baseDllName(%S) length = %d".utf16(), module.baseDllName.ref.buffer as! UInt64, module.baseDllName.ref.length)
+		if module.baseDllName.ref.buffer != null and module.baseDllName.ref.length > 0 {
 			if _wcsicmp(
-					module.baseDllName.ref.buffer as! ConstArrayPointer<ClangWideChar>,
+					module.baseDllName.ref.buffer,
 					dllName
 				) == 0 {
 				// TODO FORMAT
 				// Match found, return the base address
+				tofitaDebugLog("> module.dllBase %8".utf16(), module.dllBase as! UInt64)
 				return module.dllBase as! HModule
 			}
 		}
@@ -293,15 +303,15 @@ fun getStartupInfoW(stub SizeOfPointer) SizeOfPointer {
 	return 0
 }
 
-@dllExport('GetSystemTimeAsFileTime')
-fun getSystemTimeAsFileTime(stub SizeOfPointer) SizeOfPointer {
+@dllExport('GetSystemTimeAsFileTimeTODO')
+fun getSystemTimeAsFileTimeTODO(stub SizeOfPointer) SizeOfPointer {
 	// TODO
 	let str ArrayByValue<UInt16, 5> = "bruh"
 	// TODO Hexa: String inlining bug where str expected `value && type==String`
 	// TODO Hexa: .ref bug
 	tofitaDebugLog(str as! ConstArrayPointer<ClangWideChar>)
-	tofitaDebugLog("getSystemTimeAsFileTime()\n" as! ConstArrayPointer<ClangWideChar>)
-	tofitaDebugLog("getSystemTimeAsFileTime()\n".utf16())
+	tofitaDebugLog("getSystemTimeAsFileTime()" as! ConstArrayPointer<ClangWideChar>)
+	// tofitaDebugLog("getSystemTimeAsFileTime()".utf16())
 	return 0
 }
 
