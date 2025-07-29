@@ -15,6 +15,19 @@
 // TODO into enum
 declare LSTATUS = Int32
 
+// TODO use proper one
+fun simpleAtoW(ascii8z ConstArrayPointer<ClangChar>, utf16z ArrayPointer<ClangWideChar>) Void {
+	var i = 0
+	while ascii8z != null { // Check for a null basically
+		utf16z[i] = ascii8z[i] as! ClangWideChar
+		if ascii8z[i] as! UInt8 == 0 {
+			break
+		}
+
+		i++
+	}
+}
+
 @dllExport('RegCloseKey')
 fun regCloseKey(hKey HKey) LSTATUS {
 	// TODO seems like functions with 1/0 arguments get corrupted stack, because tofitaDebugLog receives 64 bit integers
