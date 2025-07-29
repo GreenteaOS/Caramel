@@ -1,0 +1,61 @@
+# Instructions
+
+Start every dialogue with "Working on Caramel."
+
+Use Hexa programming language.
+
+# Hexa
+
+Using Hexa (aka hexa) programming language (.hexa file extension) by example.
+These examples provide a basic overview of the .hexa syntax:
+
+```hexa
+// Operators
++ - *
+// No semicolons!
+var count = 0 // Define a writeable variable
+count = count + 1 // Increment the variable
+let constant = 123 + count // Define readonly variable
+// No parentheses needed for `if`, `switch` and `for`
+if constant == 123 {
+	count = 456
+}
+// C: `#define DIB_RGB_COLORS 0`
+let dib_rgb_colors = 0u32
+// Switches are more powerful than C's
+switch constant {
+	case 123: count = 456 // No need for `break`
+	case 456: count = 123 // No need for `break`
+	case 789: count = 111 // No need for `break`
+}
+// For loops are more powerful than C's
+for i in 0 ... 3 {
+	// 0
+	// 1
+	// 2 // Count to N-1
+}
+// Classes are more powerful than C++'s
+/// Documentation-like comment starts with `///`
+class MyClass {
+	var x = 1
+	var y = 2
+	// Note lack of `:`
+	fun method(argument Type) {
+		// Function body here
+	}
+}
+// Note lack of `:` before types
+fun function(value String) Int { return 0 }
+// Instead of `if value != null` use this:
+if let nonNullValue = value {
+	doSomething(nonNullValue)
+}
+// Native features
+// ArrayByValue is a by-value array (can be placed on stack)
+// Note lack of `:` after variable name
+var array ArrayByValue<Int> = [1, 2, 3]
+array[1] = 2
+// ArrayPointer is a by-value array (can be placed on stack)
+var pointerToArray ArrayPointer<Int> = array.ref
+pointerToArray[1] = 2
+```
