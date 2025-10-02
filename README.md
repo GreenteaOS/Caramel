@@ -77,6 +77,10 @@ Creating an open source, non-commercial, interoperable plugin is beneficial to t
 
 As per [`Article 6 Decompilation 1. (a)`](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex%3A31991L0250) you should own a **legal copy/license** of the software **before** doing any attempts at reverse engineering. The software should be **officially deprecated/obsolete**.
 
+> [!NOTE]
+>
+> Caramel API **freeze** up to `21H1` (at least until January 13, 2032)
+
 As a safety measure we assume that most contributions obtained a right to use a copy of some of the listed program bundles at some point in their lifetime ("Pro" and other versions included):
 
 - Windows XP
@@ -84,11 +88,13 @@ As a safety measure we assume that most contributions obtained a right to use a 
 - Windows 8
 - Windows 8.1
 - Windows 7
-- Windows 10 1909/1809/1703/20H2/21H2
+- Windows 10 `<= 21H1`
 
 > [!CAUTION]
 >
-> *Windows 10 22H2 support will cease in October 2025*
+> *Windows 10 22H2 extended support since October 14, 2025 until October 10, 2028*
+>
+> *Windows 10 21H2 extended support until January 13, 2032 for IoT Enterprise*
 
 We assume that **none** of the contributors had the right to utilize *any* of the "server", "beta" or other editions beyond the desktop ones.
 
