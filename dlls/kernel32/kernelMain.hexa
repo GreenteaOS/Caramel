@@ -15,7 +15,7 @@
 // Entry point of the project
 
 @customHeader('
-void *tmemcpy(void *dest, const void *src, uint64_t count) {
+void *memcpy(void *dest, const void *src, size_t count) {
 	if (count == 0 || dest == src) {
 		return dest;
 	}
@@ -30,7 +30,7 @@ void *tmemcpy(void *dest, const void *src, uint64_t count) {
 	return dest;
 }
 // TODO
-#define memcpy(z,u,x) tmemcpy(z,u,x)
+#define malloc(z) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, z)
 
 // Clang workaround
 void __chkstk(void) asm("__chkstk");
@@ -47,7 +47,7 @@ void __chkstk(void) {
 #define fflush(z) {}
 #define HEXA_UNREACHABLE(z) {}
 #define stdout ((void*)0)
-int64_t _fltused = 0;
+int64_t _fltused = 0; // TODO size_t?
 
 #ifdef bit64
 #else

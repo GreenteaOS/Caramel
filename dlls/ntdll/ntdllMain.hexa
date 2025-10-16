@@ -373,6 +373,7 @@
     }
     //#define HeapAlloc(a, b, c) HeapAllocAt(__LINE__, __FILE__, __func__, a, b, c)
     //#define HEXA_NEW(z) HeapAllocAt(__LINE__, __FILE__, __func__, 0,nullptr,z)
+	#define malloc(z) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, z)
 
     void *memcpy(void *dest, const void *src, size_t count) {
         uint8_t *dst8 = (uint8_t *)dest;

@@ -1,6 +1,6 @@
 # Instructions
 
-Start every dialogue with "Working on Caramel."
+We are using Hexa to create Greentea OS operating system, custom re-implementation of Windows. Tofita is the kernel (here called Engine) of the Greentea OS. Caramel repo is user space .dll counterparts that provide Win32 API.
 
 Use Hexa programming language.
 

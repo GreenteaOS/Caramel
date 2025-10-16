@@ -66,6 +66,7 @@
 	}
 	// TODO
 	#define memcpy(z,u,x) tmemcpy(z,u,x)
+	#define malloc(z) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, z)
 
 	// TODO move to Hexa .dll
 	void __cdecl __chkstk(size_t probeBytes) asm("__chkstk");

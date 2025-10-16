@@ -382,23 +382,24 @@ class Malloc4096 {
 #if bit32
 	@convention('cdecl')
 #end
+@rename('malloc')
 @dllExport('malloc')
 fun malloc(size SizeOfPointer) SizeOfPointer {
 	// TODO 16 bytes min + HeapAlloc?
-	tofitaDebugLog("[msvcrt] malloc called with size %u".utf16(), size as! UInt32)
+	// tofitaDebugLog("[msvcrt] malloc called with size %u".utf16(), size as! UInt32)
 
 	// TODO Hexa: if size >= 128 {
 	if (size as! UInt32) >= 128u32 {
-		tofitaDebugLog("[msvcrt] malloc >= 128".utf16())
+		// tofitaDebugLog("[msvcrt] malloc >= 128".utf16())
 
 		var stub = Malloc4096()
-		tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
+		// tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
 		return stub as! SizeOfPointer
 	}
 
 	// TODO use HeapAlloc
 	var stub = Malloc128()
-	tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
+	// tofitaDebugLog("[msvcrt] malloc done allocation %8".utf16(), stub as! UInt64)
 	return stub as! SizeOfPointer
 }
 

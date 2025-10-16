@@ -13,7 +13,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // TODO https://en.cppreference.com/w/cpp/numeric/bit_cast
-// TODO ^ fix link high `_-%~`
+// TODO ^ fix link highlight `_-%~`
 @linkName('free')
 @dllImport
 @rename('free')

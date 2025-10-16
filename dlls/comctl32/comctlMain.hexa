@@ -28,6 +28,7 @@
     }
     // TODO
     #define memcpy(z,u,x) tmemcpy(z,u,x)
+	#define malloc(z) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, z)
 
     // TODO just import kernel32
     #define wprintf(z,...) {}

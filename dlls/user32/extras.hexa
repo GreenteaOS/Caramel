@@ -3163,6 +3163,26 @@ fun patBlt(hdc HDc, x Int32, y Int32, cx Int32, cy Int32, dwRop RasterOperation)
 	tofitaDebugLog("> brushOrgX %d brushOrgY %d".utf16(), brushOrgX as! UInt64, brushOrgY as! UInt64)
 	tofitaDebugLog("> fgColor %8 bgColor %8".utf16(), fgColor as! UInt64, bgColor as! UInt64)
 
+	/* TODO
+		For a truly universal approach, you should:
+
+		Process byte-by-byte instead of word-by-word
+		Use standard bitmap alignment (DWORD-aligned scanlines)
+		Handle arbitrary widths without assuming 16-bit word boundaries
+
+		The universal bit indexing formula is:
+
+		Within a byte: 7 - (x % 8) for MSB-first bit ordering
+		Within a word: 15 - (x % 16) for MSB-first bit ordering
+		Within a dword: 31 - (x % 32) for MSB-first bit ordering
+
+		Recommendation: Replace your current word-based approach with the byte-based universal approach shown in the artifact. This will:
+
+		Work with bitmaps of any width
+		Follow standard Windows bitmap format conventions
+		Be more maintainable and less error-prone
+		Handle edge cases better (like 7-pixel wide patterns)
+	*/
 	for row in cy {
 		let destY = y + row
 		// Calculate pattern Y coordinate relative to brush origin
@@ -5954,6 +5974,7 @@ fun peekMessageW(msg Msg, hWnd HWnd?, wMsgFilterMin UInt32, wMsgFilterMax UInt32
 	payload.wMsgFilterMin = wMsgFilterMin
 	payload.wMsgFilterMax = wMsgFilterMax
 	payload.remove = wRemoveMsg
+	// TODO respect `wRemoveMsg PM_REMOVE`
 	let result = tofitaPeekMessage(payload)
 
 	msg.hwnd = payload.hwnd as! Handle
