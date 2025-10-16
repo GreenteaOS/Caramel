@@ -17,7 +17,7 @@ fun tofitaDebugLog(message ConstArrayPointer<ClangWideChar>, extra UInt64 = 0, m
 
 @customHeader('
     #define HEXA_NEW(z) HeapAlloc(0,0,z)
-    void *tmemcpy(void *dest, const void *src, uint64_t count) {
+    void *tmemcpy(void *dest, const void *src, size_t count) {
         uint8_t *dst8 = (uint8_t *)dest;
         const uint8_t *src8 = (const uint8_t *)src;
 

@@ -16,7 +16,7 @@
 @customHeader('
 	#define HEXA_NEW(z) HeapAlloc(0,0,z)
 
-	void *tmemcpy(void *dest, const void *src, uint64_t count) {
+	void *tmemcpy(void *dest, const void *src, size_t count) {
 		// Handle edge cases
 		if (count == 0 || dest == src) {
 			return dest;
