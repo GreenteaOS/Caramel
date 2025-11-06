@@ -611,6 +611,10 @@ fun registerClassExW(wc WindowClassEx) Atom {
 	// TODO actually do opposite: `registerClassW` calls `registerClassExW`
 	tofitaDebugLog("registerClassExW called".utf16())
 
+	// TODO If you fail to initialize the structure correctly (e.g., if you forget to set wc.cbSize or wc.lpfnWndProc),
+	// the function will typically fail gracefully and return 0.
+	// You could then call GetLastError() to get the error code, usually ERROR_INVALID_PARAMETER (87).
+
 	let wcw = ByValue<WindowClass>()
 	let wcw WindowClass = wcw.ref
 	// wcw.cbSize = sizeOf<WindowClass>()
@@ -738,7 +742,7 @@ fun loadBitmapW(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangWideCh
 fun loadBitmapA(hInstance HInstance?, lpBitmapName ConstArrayPointer<ClangChar>) HBitmap {
 	// TODO
 	tofitaDebugLog("loadBitmapA called %8 %S".utf16(), hInstance as! UInt64, lpBitmapName as! UInt64)
-	return loadBitmapW(hInstance, lpBitmapName)
+	return loadBitmapW(hInstance, lpBitmapName as! ConstArrayPointer<ClangWideChar>)
 }
 
 @dllExport('LoadImageW')
@@ -4372,7 +4376,7 @@ fun loadIconA(hInstance HInstance?, lpIconName ConstArrayPointer<ClangChar>) HIc
 fun loadImageA(hInstance HInstance?, lpName ConstArrayPointer<ClangChar>, uType Int, cx Int, cy Int, fuLoad Int) Handle {
 	// TODO
 	tofitaDebugLog("loadImageA called".utf16())
-	return loadImageW(hInstance, lpName, uType, cx, cy, fuLoad)
+	return loadImageW(hInstance, lpName as! ConstArrayPointer<ClangWideChar>, uType, cx, cy, fuLoad)
 }
 
 @dllExport('SystemParametersInfoA')
@@ -4950,7 +4954,7 @@ fun extTextOutA(hdc HDc, x Int32, y Int32, options UInt32, lprc Rect?, lpString 
 	tofitaDebugLog("> lprc %8 lpString {%S}".utf16(), lprc as! UInt64, lpString as! UInt64)
 	tofitaDebugLog("> lpDx %8".utf16(), lpDx as! UInt64)
 	// TODO Draw text with specified options
-	return extTextOutW(hdc, x, y, options, lprc, lpString, c, lpDx)
+	return extTextOutW(hdc, x, y, options, lprc, lpString as! ConstArrayPointer<ClangWideChar>, c, lpDx)
 }
 
 @dllExport('EnumFontFamiliesExW')
@@ -6096,7 +6100,7 @@ fun findResourceA(hModule HModule, lpName ConstArrayPointer<ClangChar>, lpType C
 {
 	tofitaDebugLog("findResourceA called".utf16())
 	// TODO `A`
-	return findResourceExW(hModule, lpType, lpName, make_lang_id(lang_neutral, sub_lang_neutral))
+	return findResourceExW(hModule, lpType as! ConstArrayPointer<ClangWideChar>, lpName as! ConstArrayPointer<ClangWideChar>, make_lang_id(lang_neutral, sub_lang_neutral))
 }
 
 @dllExport('SendMessageA')
@@ -6135,7 +6139,7 @@ fun setWindowPos(
 	let window = handleToWindow(hWnd)
 	if window == null {
 		tofitaDebugLog("> window == null".utf16())
-		return null
+		return 0
 	}
 
 	if info.ptMinTrackSize.ref.x > window.width or info.ptMinTrackSize.ref.y > window.height {

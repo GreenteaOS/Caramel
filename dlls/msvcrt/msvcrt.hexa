@@ -58,7 +58,7 @@ fun __setusermatherr(stub SizeOfPointer) Void {
 }
 
 // TODO use `meta.pointer` + rename to `wideCommandLine`
-@rename('&_wcmdln_') declare let wcmdlnPointer SizeOfPointer
+@rename('(wchar_t *)&_wcmdln_') declare let wcmdlnPointer ArrayPointer<ClangWideChar>
 #if bit32
 	@convention('cdecl')
 #end

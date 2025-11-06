@@ -184,7 +184,8 @@ fun _wcsicmp(a ConstArrayPointer<ClangWideChar>, b ConstArrayPointer<ClangWideCh
 		return (str1 == str2) ? 0 : (str1 ? 1 : -1)
 	}
 
-	while str1[0] != null and str2[0] != null {
+	// TODO ClangWideChar.nullTerminator
+	while str1[0] != (0 as! ClangWideChar) and str2[0] != (0 as! ClangWideChar) {
 		var c1 = towlower(str1[0]) as! Int
 		var c2 = towlower(str2[0]) as! Int
 		if c1 != c2 {
@@ -305,8 +306,9 @@ fun getStartupInfoW(stub SizeOfPointer) SizeOfPointer {
 
 @dllExport('GetSystemTimeAsFileTimeTODO')
 fun getSystemTimeAsFileTimeTODO(stub SizeOfPointer) SizeOfPointer {
-	// TODO
-	let str ArrayByValue<UInt16, 5> = "bruh"
+	// TODO Hexa: error: array initializer must be an initializer list uint16_t str_[5] = L"bruh";
+	// `let str ArrayByValue<UInt16, 5> = "bruh"`
+	let str ArrayByValue<ClangWideChar, 5> = "bruh"
 	// TODO Hexa: String inlining bug where str expected `value && type==String`
 	// TODO Hexa: .ref bug
 	tofitaDebugLog(str as! ConstArrayPointer<ClangWideChar>)

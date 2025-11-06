@@ -17,7 +17,7 @@
 @linkName('free')
 @dllImport
 @rename('free')
-declare fun freeNtdll(bytes SizeOfPointer) Void
+declare fun freeNtdll(bytes ArrayPointer<Void>) Void
 
 @linkName('NtCurrentTeb')
 @dllImport

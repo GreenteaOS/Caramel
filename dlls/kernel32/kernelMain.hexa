@@ -39,11 +39,12 @@ void __chkstk(void) {
 
 #define HEXA_NO_DEFAULT_INCLUDES
 #define HEXA_MAIN mainHexa
+int HEXA_MAIN(int argc, char **argv);
 #define HeapAlloc heapAlloc_
 #define GetProcessHeap() 0
 // TODO ^
 #define wprintf(z,...) {}
-#define HEAP_ZERO_MEMORY ((void*)0)
+#define HEAP_ZERO_MEMORY 0
 #define fflush(z) {}
 #define HEXA_UNREACHABLE(z) {}
 #define stdout ((void*)0)
@@ -203,7 +204,7 @@ int64_t _fltused = 0; // TODO size_t?
 	} // TODO
 #endif
 
-uint64_t bufferOffset_;
+extern uint64_t bufferOffset_;
 void startup() {
 	// TODO hexa
 	bufferOffset_ = (int32_t)0;

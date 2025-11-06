@@ -560,6 +560,8 @@ fun miceTarget(window Window, x Int32, y Int32) Window? {
 
 @dllExport('DispatchMessageW')
 fun dispatchMessageW(msg Msg) LResult? {
+	// TODO msg is optional
+	// `let msg = msg ?? return { log LResult.zero }`
 	tofitaDebugLog("dispatchMessageW called".utf16())
 	var result LResult? = null
 	// TODO ^ clearer result type? LResult.zero
@@ -626,6 +628,7 @@ fun dispatchMessageW(msg Msg) LResult? {
 				let timerProc = msg.lParam as! TimerProcedure
 				timerProc(msg.hwnd, Message.WM_TIMER, msg.wParam as! UInt64, msg.time)
 			} else {
+				// TODO logic should be "GetWindowLongPtrW GWLP_WNDPROC ?? DefWindowProcW"
 				result = window.proc(msg.hwnd, msg.message, msg.wParam, msg.lParam)
 			}
 		}
@@ -789,7 +792,7 @@ fun fillRectTODO(dc HDc, lprc Rect, brush HBrush) Int32 {
 	// TODO validate != null and that it is actually a WindowFrameBuffer
 
 	let bitmap = (dc as! DC).hBitmap as! Bitmap
-	if fb.pixels == null and bitmap != null {
+	if fb.pixels == 0 and bitmap != null {
 		tofitaDebugLog("> fb.pixels == null and bitmap != null, using bitmap".utf16())
 		fb.pixels = bitmap.bits as! UInt64
 		fb.width = bitmap.width as! UInt32

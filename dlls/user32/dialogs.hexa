@@ -719,7 +719,7 @@ fun dialog_DoDialogBox(hwnd HWnd, owner HWnd) Int32 {
 	var dlgInfo DIALOGINFO = null
 	var msg ByValue<Msg> = ByValue<Msg>()
 	var retval Int32 = 0
-	var bFirstEmpty Bool32 = null
+	var bFirstEmpty Bool32 = Bool32.False
 
 	if (dlgInfo = dialog_get_info(hwnd, 0)) == null {
 		return - 1
@@ -807,12 +807,12 @@ fun dialogBoxParamA(
 		return - 1
 	}
 
-	var ownerRef = ByValue<HWnd>()
-	if (hwnd = dialog_CreateIndirect(hInst, ptr as! ConstArrayPointer<Void>, owner, dlgProc, param, 0, ownerRef.pointer)) == null {
+	var ownerRef ArrayByValue<HWnd, 1> = []
+	if (hwnd = dialog_CreateIndirect(hInst, ptr as! ConstArrayPointer<Void>, owner, dlgProc, param, 0, ownerRef.ref)) == null {
 		return - 1
 	}
 
-	return dialog_DoDialogBox(hwnd, ownerRef.ref)
+	return dialog_DoDialogBox(hwnd, ownerRef[0])
 }
 
 @dllExport('DialogBoxParamW')
@@ -841,12 +841,12 @@ fun dialogBoxParamW(
 		return - 1
 	}
 
-	var ownerRef = ByValue<HWnd>()
-	if (hwnd = dialog_CreateIndirect(hInst, ptr as! ConstArrayPointer<Void>, owner, dlgProc, param, Bool32.True, ownerRef.pointer)) == null {
+	var ownerRef ArrayByValue<HWnd, 1> = []
+	if (hwnd = dialog_CreateIndirect(hInst, ptr as! ConstArrayPointer<Void>, owner, dlgProc, param, Bool32.True, ownerRef.ref)) == null {
 		return - 1
 	}
 
-	return dialog_DoDialogBox(hwnd, ownerRef.ref)
+	return dialog_DoDialogBox(hwnd, ownerRef[0])
 }
 
 fun dialogBoxIndirectParamAorW(
@@ -859,11 +859,12 @@ fun dialogBoxIndirectParamAorW(
 ) SignedSizeOfPointer {
 	tofitaDebugLog("dialogBoxIndirectParamAorW called".utf16())
 
-	var ownerRef = ByValue<HWnd>()
-	var hwnd HWnd = dialog_CreateIndirect(hInstance, template, owner, dlgProc, param, Bool32.fromBool(flags == 0), ownerRef.pointer)
+	// var ownerRef = ByValue<HWnd>() TODO `ownerRef.pointer` reported as `ArrayPointer<Handle>` instead of `ArrayPointer<ByValue<Handle>>` or `Handle`
+	var ownerRef ArrayByValue<HWnd, 1> = []
+	var hwnd HWnd = dialog_CreateIndirect(hInstance, template, owner, dlgProc, param, Bool32.fromBool(flags == 0), ownerRef.ref)
 
 	if hwnd != null {
-		return dialog_DoDialogBox(hwnd, ownerRef.ref)
+		return dialog_DoDialogBox(hwnd, ownerRef[0]) // TODO `.first`
 	}
 
 	// TODO format
@@ -1304,7 +1305,7 @@ fun getDlgItemTextA(
 ) UInt32 {
 	tofitaDebugLog("getDlgItemTextA called".utf16())
 	if str != null and (len > 0) {
-		str[0] = null
+		str[0] = 0
 		// TODO ^ not `null` but 0
 	}
 
@@ -1320,7 +1321,7 @@ fun getDlgItemTextW(
 ) UInt32 {
 	tofitaDebugLog("getDlgItemTextW called".utf16())
 	if str != null and (len > 0) {
-		str[0] = null
+		str[0] = 0
 	}
 
 	return sendDlgItemMessageW(hwnd, id, 13u32 as! Message, len as! WParam, str as! LParam) as! UInt32
@@ -1368,7 +1369,7 @@ fun getDlgItemInt(
 
 	if fSigned == Bool32.True {
 		// TODO pointer to &endptr var itself
-		result = strtol(str.ref, endptr, 10)
+		result = strtol(str.ref, endptr.pointerToSelf as! ArrayPointer<ArrayPointer<ClangChar>>, 10)
 
 		if endptr == null or (endptr == str.ref) {
 			return 0
@@ -1379,7 +1380,7 @@ fun getDlgItemInt(
 		}
 	} else {
 		// TODO pointer to &endptr var itself
-		result = strtoul(str.ref, endptr, 10) as! Int32
+		result = strtoul(str.ref, endptr.pointerToSelf as! ArrayPointer<ArrayPointer<ClangChar>>, 10) as! Int32
 
 		if endptr == null or (endptr == str.ref) {
 			return 0
@@ -1701,7 +1702,7 @@ fun dialog_DlgDirSelect(
 	if (ret = Bool32.fromBool((buffer [0] as! Int32) == 91)) == Bool32.True {
 		if (buffer [1] as! Int32) == 45 {
 			buffer[3] = 58 as! ClangWideChar
-			buffer[4] = null
+			buffer[4] = 0
 			ptr = buffer.offsetItems(2)
 		} else {
 			buffer[lstrlenW(buffer) - 1] = 92 as! ClangWideChar
@@ -1709,7 +1710,7 @@ fun dialog_DlgDirSelect(
 		}
 	} else {
 		if wcschr(buffer, 46u16 as! ClangWideChar) == (null) {
-			buffer[lstrlenW(buffer) + 1] = null
+			buffer[lstrlenW(buffer) + 1] = 0
 			buffer[lstrlenW(buffer)] = 46 as! ClangWideChar
 		}
 
@@ -1718,7 +1719,7 @@ fun dialog_DlgDirSelect(
 
 	if unicode == Bool32.False {
 		if len > 0 and wideCharToMultiByte(0, 0, ptr, -1, str as! ArrayPointer<ClangChar>, len, null, null) == 0 {
-			(str as! ArrayPointer<ClangChar>) [len - 1] = null
+			(str as! ArrayPointer<ClangChar>) [len - 1] = 0
 		}
 	} else {
 		lstrcpynW(str, ptr, len)
@@ -1771,7 +1772,7 @@ fun dialog_DlgDirListW(
 
 		if p != spec {
 			var sep ClangWideChar = p[0]
-			p[0] = null
+			p[0] = 0
 
 			if setCurrentDirectoryW(spec) == Bool32.False {
 				p[0] = sep
@@ -1820,8 +1821,23 @@ fun dialog_DlgDirListW(
 	if orig_spec != null and (spec != orig_spec) {
 		var p = spec
 
-		while (orig_spec++ [0] = p = p.offsetItems(1) [0]) as! Int != 0 {
-			// TODO assign not allowed!
+		// while (orig_spec++ [0] = p = p.offsetItems(1) [0]) as! Int != 0 {
+		// // TODO assign not allowed! + handle it in C to Hexa somehow
+		// }
+
+		while true {
+			// Assign current character and check for null terminator
+			let current_char = p[0]
+			orig_spec[0] = current_char
+
+			// Break if we copied the null terminator
+			if (current_char as! Int) == 0 {
+				break
+			}
+
+			// Move both pointers forward after assignment
+			orig_spec = orig_spec.offsetItems(1)
+			p = p.offsetItems(1)
 		}
 	}
 

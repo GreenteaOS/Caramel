@@ -26,7 +26,7 @@ class ClassesLinkedList {
 // TODO alloc by value, and use .ref (same for String.root)
 // TODO use Map instead of linked list
 var rootClass = ClassesLinkedList(null)
-rootClass.next = null // TODO why I do this?
+rootClass.next = null as! ClassesLinkedList // TODO why I do this?
 
 // TODO some HandleWrapper with handle type field?
 // TODO to enums

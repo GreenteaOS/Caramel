@@ -83,7 +83,17 @@
 	int64_t _fltused = 0;
 
 	#ifdef bit64
+	// 64-bit
+	void* __cdecl memset(void *dest, int val, size_t count) asm("_memset");
+	__attribute__((no_builtin("memset"))) void* __cdecl memset(void *dest, int val, size_t count) {
+		tofitaDebugLog_(L"userMain _memset called %8 %d", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)count));
+		for (size_t i = 0; i < count; i++) {
+			((uint8_t *)dest)[i] = val;
+		}
+		return dest;
+	} // TODO use crt/ntdll imports
 	#else
+	// 32-bit
 	int64_t __stdcall __alldiv(int64_t dividend, int64_t divisor) asm("__alldiv");
 	int64_t __stdcall __allrem(int64_t dividend, int64_t divisor) asm("__allrem");
 	uint64_t __stdcall __aulldiv(uint64_t dividend, uint64_t divisor) asm("__aulldiv");
@@ -314,8 +324,8 @@
 		return remainder;
 	}
 
-	void* __cdecl _memset(void *dest, int val, size_t count) asm("_memset");
-	__attribute__((no_builtin("memset"))) void* __cdecl _memset(void *dest, int val, size_t count) {
+	void* __cdecl memset(void *dest, int val, size_t count) asm("_memset");
+	__attribute__((no_builtin("memset"))) void* __cdecl memset(void *dest, int val, size_t count) {
 		tofitaDebugLog_(L"userMain _memset called %8 %d", (uint64_t)((int32_t)dest), (uint64_t)((int32_t)count));
 		for (size_t i = 0; i < count; i++) {
 			((uint8_t *)dest)[i] = val;
