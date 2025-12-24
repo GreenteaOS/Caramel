@@ -14,7 +14,7 @@ Due to Greentea OS being new, independent project in different programming langu
 
 ## Clean Room Principles
 
-Clean room states that replication of Win32 functionality should happen without copying proprietary code, using only public specifications and third-party references like ReactOS. This requirement is relaxed to a degree according to directives related to reverse engineering, but still is a strong general approach to maximize legal safeguards. *You may learn more about the directives from the README in the root of this repo.*
+Clean room states that replication of Win32 functionality should happen without copying proprietary code, using only public specifications and third-party references like ReactOS. **This requirement is relaxed to a degree according to directives related to reverse engineering**, but still is a strong general approach to maximize legal safeguards. *You may learn more about the directives from the README in the root of this repo.*
 
 1. **Reference, Don’t Copy**:
 

@@ -53,7 +53,7 @@ This documentation approach focuses on demonstrating interoperability purposes r
 
 Decompilation is strictly limited to what's necessary for interoperability purposes.
 
-Creating an open source, non-commercial, interoperable plugin is beneficial to the public interest and serves essential compatibility purposes.
+Creating an open source, non-commercial, interoperable plugin is beneficial to the **public interest** and serves essential compatibility purposes.
 
 - [Follow general clean-room requirements](SAFETY.md) (i.e. search for existing public knowledge as much as possible)
 - Make sure the necessary information is not already readily available
